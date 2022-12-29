@@ -10,6 +10,8 @@
 #include "vsc/impl/VisitorBase.h"
 
 namespace vsc {
+namespace solvers {
+
 
 class SolverBitwuzlaSolveModelBuilder : public VisitorBase {
 public:
@@ -74,5 +76,7 @@ private:
 	std::vector<int32_t>					m_width_s;
 };
 
-} /* namespace vsc */
+}
+}
+}
 

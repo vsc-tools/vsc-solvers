@@ -10,6 +10,8 @@
 #include "vsc/ICompoundSolver.h"
 
 namespace vsc {
+namespace solvers {
+
 
 class CompoundSolverDefault : public ICompoundSolver {
 public:
@@ -34,5 +36,7 @@ private:
 	IContext							*m_ctxt;
 };
 
-} /* namespace vsc */
+}
+}
+}
 

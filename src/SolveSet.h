@@ -15,6 +15,8 @@
 #include "vsc/IModelFieldVec.h"
 
 namespace vsc {
+namespace solvers {
+
 
 enum class SolveSetFlag {
 	NoFlags = 0,
@@ -101,5 +103,7 @@ private:
 
 };
 
-} /* namespace vsc */
+}
+}
+}
 

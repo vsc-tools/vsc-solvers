@@ -38,6 +38,8 @@ DEBUG_SCOPE(SolverBoolectorSolveModelBuilder);
 #endif
 
 namespace vsc {
+namespace solvers {
+
 
 SolverBoolectorSolveModelBuilder::SolverBoolectorSolveModelBuilder(
 		SolverBoolector *solver) : m_solver(solver), m_build_field(false) {
@@ -605,4 +607,6 @@ BoolectorNode *SolverBoolectorSolveModelBuilder::extend(
 	return n;
 }
 
-} /* namespace vsc */
+}
+}
+}

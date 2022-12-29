@@ -22,6 +22,8 @@
 #include "SolveSetSolveModelBuilder.h"
 
 namespace vsc {
+namespace solvers {
+
 
 SolveSetSolveModelBuilder::SolveSetSolveModelBuilder(ISolver *solver) :
 		m_solver(solver) {
@@ -44,4 +46,6 @@ void SolveSetSolveModelBuilder::build(SolveSet *sset) {
 	}
 }
 
-} /* namespace vsc */
+}
+}
+}

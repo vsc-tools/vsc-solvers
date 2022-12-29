@@ -10,6 +10,8 @@
 #include "vsc/impl/VisitorBase.h"
 
 namespace vsc {
+namespace solvers {
+
 
 class SetFieldUsedRandVisitor : public VisitorBase {
 public:
@@ -26,5 +28,7 @@ private:
 
 };
 
-} /* namespace vsc */
+}
+}
+}
 

@@ -38,6 +38,8 @@ DEBUG_SCOPE(SolverBitwuzlaSolveModelBuilder);
 #endif
 
 namespace vsc {
+namespace solvers {
+
 
 SolverBitwuzlaSolveModelBuilder::SolverBitwuzlaSolveModelBuilder(
 		SolverBitwuzla *solver) : m_solver(solver) {
@@ -634,4 +636,6 @@ const BitwuzlaTerm *SolverBitwuzlaSolveModelBuilder::extend(
 			bitwuzla_term_bv_get_size(n), ctx_width);
 }
 
-} /* namespace vsc */
+}
+}
+}

@@ -24,6 +24,8 @@
 #include "SolverBoolector.h"
 
 namespace vsc {
+namespace solvers {
+
 
 SolverFactoryDefault::SolverFactoryDefault() {
 	// TODO Auto-generated constructor stub

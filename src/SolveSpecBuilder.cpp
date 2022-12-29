@@ -39,6 +39,8 @@ DEBUG_SCOPE(SolveSpecBuilder);
 #endif
 
 namespace vsc {
+namespace solvers {
+
 
 SolveSpecBuilder::SolveSpecBuilder(IContext *ctx) : 
 	m_ctx(ctx),
@@ -367,4 +369,6 @@ void SolveSpecBuilder::process_fieldref(IModelField *f) {
 	DEBUG_LEAVE("process_fieldref %s", f->name().c_str());
 }
 
-} /* namespace vsc */
+}
+}
+}

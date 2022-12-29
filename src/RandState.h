@@ -12,6 +12,8 @@
 #include "ModelVal.h"
 
 namespace vsc {
+namespace solvers {
+
 
 class RandState;
 using RandStateUP=std::unique_ptr<RandState>;
@@ -55,5 +57,7 @@ private:
 
 };
 
-} /* namespace vsc */
+}
+}
+}
 

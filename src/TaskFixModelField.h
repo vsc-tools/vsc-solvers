@@ -3,6 +3,8 @@
 #include "vsc/impl/VisitorBase.h"
 
 namespace vsc {
+namespace solvers {
+
 
 class TaskFixModelField : public virtual VisitorBase {
 public:
@@ -26,4 +28,6 @@ private:
 
 };
 
+}
+}
 }

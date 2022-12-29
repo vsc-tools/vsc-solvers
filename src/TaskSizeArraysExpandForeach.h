@@ -5,6 +5,8 @@
 #include "SolveSet.h"
 
 namespace vsc {
+namespace solvers {
+
 namespace dm {
 
 class TaskSizeArraysExpandForeach : public virtual VisitorBase {
@@ -22,5 +24,11 @@ private:
 
 };
 
+}
+}
+}
+};
+
+}
 }
 }

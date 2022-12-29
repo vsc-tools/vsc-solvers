@@ -38,6 +38,8 @@ struct BoolectorAnonymous;
 using BoolectorSort=BoolectorAnonymous *;
 
 namespace vsc {
+namespace solvers {
+
 
 //struct BoolectorSort;
 
@@ -81,5 +83,7 @@ private:
 
 };
 
-} /* namespace vsc */
+}
+}
+}
 

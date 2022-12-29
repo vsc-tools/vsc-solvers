@@ -11,6 +11,8 @@
 #include "SolveSet.h"
 
 namespace vsc {
+namespace solvers {
+
 
 class SolveSetSwizzlerPartsel {
 public:
@@ -41,5 +43,7 @@ private:
 
 };
 
-} /* namespace vsc */
+}
+}
+}
 

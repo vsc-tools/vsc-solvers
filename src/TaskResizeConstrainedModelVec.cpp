@@ -3,6 +3,8 @@
 #include "SolveSpecBuilder.h"
 
 namespace vsc {
+namespace solvers {
+
 
 
 TaskResizeConstrainedModelVec::TaskResizeConstrainedModelVec(
@@ -63,4 +65,6 @@ void TaskResizeConstrainedModelVec::visitModelExprFieldRef(IModelExprFieldRef *f
     }
 }
 
+}
+}
 }

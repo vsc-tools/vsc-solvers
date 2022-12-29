@@ -25,8 +25,8 @@
  */
 
 #pragma once
-#include "vsc/IModelConstraint.h"
-#include "vsc/IModelField.h"
+#include "vsc/dm/IModelConstraint.h"
+#include "vsc/dm/IModelField.h"
 
 namespace vsc {
 

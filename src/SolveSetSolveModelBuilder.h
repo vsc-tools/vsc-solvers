@@ -11,6 +11,8 @@
 #include "vsc/impl/VisitorBase.h"
 
 namespace vsc {
+namespace solvers {
+
 
 /**
  * Builds solver data for the fields and constraints in the
@@ -29,5 +31,7 @@ private:
 
 };
 
-} /* namespace vsc */
+}
+}
+}
 

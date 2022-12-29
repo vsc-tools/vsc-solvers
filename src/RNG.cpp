@@ -23,6 +23,8 @@
 #include <stdlib.h>
 
 namespace vsc {
+namespace solvers {
+
 
 RNG::RNG(uint32_t seed) {
 	m_a = 0x5DEECE66DULL;
@@ -72,4 +74,6 @@ uint32_t RNG::randint_u(
 	}
 }
 
-} /* namespace vsc */
+}
+}
+}

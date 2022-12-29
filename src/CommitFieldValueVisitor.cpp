@@ -21,6 +21,8 @@
 #include "CommitFieldValueVisitor.h"
 
 namespace vsc {
+namespace solvers {
+
 
 CommitFieldValueVisitor::CommitFieldValueVisitor(ISolver *solver) :
 	m_solver(solver) {
@@ -44,4 +46,6 @@ void CommitFieldValueVisitor::visitModelField(IModelField *f) {
 	m_solver->setFieldValue(f);
 }
 
-} /* namespace vsc */
+}
+}
+}

@@ -17,6 +17,8 @@ typedef struct BitwuzlaTerm BitwuzlaTerm;
 typedef struct BitwuzlaSort BitwuzlaSort;
 
 namespace vsc {
+namespace solvers {
+
 
 class SolverBitwuzla : public ISolver {
 public:
@@ -55,5 +57,7 @@ private:
 	bool														m_issat;
 };
 
-} /* namespace vsc */
+}
+}
+}
 

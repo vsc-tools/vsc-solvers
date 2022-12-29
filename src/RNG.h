@@ -30,6 +30,8 @@
 #include <random>
 
 namespace vsc {
+namespace solvers {
+
 
 class RNG {
 public:
@@ -52,5 +54,7 @@ private:
 
 };
 
-} /* namespace vsc */
+}
+}
+}
 

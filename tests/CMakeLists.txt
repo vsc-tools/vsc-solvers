@@ -67,7 +67,9 @@ else()
 endif()
 
 target_link_libraries(test_libvsc 
-	vsc 
+    vsc-solvers 
+	vsc-dm
+    debug-mgr
 	libgtest 
 	libgmock
 	)

@@ -15,6 +15,8 @@
 #include "SolveSpec.h"
 
 namespace vsc {
+namespace solvers {
+
 
 class SolveSpecBuilder : public VisitorBase {
 public:
@@ -82,5 +84,7 @@ private:
 
 };
 
-} /* namespace vsc */
+}
+}
+}
 

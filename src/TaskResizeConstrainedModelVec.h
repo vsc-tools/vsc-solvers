@@ -7,6 +7,8 @@
 #include "vsc/impl/VisitorBase.h"
 
 namespace vsc {
+namespace solvers {
+
 
 class TaskResizeConstrainedModelVec : public VisitorBase {
 public:
@@ -29,4 +31,6 @@ protected:
 
 };
 
+}
+}
 }

@@ -13,6 +13,8 @@
 #include "RNG.h"
 
 namespace vsc {
+namespace solvers {
+
 
 class Randomizer : public IRandomizer {
 public:
@@ -34,5 +36,7 @@ private:
 
 };
 
-} /* namespace vsc */
+}
+}
+}
 

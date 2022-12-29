@@ -36,6 +36,8 @@ DEBUG_SCOPE(SetFieldUsedRandVisitor);
 #endif
 
 namespace vsc {
+namespace solvers {
+
 
 SetFieldUsedRandVisitor::SetFieldUsedRandVisitor() {
 	// TODO Auto-generated constructor stub
@@ -71,4 +73,6 @@ void SetFieldUsedRandVisitor::visitModelField(IModelField *f) {
 			f->name().c_str(), f->flags());
 }
 
-} /* namespace vsc */
+}
+}
+}

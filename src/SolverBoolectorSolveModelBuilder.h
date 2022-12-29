@@ -10,6 +10,8 @@
 #include "vsc/impl/VisitorBase.h"
 
 namespace vsc {
+namespace solvers {
+
 
 class SolverBoolectorSolveModelBuilder : public VisitorBase {
 public:
@@ -81,5 +83,7 @@ private:
 	bool								m_build_field;
 };
 
-} /* namespace vsc */
+}
+}
+}
 

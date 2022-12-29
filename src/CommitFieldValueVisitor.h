@@ -7,10 +7,12 @@
 
 #pragma once
 #include <vector>
-#include "vsc/ISolver.h"
-#include "vsc/impl/VisitorBase.h"
+#include "vsc/solvers/ISolver.h"
+#include "vsc/dm/impl/VisitorBase.h"
 
 namespace vsc {
+namespace solvers {
+
 
 class CommitFieldValueVisitor : public VisitorBase {
 public:
@@ -30,5 +32,7 @@ private:
 
 };
 
-} /* namespace vsc */
+}
+}
+}
 

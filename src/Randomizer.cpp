@@ -41,6 +41,8 @@ DEBUG_SCOPE(Randomizer);
 #endif
 
 namespace vsc {
+namespace solvers {
+
 
 Randomizer::Randomizer(
 		ISolverFactory		*solver_factory,
@@ -144,4 +146,6 @@ bool Randomizer::randomize(
 	return ret;
 }
 
-} /* namespace vsc */
+}
+}
+}

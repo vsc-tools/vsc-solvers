@@ -9,6 +9,8 @@
 #include "RandState.h"
 
 namespace vsc {
+namespace solvers {
+
 
 RandState::RandState(const std::string &seed) : m_seed(seed) {
 	std::seed_seq seq(seed.begin(), seed.end());
@@ -89,4 +91,6 @@ IRandState *RandState::next() {
 	return new RandState(m_state);
 }
 
-} /* namespace vsc */
+}
+}
+}

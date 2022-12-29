@@ -9,6 +9,8 @@
 #include "vsc/ISolverFactory.h"
 
 namespace vsc {
+namespace solvers {
+
 
 class SolverFactoryDefault : public ISolverFactory {
 public:
@@ -25,5 +27,7 @@ private:
 
 };
 
-} /* namespace vsc */
+}
+}
+}
 

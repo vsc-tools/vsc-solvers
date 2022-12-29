@@ -2,6 +2,8 @@
 #include "TaskFixModelField.h"
 
 namespace vsc {
+namespace solvers {
+
 
 TaskFixModelField::TaskFixModelField(uint32_t flags) : m_flags(flags) {
 
@@ -29,4 +31,6 @@ void TaskFixModelField::visitModelField(IModelField *f) {
     }
 }
 
+}
+}
 }

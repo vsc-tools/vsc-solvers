@@ -33,6 +33,8 @@ DEBUG_SCOPE(CompoundSolverDefault);
 #endif
 
 namespace vsc {
+namespace solvers {
+
 
 CompoundSolverDefault::CompoundSolverDefault(IContext *ctxt) : m_ctxt(ctxt) {
 	// TODO Auto-generated constructor stub
@@ -231,5 +233,6 @@ bool CompoundSolverDefault::solve_sset(
 	return ret;
 }
 
-
-} /* namespace vsc */
+}
+}
+}

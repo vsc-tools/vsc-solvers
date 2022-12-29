@@ -22,6 +22,8 @@
 #include "SolveSpec.h"
 
 namespace vsc {
+namespace solvers {
+
 
 SolveSpec::SolveSpec(
 		const std::vector<SolveSet *>			&solvesets,
@@ -41,4 +43,6 @@ SolveSpec::~SolveSpec() {
 	// TODO Auto-generated destructor stub
 }
 
-} /* namespace vsc */
+}
+}
+}

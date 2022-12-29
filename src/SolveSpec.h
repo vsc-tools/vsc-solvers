@@ -13,6 +13,8 @@
 #include "SolveSet.h"
 
 namespace vsc {
+namespace solvers {
+
 
 class SolveSpec;
 using SolveSpecUP = std::unique_ptr<SolveSpec>;
@@ -50,5 +52,7 @@ private:
 	std::vector<IModelFieldVec *>	m_unconstrained_sz_vec;
 };
 
-} /* namespace vsc */
+}
+}
+}
 

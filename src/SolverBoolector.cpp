@@ -38,6 +38,8 @@ DEBUG_SCOPE(SolverBoolector);
 #endif
 
 namespace vsc {
+namespace solvers {
+
 
 SolverBoolector::SolverBoolector() {
 	m_btor = boolector_new();
@@ -173,4 +175,6 @@ BoolectorNode *SolverBoolector::findFieldData(IModelField *f) {
 	}
 }
 
-} /* namespace vsc */
+}
+}
+}

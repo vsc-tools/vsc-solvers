@@ -29,6 +29,8 @@ DEBUG_SCOPE(SolveSet);
 #define DEBUG(fmt, ...) DEBUG_BASE(SolveSet, fmt, ##__VA_ARGS__)
 
 namespace vsc {
+namespace solvers {
+
 
 SolveSet::SolveSet() : m_flags(SolveSetFlag::NoFlags) {
 	// TODO Auto-generated constructor stub
@@ -86,4 +88,6 @@ void SolveSet::merge(SolveSet *src) {
 	m_flags |= src->m_flags;
 }
 
-} /* namespace vsc */
+}
+}
+}

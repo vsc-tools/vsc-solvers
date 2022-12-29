@@ -27,6 +27,8 @@ DEBUG_SCOPE(SolveSetSwizzlerPartSel);
 #endif
 
 namespace vsc {
+namespace solvers {
+
 
 SolveSetSwizzlerPartsel::SolveSetSwizzlerPartsel(IRandState *randstate) :
 		m_randstate(randstate) {
@@ -216,4 +218,6 @@ void SolveSetSwizzlerPartsel::create_rand_domain_constraint(
 	DEBUG_LEAVE("create_rand_domain_constraint %s", f->name().c_str());
 }
 
-} /* namespace vsc */
+}
+}
+}

@@ -38,6 +38,8 @@ DEBUG_SCOPE(SolverBitwuzla);
 #endif
 
 namespace vsc {
+namespace solvers {
+
 
 SolverBitwuzla::SolverBitwuzla() {
 	m_bitwuzla = bitwuzla_new();
@@ -162,5 +164,6 @@ const BitwuzlaTerm *SolverBitwuzla::findFieldData(IModelField *f) {
 	}
 }
 
-
-} /* namespace vsc */
+}
+}
+}
