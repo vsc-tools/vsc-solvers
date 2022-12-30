@@ -29,6 +29,7 @@
 #include "vsc/dm/IModelField.h"
 
 namespace vsc {
+namespace solvers {
 
 class ISolver;
 using ISolverUP=std::unique_ptr<ISolver>;
@@ -42,21 +43,22 @@ public:
 	virtual ~ISolver() { }
 
 	// Creates solver data for a field
-	virtual void initField(IModelField *f) = 0;
+	virtual void initField(dm::IModelField *f) = 0;
 
 	// Creates solver data for a constraint
-	virtual void initConstraint(IModelConstraint *c) = 0;
+	virtual void initConstraint(dm::IModelConstraint *c) = 0;
 
-	virtual void addAssume(IModelConstraint *c) = 0;
+	virtual void addAssume(dm::IModelConstraint *c) = 0;
 
-	virtual void addAssert(IModelConstraint *c) = 0;
+	virtual void addAssert(dm::IModelConstraint *c) = 0;
 
 	virtual bool isSAT() = 0;
 
 	// Assign a value to a scalar field
-	virtual void setFieldValue(IModelField *f) = 0;
+	virtual void setFieldValue(dm::IModelField *f) = 0;
 
 };
 
-
 }
+}
+

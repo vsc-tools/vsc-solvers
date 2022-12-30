@@ -5,11 +5,10 @@
  *      Author: mballance
  */
 #pragma once
-#include "vsc/IModelConstraint.h"
-#include "vsc/ISolverFactory.h"
-#include "ModelField.h"
-#include "vsc/IRandomizer.h"
-#include "vsc/IRandState.h"
+#include "vsc/dm/IModelConstraint.h"
+#include "vsc/solvers/ISolverFactory.h"
+#include "vsc/solvers/IRandomizer.h"
+#include "vsc/solvers/IRandState.h"
 #include "RNG.h"
 
 namespace vsc {
@@ -25,8 +24,8 @@ public:
 	virtual ~Randomizer();
 
 	virtual bool randomize(
-			const std::vector<IModelField *>		&fields,
-			const std::vector<IModelConstraint *>	&constraints,
+			const std::vector<dm::IModelField *>		&fields,
+			const std::vector<dm::IModelConstraint *>	&constraints,
 			bool									diagnose_failures
 			) override;
 
@@ -36,7 +35,6 @@ private:
 
 };
 
-}
 }
 }
 

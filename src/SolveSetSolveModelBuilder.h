@@ -6,9 +6,9 @@
  */
 
 #pragma once
-#include "vsc/ISolver.h"
+#include "vsc/solvers/ISolver.h"
 #include "SolveSet.h"
-#include "vsc/impl/VisitorBase.h"
+#include "vsc/dm/impl/VisitorBase.h"
 
 namespace vsc {
 namespace solvers {
@@ -18,7 +18,7 @@ namespace solvers {
  * Builds solver data for the fields and constraints in the
  * specified solve set
  */
-class SolveSetSolveModelBuilder : public VisitorBase {
+class SolveSetSolveModelBuilder : public dm::VisitorBase {
 public:
 	SolveSetSolveModelBuilder(ISolver *solver);
 
@@ -31,7 +31,6 @@ private:
 
 };
 
-}
 }
 }
 

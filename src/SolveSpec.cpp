@@ -27,8 +27,8 @@ namespace solvers {
 
 SolveSpec::SolveSpec(
 		const std::vector<SolveSet *>			&solvesets,
-		const std::vector<IModelField *>		&unconstrained,
-		const std::vector<IModelFieldVec *>		&unconstrained_sz_vec) :
+		const std::vector<dm::IModelField *>		&unconstrained,
+		const std::vector<dm::IModelFieldVec *>		&unconstrained_sz_vec) :
 				m_unconstrained(unconstrained),
 				m_unconstrained_sz_vec(unconstrained_sz_vec) {
 
@@ -45,4 +45,4 @@ SolveSpec::~SolveSpec() {
 
 }
 }
-}
+

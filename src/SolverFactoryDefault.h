@@ -6,7 +6,7 @@
  */
 
 #pragma once
-#include "vsc/ISolverFactory.h"
+#include "vsc/solvers/ISolverFactory.h"
 
 namespace vsc {
 namespace solvers {
@@ -27,7 +27,6 @@ private:
 
 };
 
-}
 }
 }
 

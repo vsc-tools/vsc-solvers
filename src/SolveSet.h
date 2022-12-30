@@ -9,10 +9,10 @@
 #include <memory>
 #include <unordered_set>
 #include <vector>
-#include "vsc/IModelConstraint.h"
-#include "vsc/IModelConstraintSoft.h"
-#include "vsc/IModelField.h"
-#include "vsc/IModelFieldVec.h"
+#include "vsc/dm/IModelConstraint.h"
+#include "vsc/dm/IModelConstraintSoft.h"
+#include "vsc/dm/IModelField.h"
+#include "vsc/dm/IModelFieldVec.h"
 
 namespace vsc {
 namespace solvers {
@@ -52,29 +52,29 @@ public:
 
 	virtual ~SolveSet();
 
-	void add_field(IModelField *f);
+	void add_field(dm::IModelField *f);
 
-	void add_constraint(IModelConstraint *c);
+	void add_constraint(dm::IModelConstraint *c);
 
-	void add_soft_constraint(IModelConstraintSoft *c);
+	void add_soft_constraint(dm::IModelConstraintSoft *c);
 
-	const std::vector<IModelField *> &all_fields() const {
+	const std::vector<dm::IModelField *> &all_fields() const {
 		return m_all_fields;
 	}
 
-	const std::vector<IModelField *> &rand_fields() const {
+	const std::vector<dm::IModelField *> &rand_fields() const {
 		return m_rand_fields;
 	}
 
-	const std::vector<IModelFieldVec *> &constrained_sz_vec() const {
+	const std::vector<dm::IModelFieldVec *> &constrained_sz_vec() const {
 		return m_constrained_sz_vec;
 	}
 
-	const std::vector<IModelConstraint *> &constraints() const {
+	const std::vector<dm::IModelConstraint *> &constraints() const {
 		return m_constraints;
 	}
 
-	const std::vector<IModelConstraintSoft *> &soft_constraints() const {
+	const std::vector<dm::IModelConstraintSoft *> &soft_constraints() const {
 		return m_soft_constraints;
 	}
 
@@ -90,20 +90,19 @@ public:
 	void merge(SolveSet *src);
 
 private:
-	std::unordered_set<IModelField *>			m_field_s;
-	std::vector<IModelField *>					m_all_fields;
-	std::vector<IModelField *>					m_rand_fields;
-	std::vector<IModelFieldVec *>				m_constrained_sz_vec;
-	std::unordered_set<IModelConstraint *>		m_constraint_s;
-	std::vector<IModelConstraint *>				m_constraints;
+	std::unordered_set<dm::IModelField *>			m_field_s;
+	std::vector<dm::IModelField *>				m_all_fields;
+	std::vector<dm::IModelField *>				m_rand_fields;
+	std::vector<dm::IModelFieldVec *>			m_constrained_sz_vec;
+	std::unordered_set<dm::IModelConstraint *>		m_constraint_s;
+	std::vector<dm::IModelConstraint *>			m_constraints;
 
-	std::unordered_set<IModelConstraintSoft *>	m_soft_constraint_s;
-	std::vector<IModelConstraintSoft *>			m_soft_constraints;
-	SolveSetFlag								m_flags;
+	std::unordered_set<dm::IModelConstraintSoft *>		m_soft_constraint_s;
+	std::vector<dm::IModelConstraintSoft *>			m_soft_constraints;
+	SolveSetFlag						m_flags;
 
 };
 
-}
 }
 }
 

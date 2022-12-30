@@ -76,4 +76,4 @@ uint32_t RNG::randint_u(
 
 }
 }
-}
+

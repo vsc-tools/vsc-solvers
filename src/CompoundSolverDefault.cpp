@@ -5,39 +5,25 @@
  *      Author: mballance
  */
 
-#include "vsc/impl/PrettyPrinter.h"
-#include "vsc/impl/TaskUnrollModelIterativeConstraints.h"
-#include "vsc/impl/TaskRollbackConstraintSubst.h"
+#include "dmgr/impl/DebugMacros.h"
+#include "vsc/dm/impl/PrettyPrinter.h"
+#include "vsc/dm/impl/TaskUnrollModelIterativeConstraints.h"
+#include "vsc/dm/impl/TaskRollbackConstraintSubst.h"
 #include "CommitFieldValueVisitor.h"
 #include "CompoundSolverDefault.h"
-#include "Debug.h"
 #include "SolverFactoryDefault.h"
 #include "SolveSetSolveModelBuilder.h"
 #include "SolveSetSwizzlerPartsel.h"
 #include "SolveSpecBuilder.h"
-#include "vsc/impl/TaskSetUsedRand.h"
+#include "vsc/dm/impl/TaskSetUsedRand.h"
 #include "TaskResizeConstrainedModelVec.h"
-#include "vsc/impl/TaskUnrollModelIterativeConstraints.h"
-
-#define EN_DEBUG_COMPOUND_SOLVER_DEFAULT
-
-#ifdef EN_DEBUG_COMPOUND_SOLVER_DEFAULT
-DEBUG_SCOPE(CompoundSolverDefault);
-#define DEBUG_ENTER(fmt, ...) DEBUG_ENTER_BASE(CompoundSolverDefault, fmt, ##__VA_ARGS__)
-#define DEBUG_LEAVE(fmt, ...) DEBUG_LEAVE_BASE(CompoundSolverDefault, fmt, ##__VA_ARGS__)
-#define DEBUG(fmt, ...) DEBUG_BASE(CompoundSolverDefault, fmt, ##__VA_ARGS__)
-#else
-#define DEBUG_ENTER(fmt, ...)
-#define DEBUG_LEAVE(fmt, ...)
-#define DEBUG(fmt, ...)
-#endif
 
 namespace vsc {
 namespace solvers {
 
 
-CompoundSolverDefault::CompoundSolverDefault(IContext *ctxt) : m_ctxt(ctxt) {
-	// TODO Auto-generated constructor stub
+CompoundSolverDefault::CompoundSolverDefault(dm::IContext *ctxt) : m_ctxt(ctxt) {
+	DEBUG_INIT("CompountSolverDefault", ctxt->getDebugMgr());
 
 }
 
@@ -47,8 +33,8 @@ CompoundSolverDefault::~CompoundSolverDefault() {
 
 bool CompoundSolverDefault::solve(
 			IRandState								*randstate,
-			const std::vector<IModelField *>		&fields,
-			const std::vector<IModelConstraint *>	&constraints,
+			const std::vector<dm::IModelField *>		&fields,
+			const std::vector<dm::IModelConstraint *>	&constraints,
 			SolveFlags								flags) {
 	ISolverFactory *solver_f = SolverFactoryDefault::inst();
 
@@ -58,7 +44,7 @@ bool CompoundSolverDefault::solve(
 			constraints.size());
 
 	if ((flags & SolveFlags::RandomizeDeclRand) || (flags & SolveFlags::RandomizeTopFields)) {
-		TaskSetUsedRand task;
+		dm::TaskSetUsedRand task;
 		for (auto f=fields.begin(); f!=fields.end(); f++) {
 			task.apply(*f,
 					(flags & SolveFlags::RandomizeTopFields) != SolveFlags::NoFlags,
@@ -79,11 +65,11 @@ bool CompoundSolverDefault::solve(
 
 	// Start by fixing the size of the unconstrained-size vectors
 	// to the current size
-	for (std::vector<IModelFieldVec *>::const_iterator
+	for (std::vector<dm::IModelFieldVec *>::const_iterator
 		it=spec->unconstrained_sz_vec().begin();
 		it!=spec->unconstrained_sz_vec().end(); it++) {
 		(*it)->getSizeRef()->val()->set_val_u((*it)->getSize(), 32);
-		(*it)->getSizeRef()->setFlag(ModelFieldFlag::Resolved);
+		(*it)->getSizeRef()->setFlag(dm::ModelFieldFlag::Resolved);
 	}
 
 	for (auto uc_it=spec->unconstrained().begin();
@@ -110,12 +96,12 @@ bool CompoundSolverDefault::solve(
 			// This solve-set has foreach constraints. Need to expand
 			// the constraints, etc
 			fprintf(stdout, "TODO: expand foreach constraints\n");
-			TaskUnrollModelIterativeConstraints unroller(m_ctxt);
-			IModelConstraintScopeUP unroll_s(m_ctxt->mkModelConstraintScope());
-			for (std::vector<IModelConstraint *>::const_iterator
+			dm::TaskUnrollModelIterativeConstraints unroller(m_ctxt);
+			dm::IModelConstraintScopeUP unroll_s(m_ctxt->mkModelConstraintScope());
+			for (std::vector<dm::IModelConstraint *>::const_iterator
 				it=(*sset)->constraints().begin();
 				it!=(*sset)->constraints().end(); it++) {
-				if (dynamic_cast<IModelConstraintScope *>(*it)) {
+				if (dynamic_cast<dm::IModelConstraintScope *>(*it)) {
 					unroller.unroll(unroll_s.get(), *it);
 				}
 			}
@@ -142,10 +128,10 @@ bool CompoundSolverDefault::solve(
 
 			// TODO: roll-back the variables in the solve-set to 
 			// reverse the  result of unrolling
-			for (std::vector<IModelConstraint *>::const_iterator
+			for (std::vector<dm::IModelConstraint *>::const_iterator
 				it=(*sset)->constraints().begin();
 				it!=(*sset)->constraints().end(); it++) {
-				TaskRollbackConstraintSubst().rollback(*it);
+				dm::TaskRollbackConstraintSubst().rollback(*it);
 			}
 
 		} else {
@@ -233,6 +219,8 @@ bool CompoundSolverDefault::solve_sset(
 	return ret;
 }
 
+dmgr::IDebug *CompoundSolverDefault::m_dbg = 0;
+
 }
 }
-}
+

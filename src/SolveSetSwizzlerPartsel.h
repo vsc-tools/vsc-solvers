@@ -6,8 +6,8 @@
  */
 
 #pragma once
-#include "vsc/ISolver.h"
-#include "vsc/IRandState.h"
+#include "vsc/solvers/ISolver.h"
+#include "vsc/solvers/IRandState.h"
 #include "SolveSet.h"
 
 namespace vsc {
@@ -26,15 +26,15 @@ public:
 
 private:
 	void swizzle_field_l(
-			const std::vector<IModelField *>	&fields);
+			const std::vector<dm::IModelField *>	&fields);
 
 	void swizzle_field(
-			IModelField						*f,
-			std::vector<IModelConstraintUP>	&constraints);
+			dm::IModelField			*f,
+			std::vector<dm::IModelConstraintUP>	&constraints);
 
 	void create_rand_domain_constraint(
-			IModelField						*f,
-			std::vector<IModelConstraintUP>	&constraints);
+			dm::IModelField			*f,
+			std::vector<dm::IModelConstraintUP>	&constraints);
 
 private:
 	IRandState				*m_randstate;
@@ -45,5 +45,5 @@ private:
 
 }
 }
-}
+
 

@@ -8,7 +8,7 @@ namespace solvers {
 
 
 TaskResizeConstrainedModelVec::TaskResizeConstrainedModelVec(
-        IContext            *ctxt,
+        dm::IContext        *ctxt,
         ISolverFactory      *solver_f) : m_ctxt(ctxt), m_solver_f(solver_f) { 
 }
 
@@ -37,10 +37,10 @@ bool TaskResizeConstrainedModelVec::resize(SolveSet *solve_s) {
     return m_sizeref_vec_l.size() > 0;
 }
 
-void TaskResizeConstrainedModelVec::visitModelExprFieldRef(IModelExprFieldRef *f) {
-    if (f->field()->isFlagSet(ModelFieldFlag::VecSize)) {
+void TaskResizeConstrainedModelVec::visitModelExprFieldRef(dm::IModelExprFieldRef *f) {
+    if (f->field()->isFlagSet(dm::ModelFieldFlag::VecSize)) {
         // Add the vector to our list if it isn't there already
-        IModelFieldVec *vec = f->field()->getParentT<IModelFieldVec>();
+        dm::IModelFieldVec *vec = f->field()->getParentT<dm::IModelFieldVec>();
         if (m_sizeref_vec_s.insert(vec).second) {
             m_sizeref_vec_l.push_back(vec);
 
@@ -48,13 +48,13 @@ void TaskResizeConstrainedModelVec::visitModelExprFieldRef(IModelExprFieldRef *f
             // is restricted to being less-equal to the 
             // current size
             if (!vec->getElemFactory()) {
-                IModelVal *size_v = m_ctxt->mkModelVal();
+                dm::IModelVal *size_v = m_ctxt->mkModelVal();
                 size_v->set_val_u(vec->getSize(), 32);
-                m_fixed_size_c.push_back(IModelConstraintUP(
+                m_fixed_size_c.push_back(dm::IModelConstraintUP(
                     m_ctxt->mkModelConstraintExpr(
                         m_ctxt->mkModelExprBin(
                             m_ctxt->mkModelExprFieldRef(vec->getSizeRef()),
-                            BinOp::Le,
+                            dm::BinOp::Le,
                             m_ctxt->mkModelExprVal(size_v)
                         )
                     )
@@ -67,4 +67,4 @@ void TaskResizeConstrainedModelVec::visitModelExprFieldRef(IModelExprFieldRef *f
 
 }
 }
-}
+

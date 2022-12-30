@@ -7,12 +7,12 @@
 
 #pragma once
 #include <memory>
-#include "vsc/IModelField.h"
-#include "vsc/IModelConstraint.h"
-#include "vsc/IRandState.h"
+#include "vsc/dm/IModelField.h"
+#include "vsc/dm/IModelConstraint.h"
+#include "vsc/solvers/IRandState.h"
 
 namespace vsc {
-namespace dm {
+namespace solvers {
 
 enum class SolveFlags {
 	NoFlags = 0,
@@ -63,12 +63,12 @@ public:
 
 	virtual bool solve(
 			IRandState								*randstate,
-			const std::vector<IModelField *>		&fields,
-			const std::vector<IModelConstraint *>	&constraints,
+			const std::vector<dm::IModelField *>		&fields,
+			const std::vector<dm::IModelConstraint *>	&constraints,
 			SolveFlags								flags) = 0;
 };
-}
-}
 
+}
+}
 
 

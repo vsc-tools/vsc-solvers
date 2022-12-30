@@ -28,9 +28,10 @@
 #include <memory>
 #include <vector>
 
-#include "vsc/ISolver.h"
+#include "vsc/solvers/ISolver.h"
 
 namespace vsc {
+namespace solvers {
 
 class SolveSet;
 
@@ -45,5 +46,6 @@ public:
 
 };
 
+}
 }
 

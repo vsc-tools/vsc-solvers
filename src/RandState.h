@@ -8,8 +8,8 @@
 #pragma once
 #include <random>
 #include <stdint.h>
-#include "vsc/IRandState.h"
-#include "ModelVal.h"
+#include "vsc/solvers/IRandState.h"
+#include "vsc/dm/IModelVal.h"
 
 namespace vsc {
 namespace solvers {
@@ -40,7 +40,7 @@ public:
 	/**
 	 * Fills the value with a random bit pattern
 	 */
-	virtual void randbits(IModelVal *val) override;
+	virtual void randbits(dm::IModelVal *val) override;
 	
 	virtual void setState(IRandState *other) override;
 
@@ -57,7 +57,6 @@ private:
 
 };
 
-}
 }
 }
 

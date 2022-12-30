@@ -20,7 +20,6 @@
  */
 
 #include "CommitFieldValueVisitor.h"
-#include "Debug.h"
 #include "Randomizer.h"
 #include "SolveSetSwizzlerPartsel.h"
 #include "SolveSpecBuilder.h"
@@ -46,7 +45,7 @@ namespace solvers {
 
 Randomizer::Randomizer(
 		ISolverFactory		*solver_factory,
-		IRandState 			*randstate) :
+		IRandState 		*randstate) :
 				m_solver_factory(solver_factory), m_randstate(randstate) {
 
 	if (!m_solver_factory) {
@@ -60,8 +59,8 @@ Randomizer::~Randomizer() {
 }
 
 bool Randomizer::randomize(
-			const std::vector<IModelField *>		&fields,
-			const std::vector<IModelConstraint *>	&constraints,
+			const std::vector<dm::IModelField *>		&fields,
+			const std::vector<dm::IModelConstraint *>	&constraints,
 			bool									diagnose_failures) {
 	bool ret = true;
 	DEBUG_ENTER("randomize n_fields=%d n_constraints=%d",
@@ -148,4 +147,4 @@ bool Randomizer::randomize(
 
 }
 }
-}
+

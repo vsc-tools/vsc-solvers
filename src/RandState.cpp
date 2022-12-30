@@ -45,7 +45,7 @@ int64_t RandState::rand_i64() {
 	return static_cast<int64_t>(next_ui64());
 }
 
-void RandState::randbits(IModelVal *val) {
+void RandState::randbits(dm::IModelVal *val) {
 	if (val->bits() <= 64) {
 		uint64_t bits = next_ui64();
 		val->val_u(bits);
@@ -91,6 +91,5 @@ IRandState *RandState::next() {
 	return new RandState(m_state);
 }
 
-}
 }
 }

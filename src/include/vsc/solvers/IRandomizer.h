@@ -6,11 +6,11 @@
  */
 
 #pragma once
-#include "vsc/IModelField.h"
-#include "vsc/IModelConstraint.h"
+#include "vsc/dm/IModelField.h"
+#include "vsc/dm/IModelConstraint.h"
 
 namespace vsc {
-namespace dm {
+namespace solvers {
 
 class IRandomizer {
 public:
@@ -18,10 +18,9 @@ public:
 	virtual ~IRandomizer() { }
 
 	virtual bool randomize(
-			const std::vector<IModelField *>		&fields,
-			const std::vector<IModelConstraint *>	&constraints,
-			bool									diagnost_failures) = 0;
-
+			const std::vector<dm::IModelField *>		&fields,
+			const std::vector<dm::IModelConstraint *>	&constraints,
+			bool						diagnost_failures) = 0; 
 };
 
 }

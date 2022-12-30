@@ -6,23 +6,26 @@
  */
 
 #pragma once
-#include "vsc/IContext.h"
-#include "vsc/ICompoundSolver.h"
+#include "vsc/dm/IContext.h"
+#include "vsc/solvers/ICompoundSolver.h"
+#include "vsc/solvers/ISolverFactory.h"
 
 namespace vsc {
 namespace solvers {
 
+class SolveSet;
+
 
 class CompoundSolverDefault : public ICompoundSolver {
 public:
-	CompoundSolverDefault(IContext *ctxt);
+	CompoundSolverDefault(dm::IContext *ctxt);
 
 	virtual ~CompoundSolverDefault();
 
 	virtual bool solve(
 			IRandState								*randstate,
-			const std::vector<IModelField *>		&fields,
-			const std::vector<IModelConstraint *>	&constraints,
+			const std::vector<dm::IModelField *>		&fields,
+			const std::vector<dm::IModelConstraint *>	&constraints,
 			SolveFlags								flags) override;
 
 protected:
@@ -33,10 +36,10 @@ protected:
 		SolveFlags						flags);
 
 private:
-	IContext							*m_ctxt;
+	static dmgr::IDebug						*m_dbg;
+	dm::IContext							*m_ctxt;
 };
 
-}
 }
 }
 

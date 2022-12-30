@@ -9,10 +9,10 @@
 #include <memory>
 #include <string>
 #include <stdint.h>
-#include "vsc/IModelVal.h"
+#include "vsc/dm/IModelVal.h"
 
 namespace vsc {
-namespace dm {
+namespace solvers {
 
 class IRandState;
 using IRandStateUP=std::unique_ptr<IRandState>;
@@ -31,7 +31,7 @@ public:
 
 	virtual int64_t rand_i64() = 0;
 
-	virtual void randbits(IModelVal *val) = 0;
+	virtual void randbits(dm::IModelVal *val) = 0;
 
 	virtual void setState(IRandState *other) = 0;
 
@@ -43,3 +43,4 @@ public:
 
 }
 }
+

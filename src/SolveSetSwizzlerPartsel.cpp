@@ -54,18 +54,18 @@ void SolveSetSwizzlerPartsel::swizzle(
 }
 
 void SolveSetSwizzlerPartsel::swizzle_field_l(
-		const std::vector<IModelField *>		&fields) {
+		const std::vector<dm::IModelField *>		&fields) {
 	DEBUG_ENTER("swizzle_field_l");
 
 	uint32_t max_swizzle = 4;
 	// Create a copy for random selection
-	std::vector<IModelField *> fields_c(fields.begin(), fields.end());
-	std::vector<IModelConstraintUP> constraints;
+	std::vector<dm::IModelField *> fields_c(fields.begin(), fields.end());
+	std::vector<dm::IModelConstraintUP> constraints;
 
 	DEBUG_ENTER("Select %d fields from %d", max_swizzle, fields_c.size());
 	for (uint32_t i=0; i<max_swizzle && fields_c.size(); i++) {
 		uint32_t target_idx = m_randstate->randint32(0, fields_c.size()-1);
-		IModelField *field = fields_c.at(target_idx);
+		dm::IModelField *field = fields_c.at(target_idx);
 		fields_c.erase(fields_c.begin()+target_idx);
 		swizzle_field(field, constraints);
 		DEBUG("select field %s", field->name().c_str());
@@ -93,8 +93,8 @@ void SolveSetSwizzlerPartsel::swizzle_field_l(
 }
 
 void SolveSetSwizzlerPartsel::swizzle_field(
-		IModelField 						*f,
-		std::vector<IModelConstraintUP>		&constraints) {
+		dm::IModelField 				*f,
+		std::vector<dm::IModelConstraintUP>		&constraints) {
 	DEBUG_ENTER("swizzle_field %s", f->name().c_str());
 
 	// TODO: handle distribution
@@ -107,8 +107,8 @@ void SolveSetSwizzlerPartsel::swizzle_field(
 }
 
 void SolveSetSwizzlerPartsel::create_rand_domain_constraint(
-			IModelField						*f,
-			std::vector<IModelConstraintUP>	&constraints) {
+			dm::IModelField				*f,
+			std::vector<dm::IModelConstraintUP>	&constraints) {
 	DEBUG_ENTER("create_rand_domain_constraint %s", f->name().c_str());
 	// TODO: Should be able to incorporate min/max information.
 	// Specifically, there is a width inside min/max
@@ -124,7 +124,7 @@ void SolveSetSwizzlerPartsel::create_rand_domain_constraint(
 
 	uint32_t max_intervals = 4;
 
-	std::vector<IModelConstraintUP> swizzle_c;
+	std::vector<dm::IModelConstraintUP> swizzle_c;
 	if (width > max_intervals) {
 		// Partition into 'max_intervals' ranges
 		DEBUG("must partition: width=%d max_intervals=%d", width, max_intervals);
@@ -172,7 +172,7 @@ void SolveSetSwizzlerPartsel::create_rand_domain_constraint(
 						(width-(max_intervals-i)-bit));
 				upper = bit+n_bits-1;
 			}
-			swizzle_c.push_back(IModelConstraintExprUP(
+			swizzle_c.push_back(dm::IModelConstraintExprUP(
 					new ModelConstraintExpr(
 							new ModelExprBin(
 								new ModelExprPartSelect(
@@ -191,7 +191,7 @@ void SolveSetSwizzlerPartsel::create_rand_domain_constraint(
 		// Single bits
 		DEBUG("single bits: width=%d max_intervals=%d", width, max_intervals);
 		for (uint32_t i=0; i<width; i++) {
-			swizzle_c.push_back(IModelConstraintExprUP(
+			swizzle_c.push_back(dm::IModelConstraintExprUP(
 					new ModelConstraintExpr(
 							new ModelExprBin(
 								new ModelExprPartSelect(
@@ -211,13 +211,13 @@ void SolveSetSwizzlerPartsel::create_rand_domain_constraint(
 	// back into the result constraints vector
 	while (swizzle_c.size()) {
 		int32_t sel_idx = m_randstate->randint32(0, swizzle_c.size()-1);
-		IModelConstraint *c = swizzle_c[sel_idx].release();
+		dm::IModelConstraint *c = swizzle_c[sel_idx].release();
 		swizzle_c.erase(swizzle_c.begin()+sel_idx);
-		constraints.push_back(IModelConstraintUP(c));
+		constraints.push_back(dm::IModelConstraintUP(c));
 	}
 	DEBUG_LEAVE("create_rand_domain_constraint %s", f->name().c_str());
 }
 
 }
 }
-}
+
