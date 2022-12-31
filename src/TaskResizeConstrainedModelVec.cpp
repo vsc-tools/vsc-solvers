@@ -20,7 +20,7 @@ bool TaskResizeConstrainedModelVec::resize(SolveSet *solve_s) {
     m_fixed_size_c.clear();
 
     // Collect vectors with referenced size
-    for (std::vector<IModelConstraint *>::const_iterator
+    for (std::vector<dm::IModelConstraint *>::const_iterator
         it=solve_s->constraints().begin();
         it!=solve_s->constraints().end(); it++) {
         (*it)->accept(m_this);

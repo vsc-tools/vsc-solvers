@@ -19,6 +19,7 @@
  *      Author: mballance
  */
 
+#include "dmgr/impl/DebugMacros.h"
 #include "CommitFieldValueVisitor.h"
 #include "Randomizer.h"
 #include "SolveSetSwizzlerPartsel.h"
@@ -26,32 +27,16 @@
 #include "SolveSetSolveModelBuilder.h"
 #include "SolverFactoryDefault.h"
 
-#define EN_DEBUG_RANDOMIZER
-
-#ifdef EN_DEBUG_RANDOMIZER
-DEBUG_SCOPE(Randomizer);
-#define DEBUG_ENTER(fmt, ...) DEBUG_ENTER_BASE(Randomizer, fmt, ##__VA_ARGS__)
-#define DEBUG_LEAVE(fmt, ...) DEBUG_LEAVE_BASE(Randomizer, fmt, ##__VA_ARGS__)
-#define DEBUG(fmt, ...) DEBUG_BASE(Randomizer, fmt, ##__VA_ARGS__)
-#else
-#define DEBUG_ENTER(fmt, ...)
-#define DEBUG_LEAVE(fmt, ...)
-#define DEBUG(fmt, ...)
-#endif
-
 namespace vsc {
 namespace solvers {
 
 
 Randomizer::Randomizer(
+        dm::IContext        *ctxt,
 		ISolverFactory		*solver_factory,
-		IRandState 		*randstate) :
-				m_solver_factory(solver_factory), m_randstate(randstate) {
-
-	if (!m_solver_factory) {
-		m_solver_factory = SolverFactoryDefault::inst();
-	}
-
+		IRandState 		    *randstate) :
+				m_ctxt(ctxt), m_solver_factory(solver_factory), m_randstate(randstate) {
+    DEBUG_INIT("Randomizer", ctxt->getDebugMgr());
 }
 
 Randomizer::~Randomizer() {
@@ -80,7 +65,10 @@ bool Randomizer::randomize(
 		DEBUG("Solve Set: %d fields ; %d constraints",
 				(*sset)->all_fields().size(),
 				(*sset)->constraints().size());
-		ISolverUP solver(m_solver_factory->createSolverInst(sset->get()));
+		ISolverUP solver(m_solver_factory->createSolverInst(
+            m_ctxt,
+            sset->get())
+        );
 
 		// Build solve data for this solve set
 		SolveSetSolveModelBuilder(solver.get()).build(sset->get());
@@ -113,7 +101,7 @@ bool Randomizer::randomize(
 			/*
 			 */
 			// Swizzle fields
-			SolveSetSwizzlerPartsel(m_randstate).swizzle(
+			SolveSetSwizzlerPartsel(m_ctxt, m_randstate).swizzle(
 					solver.get(),
 					sset->get());
 
@@ -144,6 +132,8 @@ bool Randomizer::randomize(
 			ret);
 	return ret;
 }
+
+dmgr::IDebug            *Randomizer::m_dbg;
 
 }
 }

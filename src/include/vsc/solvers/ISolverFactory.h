@@ -42,7 +42,9 @@ public:
 	virtual ~ISolverFactory() { }
 
 	// Get a solver instance
-	virtual ISolver *createSolverInst(SolveSet *spec) = 0;
+	virtual ISolver *createSolverInst(
+        dm::IContext        *ctxt,
+        SolveSet            *spec) = 0;
 
 };
 

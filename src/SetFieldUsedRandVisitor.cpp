@@ -19,53 +19,39 @@
  *      Author: mballance
  */
 
-#include "Debug.h"
+#include "dmgr/impl/DebugMacros.h"
 #include "SetFieldUsedRandVisitor.h"
-
-#define EN_DEBUG_SET_FIELD_USED_RAND_VISITOR
-
-#ifdef EN_DEBUG_SET_FIELD_USED_RAND_VISITOR
-DEBUG_SCOPE(SetFieldUsedRandVisitor);
-#define DEBUG_ENTER(fmt, ...) DEBUG_ENTER_BASE(SetFieldUsedRandVisitor, fmt, ##__VA_ARGS__)
-#define DEBUG_LEAVE(fmt, ...) DEBUG_LEAVE_BASE(SetFieldUsedRandVisitor, fmt, ##__VA_ARGS__)
-#define DEBUG(fmt, ...) DEBUG_BASE(SetFieldUsedRandVisitor, fmt, ##__VA_ARGS__)
-#else
-#define DEBUG_ENTER(fmt, ...)
-#define DEBUG_LEAVE(fmt, ...)
-#define DEBUG(fmt, ...)
-#endif
 
 namespace vsc {
 namespace solvers {
 
 
-SetFieldUsedRandVisitor::SetFieldUsedRandVisitor() {
-	// TODO Auto-generated constructor stub
-
+SetFieldUsedRandVisitor::SetFieldUsedRandVisitor(dm::IContext *ctxt) {
+    DEBUG_INIT("SetFieldUsedRandVisitor", ctxt->getDebugMgr());
 }
 
 SetFieldUsedRandVisitor::~SetFieldUsedRandVisitor() {
 	// TODO Auto-generated destructor stub
 }
 
-void SetFieldUsedRandVisitor::set(IModelField *f) {
+void SetFieldUsedRandVisitor::set(dm::IModelField *f) {
 	DEBUG_ENTER("set %s", f->name().c_str());
 	m_decl_rand_s.clear();
 	f->accept(this);
 	DEBUG_LEAVE("set %s", f->name().c_str());
 }
 
-void SetFieldUsedRandVisitor::visitModelField(IModelField *f) {
+void SetFieldUsedRandVisitor::visitModelField(dm::IModelField *f) {
 	DEBUG_ENTER("visitModelField %s flags=0x%08x",
 			f->name().c_str(), f->flags());
 	if ((m_decl_rand_s.size() == 0 || m_decl_rand_s.back()) &&
-			f->isFlagSet(ModelFieldFlag::DeclRand)) {
-		f->setFlag(ModelFieldFlag::UsedRand);
+			f->isFlagSet(dm::ModelFieldFlag::DeclRand)) {
+		f->setFlag(dm::ModelFieldFlag::UsedRand);
 	}
 
 	m_decl_rand_s.push_back(
 			(m_decl_rand_s.size() == 0 ||
-				f->isFlagSet(ModelFieldFlag::DeclRand)));
+				f->isFlagSet(dm::ModelFieldFlag::DeclRand)));
 	VisitorBase::visitModelField(f);
 	m_decl_rand_s.pop_back();
 
@@ -73,6 +59,7 @@ void SetFieldUsedRandVisitor::visitModelField(IModelField *f) {
 			f->name().c_str(), f->flags());
 }
 
-}
+dmgr::IDebug *SetFieldUsedRandVisitor::m_dbg;
+
 }
 }

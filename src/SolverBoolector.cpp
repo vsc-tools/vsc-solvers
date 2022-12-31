@@ -20,28 +20,17 @@
  */
 
 #include "boolector/boolector.h"
-#include "Debug.h"
+#include "dmgr/impl/DebugMacros.h"
 #include "SolverBoolector.h"
 #include "SolverBoolectorSolveModelBuilder.h"
-
-#define EN_DEBUG_SOLVER_BOOLECTOR
-
-#ifdef EN_DEBUG_SOLVER_BOOLECTOR
-DEBUG_SCOPE(SolverBoolector);
-#define DEBUG_ENTER(fmt, ...) DEBUG_ENTER_BASE(SolverBoolector, fmt, ##__VA_ARGS__)
-#define DEBUG_LEAVE(fmt, ...) DEBUG_LEAVE_BASE(SolverBoolector, fmt, ##__VA_ARGS__)
-#define DEBUG(fmt, ...) DEBUG_BASE(SolverBoolector, fmt, ##__VA_ARGS__)
-#else
-#define DEBUG_ENTER(fmt, ...)
-#define DEBUG_LEAVE(fmt, ...)
-#define DEBUG(fmt, ...)
-#endif
 
 namespace vsc {
 namespace solvers {
 
 
-SolverBoolector::SolverBoolector() {
+SolverBoolector::SolverBoolector(dm::IContext *ctxt) : m_ctxt(ctxt) {
+    DEBUG_INIT("SolverBoolector", ctxt->getDebugMgr());
+
 	m_btor = boolector_new();
 	boolector_set_opt(m_btor, BTOR_OPT_INCREMENTAL, 1);
 	boolector_set_opt(m_btor, BTOR_OPT_MODEL_GEN, 1);
@@ -71,13 +60,15 @@ SolverBoolector::~SolverBoolector() {
 }
 
 	// Creates solver data for a field
-void SolverBoolector::initField(IModelField *f) {
+void SolverBoolector::initField(dm::IModelField *f) {
 	DEBUG_ENTER("initField %s", f->name().c_str());
 
 	auto it = m_field_node_m.find(f);
 
 	if (it == m_field_node_m.end()) {
-		BoolectorNode *node = SolverBoolectorSolveModelBuilder(this).build(f);
+		BoolectorNode *node = SolverBoolectorSolveModelBuilder(
+            m_ctxt->getDebugMgr(), this).build(f);
+
 		m_field_node_m.insert({f, node});
 		DEBUG("node width: %d", boolector_get_width(m_btor, node));
 		m_issat_valid = false;
@@ -89,17 +80,18 @@ void SolverBoolector::initField(IModelField *f) {
 }
 
 	// Creates solver data for a constraint
-void SolverBoolector::initConstraint(IModelConstraint *c) {
+void SolverBoolector::initConstraint(dm::IModelConstraint *c) {
 	auto it = m_constraint_node_m.find(c);
 
 	if (it == m_constraint_node_m.end()) {
-		BoolectorNode *node = SolverBoolectorSolveModelBuilder(this).build(c);
+		BoolectorNode *node = SolverBoolectorSolveModelBuilder(
+            m_ctxt->getDebugMgr(), this).build(c);
 		m_constraint_node_m.insert({c, node});
 		m_issat_valid = false;
 	}
 }
 
-void SolverBoolector::addAssume(IModelConstraint *c) {
+void SolverBoolector::addAssume(dm::IModelConstraint *c) {
 	auto it = m_constraint_node_m.find(c);
 	// TODO: assert ) == m_field_node_m.end()) {
 
@@ -107,7 +99,7 @@ void SolverBoolector::addAssume(IModelConstraint *c) {
 	boolector_assume(m_btor, it->second);
 }
 
-void SolverBoolector::addAssert(IModelConstraint *c) {
+void SolverBoolector::addAssert(dm::IModelConstraint *c) {
 	auto it = m_constraint_node_m.find(c);
 
 	// TODO: assert
@@ -126,7 +118,7 @@ bool SolverBoolector::isSAT() {
 	return m_issat;
 }
 
-void SolverBoolector::setFieldValue(IModelField *f) {
+void SolverBoolector::setFieldValue(dm::IModelField *f) {
 	DEBUG_ENTER("setFieldValue %s", f->name().c_str());
 
 	auto it = m_field_node_m.find(f);
@@ -161,11 +153,11 @@ BoolectorSort SolverBoolector::get_sort(int32_t width) {
 	}
 }
 
-void SolverBoolector::addFieldData(IModelField *f, BoolectorNode *n) {
+void SolverBoolector::addFieldData(dm::IModelField *f, BoolectorNode *n) {
 	m_field_node_m.insert({f, n});
 }
 
-BoolectorNode *SolverBoolector::findFieldData(IModelField *f) {
+BoolectorNode *SolverBoolector::findFieldData(dm::IModelField *f) {
 	auto it = m_field_node_m.find(f);
 
 	if (it != m_field_node_m.end()) {
@@ -175,6 +167,7 @@ BoolectorNode *SolverBoolector::findFieldData(IModelField *f) {
 	}
 }
 
-}
+dmgr::IDebug *SolverBoolector::m_dbg = 0;
+
 }
 }

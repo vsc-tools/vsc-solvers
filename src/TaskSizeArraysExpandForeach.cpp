@@ -4,9 +4,7 @@
 namespace vsc {
 namespace solvers {
 
-namespace dm {
-
-TaskSizeArraysExpandForeach::TaskSizeArraysExpandForeach(IContext *ctxt) : m_ctxt(ctxt) {
+TaskSizeArraysExpandForeach::TaskSizeArraysExpandForeach(dm::IContext *ctxt) : m_ctxt(ctxt) {
 
 }
 
@@ -18,11 +16,5 @@ void TaskSizeArraysExpandForeach::apply(SolveSet *sset) {
 
 }
 
-}
-}
-}
-}
-
-}
 }
 }

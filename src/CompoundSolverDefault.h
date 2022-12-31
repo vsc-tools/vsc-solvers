@@ -18,7 +18,9 @@ class SolveSet;
 
 class CompoundSolverDefault : public ICompoundSolver {
 public:
-	CompoundSolverDefault(dm::IContext *ctxt);
+	CompoundSolverDefault(
+        dm::IContext        *ctxt,
+        ISolverFactory      *solver_factory);
 
 	virtual ~CompoundSolverDefault();
 
@@ -38,6 +40,7 @@ protected:
 private:
 	static dmgr::IDebug						*m_dbg;
 	dm::IContext							*m_ctxt;
+    ISolverFactory                          *m_solver_factory;
 };
 
 }

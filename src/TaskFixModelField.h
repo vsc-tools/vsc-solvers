@@ -1,12 +1,12 @@
 
 #pragma once
-#include "vsc/impl/VisitorBase.h"
+#include "vsc/dm/impl/VisitorBase.h"
 
 namespace vsc {
 namespace solvers {
 
 
-class TaskFixModelField : public virtual VisitorBase {
+class TaskFixModelField : public virtual dm::VisitorBase {
 public:
     static const uint32_t       Flags_Scalar  = (1 << 0);
     static const uint32_t       Flags_VecSize = (1 << 1);
@@ -19,15 +19,14 @@ public:
 
     virtual ~TaskFixModelField();
 
-    void fix(const std::vector<IModelField *> &fields);
+    void fix(const std::vector<dm::IModelField *> &fields);
 
-	virtual void visitModelField(IModelField *f) override;
+	virtual void visitModelField(dm::IModelField *f) override;
 
 private:
     uint32_t                            m_flags;
 
 };
 
-}
 }
 }

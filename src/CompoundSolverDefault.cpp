@@ -22,7 +22,9 @@ namespace vsc {
 namespace solvers {
 
 
-CompoundSolverDefault::CompoundSolverDefault(dm::IContext *ctxt) : m_ctxt(ctxt) {
+CompoundSolverDefault::CompoundSolverDefault(
+    dm::IContext        *ctxt,
+    ISolverFactory      *solver_factory) : m_ctxt(ctxt), m_solver_factory(solver_factory) {
 	DEBUG_INIT("CompountSolverDefault", ctxt->getDebugMgr());
 
 }
@@ -32,12 +34,10 @@ CompoundSolverDefault::~CompoundSolverDefault() {
 }
 
 bool CompoundSolverDefault::solve(
-			IRandState								*randstate,
+			IRandState								    *randstate,
 			const std::vector<dm::IModelField *>		&fields,
 			const std::vector<dm::IModelConstraint *>	&constraints,
 			SolveFlags								flags) {
-	ISolverFactory *solver_f = SolverFactoryDefault::inst();
-
 	bool ret = true;
 	DEBUG_ENTER("randomize n_fields=%d n_constraints=%d",
 			fields.size(),
@@ -89,7 +89,7 @@ bool CompoundSolverDefault::solve(
 		if ((*sset)->constrained_sz_vec().size() > 0) {
 			fprintf(stdout, "TODO: apply sizing to vectors\n");
 
-			TaskResizeConstrainedModelVec(m_ctxt, solver_f).resize(sset->get());
+			TaskResizeConstrainedModelVec(m_ctxt, m_solver_factory).resize(sset->get());
 		} 
 
 		if ((*sset)->hasFlags(SolveSetFlag::HaveForeach)) {
@@ -123,7 +123,7 @@ bool CompoundSolverDefault::solve(
 				DEBUG("Solve Set It: %d fields ; %d constraints",
 						(*sset_it)->all_fields().size(),
 						(*sset_it)->constraints().size());
-				solve_sset(sset_it->get(), solver_f, randstate, flags);
+				solve_sset(sset_it->get(), m_solver_factory, randstate, flags);
 			}
 
 			// TODO: roll-back the variables in the solve-set to 
@@ -137,7 +137,7 @@ bool CompoundSolverDefault::solve(
 		} else {
 			// If vector-sizing has no effect on this solve set, then proceed
 			// to solve and randomize the existing solveset
-			if (!(ret=solve_sset(sset->get(), solver_f, randstate, flags))) {
+			if (!(ret=solve_sset(sset->get(), m_solver_factory, randstate, flags))) {
 				break;
 			}
 		}
@@ -159,7 +159,7 @@ bool CompoundSolverDefault::solve_sset(
 	DEBUG_ENTER("solve_sset");
 	bool ret = true;
 
-	ISolverUP solver(solver_f->createSolverInst(sset));
+	ISolverUP solver(solver_f->createSolverInst(m_ctxt, sset));
 	// Build solve data for this solve set
 	SolveSetSolveModelBuilder(solver.get()).build(sset);
 
@@ -198,7 +198,7 @@ bool CompoundSolverDefault::solve_sset(
 	if (ret) {
 		if ((flags & SolveFlags::Randomize) != SolveFlags::NoFlags) {
 			// Swizzle fields
-			SolveSetSwizzlerPartsel(randstate).swizzle(
+			SolveSetSwizzlerPartsel(m_ctxt, randstate).swizzle(
 					solver.get(),
 					sset);
 		}

@@ -9,6 +9,7 @@
 #include <memory>
 #include <unordered_set>
 #include <vector>
+#include "dmgr/IDebugMgr.h"
 #include "vsc/dm/IModelConstraint.h"
 #include "vsc/dm/IModelConstraintSoft.h"
 #include "vsc/dm/IModelField.h"
@@ -48,7 +49,7 @@ using SolveSetUP = std::unique_ptr<SolveSet>;
 
 class SolveSet {
 public:
-	SolveSet();
+	SolveSet(dmgr::IDebugMgr *dmgr);
 
 	virtual ~SolveSet();
 
@@ -90,16 +91,17 @@ public:
 	void merge(SolveSet *src);
 
 private:
+    static dmgr::IDebug                             *m_dbg;
 	std::unordered_set<dm::IModelField *>			m_field_s;
-	std::vector<dm::IModelField *>				m_all_fields;
-	std::vector<dm::IModelField *>				m_rand_fields;
-	std::vector<dm::IModelFieldVec *>			m_constrained_sz_vec;
+	std::vector<dm::IModelField *>				    m_all_fields;
+	std::vector<dm::IModelField *>				    m_rand_fields;
+	std::vector<dm::IModelFieldVec *>			    m_constrained_sz_vec;
 	std::unordered_set<dm::IModelConstraint *>		m_constraint_s;
-	std::vector<dm::IModelConstraint *>			m_constraints;
+	std::vector<dm::IModelConstraint *>			    m_constraints;
 
-	std::unordered_set<dm::IModelConstraintSoft *>		m_soft_constraint_s;
+	std::unordered_set<dm::IModelConstraintSoft *>	m_soft_constraint_s;
 	std::vector<dm::IModelConstraintSoft *>			m_soft_constraints;
-	SolveSetFlag						m_flags;
+	SolveSetFlag						            m_flags;
 
 };
 

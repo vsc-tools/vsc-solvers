@@ -7,51 +7,53 @@
 
 #include <vector>
 #include "SolverBitwuzla.h"
-#include "vsc/impl/VisitorBase.h"
+#include "vsc/dm/impl/VisitorBase.h"
 
 namespace vsc {
 namespace solvers {
 
 
-class SolverBitwuzlaSolveModelBuilder : public VisitorBase {
+class SolverBitwuzlaSolveModelBuilder : public dm::VisitorBase {
 public:
-	SolverBitwuzlaSolveModelBuilder(SolverBitwuzla *solver);
+	SolverBitwuzlaSolveModelBuilder(
+        dmgr::IDebugMgr     *dmgr,
+        SolverBitwuzla      *solver);
 
 	virtual ~SolverBitwuzlaSolveModelBuilder();
 
-	const BitwuzlaTerm *build(IModelField *f);
+	const BitwuzlaTerm *build(dm::IModelField *f);
 
-	const BitwuzlaTerm *build(IModelConstraint *c);
+	const BitwuzlaTerm *build(dm::IModelConstraint *c);
 
-	virtual void visitDataTypeEnum(IDataTypeEnum *t) override;
+	virtual void visitDataTypeEnum(dm::IDataTypeEnum *t) override;
 
-	virtual void visitDataTypeInt(IDataTypeInt *t) override;
+	virtual void visitDataTypeInt(dm::IDataTypeInt *t) override;
 
-	virtual void visitDataTypeStruct(IDataTypeStruct *t) override;
+	virtual void visitDataTypeStruct(dm::IDataTypeStruct *t) override;
 
-	virtual void visitModelConstraint(IModelConstraint *c) override;
+	virtual void visitModelConstraint(dm::IModelConstraint *c) override;
 
-	virtual void visitModelConstraintExpr(IModelConstraintExpr *c) override;
+	virtual void visitModelConstraintExpr(dm::IModelConstraintExpr *c) override;
 
-	virtual void visitModelConstraintScope(IModelConstraintScope *c) override;
+	virtual void visitModelConstraintScope(dm::IModelConstraintScope *c) override;
 
-	virtual void visitModelConstraintSoft(IModelConstraintSoft *c) override;
+	virtual void visitModelConstraintSoft(dm::IModelConstraintSoft *c) override;
 
-	virtual void visitModelExprBin(IModelExprBin *e) override;
+	virtual void visitModelExprBin(dm::IModelExprBin *e) override;
 
-	virtual void visitModelExprFieldRef(IModelExprFieldRef *e) override;
+	virtual void visitModelExprFieldRef(dm::IModelExprFieldRef *e) override;
 
-	virtual void visitModelExprIn(IModelExprIn *e) override;
+	virtual void visitModelExprIn(dm::IModelExprIn *e) override;
 
-	virtual void visitModelExprPartSelect(IModelExprPartSelect *e) override;
+	virtual void visitModelExprPartSelect(dm::IModelExprPartSelect *e) override;
 
-	virtual void visitModelExprVal(IModelExprVal *e) override;
+	virtual void visitModelExprVal(dm::IModelExprVal *e) override;
 
-	virtual void visitModelField(IModelField *f) override;
+	virtual void visitModelField(dm::IModelField *f) override;
 
-	virtual void visitModelFieldRoot(IModelFieldRoot *f) override;
+	virtual void visitModelFieldRoot(dm::IModelFieldRoot *f) override;
 
-	virtual void visitModelFieldType(IModelFieldType *f) override;
+	virtual void visitModelFieldType(dm::IModelFieldType *f) override;
 
 private:
 
@@ -61,7 +63,7 @@ private:
 
 	const BitwuzlaTerm *toBoolNode(const BitwuzlaTerm *n);
 
-	node_info_t expr(IModelExpr *e, int32_t ctx_width);
+	node_info_t expr(dm::IModelExpr *e, int32_t ctx_width);
 
 	const BitwuzlaTerm *extend(
 			const BitwuzlaTerm		*n,
@@ -70,13 +72,13 @@ private:
 
 
 private:
+    static dmgr::IDebug                     *m_dbg;
 	SolverBitwuzla							*m_solver;
-	std::vector<IModelField *>				m_field_s;
+	std::vector<dm::IModelField *>			m_field_s;
 	std::pair<bool,const BitwuzlaTerm *>	m_node_i;
 	std::vector<int32_t>					m_width_s;
 };
 
-}
 }
 }
 

@@ -13,24 +13,23 @@ TaskFixModelField::~TaskFixModelField() {
 
 }
 
-void TaskFixModelField::fix(const std::vector<IModelField *> &fields) {
-    for (std::vector<IModelField *>::const_iterator
+void TaskFixModelField::fix(const std::vector<dm::IModelField *> &fields) {
+    for (std::vector<dm::IModelField *>::const_iterator
             it=fields.begin();
             it!=fields.end(); it++) {
         (*it)->accept(m_this);
     }
 }
 
-void TaskFixModelField::visitModelField(IModelField *f) {
+void TaskFixModelField::visitModelField(dm::IModelField *f) {
     bool fix = (m_flags == Flags_All);
 
-    fix |= (f->isFlagSet(ModelFieldFlag::VecSize) && (m_flags & Flags_VecSize));
+    fix |= (f->isFlagSet(dm::ModelFieldFlag::VecSize) && (m_flags & Flags_VecSize));
 
     if (fix) {
-        f->setFlag(ModelFieldFlag::Resolved);
+        f->setFlag(dm::ModelFieldFlag::Resolved);
     }
 }
 
-}
 }
 }

@@ -67,8 +67,9 @@ private:
 	void process_fieldref(dm::IModelField *f);
 
 private:
+    static dmgr::IDebug                             *m_dbg;
 	dm::IContext									*m_ctx;
-	uint32_t									m_pass;
+	uint32_t									    m_pass;
 	SolveSetFlag								m_flags;
 	std::vector<SolveSetUP>						m_solveset_l;
 	std::unordered_map<SolveSet *, int32_t>		m_solveset_m;

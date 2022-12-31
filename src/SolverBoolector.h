@@ -29,7 +29,8 @@
 #include <map>
 #include <unordered_map>
 
-#include "vsc/ISolver.h"
+#include "vsc/dm/IContext.h"
+#include "vsc/solvers/ISolver.h"
 
 struct BoolectorNode;
 struct Btor;
@@ -45,45 +46,46 @@ namespace solvers {
 
 class SolverBoolector : public virtual ISolver {
 public:
-	SolverBoolector();
+	SolverBoolector(dm::IContext *ctxt);
 
 	virtual ~SolverBoolector();
 
 	Btor *btor() const { return m_btor; }
 
 	// Creates solver data for a field (and possibly sub-fields)
-	virtual void initField(IModelField *f) override;
+	virtual void initField(dm::IModelField *f) override;
 
 	// Creates solver data for a constraint
-	virtual void initConstraint(IModelConstraint *c) override;
+	virtual void initConstraint(dm::IModelConstraint *c) override;
 
-	virtual void addAssume(IModelConstraint *c) override;
+	virtual void addAssume(dm::IModelConstraint *c) override;
 
-	virtual void addAssert(IModelConstraint *c) override;
+	virtual void addAssert(dm::IModelConstraint *c) override;
 
 	virtual bool isSAT() override;
 
-	virtual void setFieldValue(IModelField *f) override;
+	virtual void setFieldValue(dm::IModelField *f) override;
 
 	BoolectorSort get_sort(int32_t width);
 
-	void addFieldData(IModelField *f, BoolectorNode *n);
+	void addFieldData(dm::IModelField *f, BoolectorNode *n);
 
-	BoolectorNode *findFieldData(IModelField *f);
+	BoolectorNode *findFieldData(dm::IModelField *f);
 
 
 private:
+    static dmgr::IDebug                                     *m_dbg;
+    dm::IContext                                            *m_ctxt;
 	Btor													*m_btor;
 
-	std::unordered_map<IModelField *,BoolectorNode *>		m_field_node_m;
-	std::unordered_map<IModelConstraint *,BoolectorNode *>	m_constraint_node_m;
+	std::unordered_map<dm::IModelField *,BoolectorNode *>		m_field_node_m;
+	std::unordered_map<dm::IModelConstraint *,BoolectorNode *>	m_constraint_node_m;
 	std::unordered_map<uint32_t, BoolectorSort>				m_sort_m;
 	bool													m_issat_valid;
 	bool													m_issat;
 
 };
 
-}
 }
 }
 

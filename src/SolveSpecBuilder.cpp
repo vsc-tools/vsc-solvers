@@ -18,25 +18,9 @@
  *  Created on: Oct 7, 2021
  *      Author: mballance
  */
-#include "Debug.h"
+#include "dmgr/impl/DebugMacros.h"
 #include "SolveSpecBuilder.h"
-#include "vsc/solvers/impl/TaskResolveModelExprFieldRef.h"
-
-#define EN_DEBUG_SOLVE_SPEC_BUILDER
-
-#ifdef EN_DEBUG_SOLVE_SPEC_BUILDER
-DEBUG_SCOPE(SolveSpecBuilder);
-#define DEBUG_ENTER(fmt, ...) \
-		DEBUG_ENTER_BASE(SolveSpecBuilder, fmt, ##__VA_ARGS__)
-#define DEBUG_LEAVE(fmt, ...) \
-	DEBUG_LEAVE_BASE(SolveSpecBuilder, fmt, ##__VA_ARGS__)
-#define DEBUG(fmt, ...) \
-	DEBUG_BASE(SolveSpecBuilder, fmt, ##__VA_ARGS__)
-#else
-#define DEBUG_ENTER(fmt, ...)
-#define DEBUG_LEAVE(fmt, ...)
-#define DEBUG(fmt, ...)
-#endif
+#include "vsc/dm/impl/TaskResolveModelExprFieldRef.h"
 
 namespace vsc {
 namespace solvers {
@@ -47,8 +31,7 @@ SolveSpecBuilder::SolveSpecBuilder(dm::IContext *ctx) :
 	m_pass(0), 
 	m_flags(SolveSetFlag::NoFlags),
 	m_active_solveset(0) {
-	// TODO Auto-generated constructor stub
-
+    DEBUG_INIT("SolveSpecBuilder", ctx->getDebugMgr());
 }
 
 SolveSpecBuilder::~SolveSpecBuilder() {
@@ -91,9 +74,9 @@ SolveSpec *SolveSpecBuilder::build(
 
 	for (auto it=m_unconstrained_l.begin(); it!=m_unconstrained_l.end(); it++) {
 		if (*it) {
-			if ((*it)->isFlagSet(ModelFieldFlag::VecSize)) {
-				unconstrained_sz_vec.push_back((*it)->getParentT<IModelFieldVec>());
-			} else if ((*it)->isFlagSet(ModelFieldFlag::UsedRand)) {
+			if ((*it)->isFlagSet(dm::ModelFieldFlag::VecSize)) {
+				unconstrained_sz_vec.push_back((*it)->getParentT<dm::IModelFieldVec>());
+			} else if ((*it)->isFlagSet(dm::ModelFieldFlag::UsedRand)) {
 				unconstrained.push_back(*it);
 			}
 		}
@@ -146,8 +129,8 @@ SolveSpec *SolveSpecBuilder::build(
 
 	for (auto it=m_unconstrained_l.begin(); it!=m_unconstrained_l.end(); it++) {
 		if (*it) {
-			if ((*it)->isFlagSet(ModelFieldFlag::VecSize)) {
-				unconstrained_sz_vec.push_back((*it)->getParentT<IModelFieldVec>());
+			if ((*it)->isFlagSet(dm::ModelFieldFlag::VecSize)) {
+				unconstrained_sz_vec.push_back((*it)->getParentT<dm::IModelFieldVec>());
 			} else {
 				unconstrained.push_back(*it);
 			}
@@ -168,7 +151,7 @@ void SolveSpecBuilder::visitDataTypeEnum(dm::IDataTypeEnum *t) {
 
 	if (m_pass == 0) {
 		// Save the field
-		IModelField *field = m_field_s.back();
+		dm::IModelField *field = m_field_s.back();
 		auto it = m_unconstrained_m.find(field);
 
 		if (it == m_unconstrained_m.end()) {
@@ -253,7 +236,7 @@ void SolveSpecBuilder::visitModelExprFieldRef(dm::IModelExprFieldRef *e) {
 
 void SolveSpecBuilder::visitModelExprIndexedFieldRef(dm::IModelExprIndexedFieldRef *e) {
 	DEBUG_ENTER("visitModelExprIndexedFieldRef");
-	dm::IModelField *field = TaskResolveModelExprFieldRef(m_ctx).resolve(0, e);
+	dm::IModelField *field = dm::TaskResolveModelExprFieldRef(m_ctx).resolve(0, e);
 
 	// We ignore constraints via null field references
 	if (!field) {
@@ -312,7 +295,7 @@ void SolveSpecBuilder::constraint_leave(dm::IModelConstraint *c) {
 
 void SolveSpecBuilder::process_fieldref(dm::IModelField *f) {
 	DEBUG_ENTER("process_fieldref %s", f->name().c_str());
-	std::unordered_map<IModelField *, SolveSet *>::const_iterator f_it;
+	std::unordered_map<dm::IModelField *, SolveSet *>::const_iterator f_it;
 
 	if ((f_it=m_solveset_field_m.find(f)) != m_solveset_field_m.end()) {
 		// This field is part of an existing solveset
@@ -329,7 +312,7 @@ void SolveSpecBuilder::process_fieldref(dm::IModelField *f) {
 			DEBUG("Must merge this solve-set with the active one");
 
 			// Relink fields into the new consolidated solveset
-			for (std::vector<IModelField *>::const_iterator
+			for (std::vector<dm::IModelField *>::const_iterator
 					it=f_it->second->all_fields().begin();
 					it!=f_it->second->all_fields().end(); it++) {
 				// Update the solveset this field is mapped to
@@ -351,7 +334,7 @@ void SolveSpecBuilder::process_fieldref(dm::IModelField *f) {
 		DEBUG("Not in an existing solve set (active=%p)", m_active_solveset);
 
 		if (!m_active_solveset) {
-			m_active_solveset = new SolveSet();
+			m_active_solveset = new SolveSet(m_ctx->getDebugMgr());
 			m_solveset_m.insert({m_active_solveset, m_solveset_l.size()});
 			m_solveset_l.push_back(SolveSetUP(m_active_solveset));
 		}
@@ -369,5 +352,6 @@ void SolveSpecBuilder::process_fieldref(dm::IModelField *f) {
 	DEBUG_LEAVE("process_fieldref %s", f->name().c_str());
 }
 
+dmgr::IDebug *SolveSpecBuilder::m_dbg = 0;
 }
 }

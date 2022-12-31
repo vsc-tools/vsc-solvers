@@ -5,35 +5,19 @@
  *      Author: mballance
  */
 
-#include "Debug.h"
-#include "ModelConstraintExpr.h"
-#include "ModelExprBin.h"
-#include "ModelExprFieldRef.h"
-#include "ModelExprPartSelect.h"
-#include "ModelExprVal.h"
+#include "dmgr/impl/DebugMacros.h"
 #include "SolveSetSwizzlerPartsel.h"
-
-#define EN_DEBUG_SOLVE_SET_SWIZZLER_PARTSEL
-
-#ifdef EN_DEBUG_SOLVE_SET_SWIZZLER_PARTSEL
-DEBUG_SCOPE(SolveSetSwizzlerPartSel);
-#define DEBUG_ENTER(fmt, ...) DEBUG_ENTER_BASE(SolveSetSwizzlerPartSel, fmt, ##__VA_ARGS__)
-#define DEBUG_LEAVE(fmt, ...) DEBUG_LEAVE_BASE(SolveSetSwizzlerPartSel, fmt, ##__VA_ARGS__)
-#define DEBUG(fmt, ...) DEBUG_BASE(SolveSetSwizzlerPartSel, fmt, ##__VA_ARGS__)
-#else
-#define DEBUG_ENTER(fmt, ...)
-#define DEBUG_LEAVE(fmt, ...)
-#define DEBUG(fmt, ...)
-#endif
 
 namespace vsc {
 namespace solvers {
 
 
-SolveSetSwizzlerPartsel::SolveSetSwizzlerPartsel(IRandState *randstate) :
-		m_randstate(randstate) {
+SolveSetSwizzlerPartsel::SolveSetSwizzlerPartsel(
+    dm::IContext            *ctxt,
+    IRandState              *randstate) : m_ctxt(ctxt), m_randstate(randstate) {
 	m_solver = 0;
 	m_sset = 0;
+    DEBUG_INIT("SolveSetSwizzlerPartsel", ctxt->getDebugMgr());
 }
 
 SolveSetSwizzlerPartsel::~SolveSetSwizzlerPartsel() {
@@ -114,13 +98,14 @@ void SolveSetSwizzlerPartsel::create_rand_domain_constraint(
 	// Specifically, there is a width inside min/max
 	// TODO: should probably do this with 'val' to ensure we
 	// can handle wide variables
-	ModelVal val;
+	dm::IModelValUP val(m_ctxt->mkModelVal());
+	dm::IModelValUP slice(m_ctxt->mkModelVal());
 	uint32_t width = f->val()->bits();
 
-	val.set(f->val());
+	val->set(f->val());
 
-	m_randstate->randbits(&val);
-	DEBUG("randbits: 0x%08llx", val.val_u());
+	m_randstate->randbits(val.get());
+	DEBUG("randbits: 0x%08llx", val->val_u());
 
 	uint32_t max_intervals = 4;
 
@@ -172,38 +157,44 @@ void SolveSetSwizzlerPartsel::create_rand_domain_constraint(
 						(width-(max_intervals-i)-bit));
 				upper = bit+n_bits-1;
 			}
+            val->slice(
+                slice.get(),
+                upper,
+                lower
+            );
+
 			swizzle_c.push_back(dm::IModelConstraintExprUP(
-					new ModelConstraintExpr(
-							new ModelExprBin(
-								new ModelExprPartSelect(
-									new ModelExprFieldRef(f),
-										upper,
-										lower),
-								BinOp::Eq,
-								new ModelExprVal(
-										val.slice(
-											upper,
-											lower))
-						))));
+                    m_ctxt->mkModelConstraintExpr(
+                        m_ctxt->mkModelExprBin(
+                            m_ctxt->mkModelExprPartSelect(
+                                m_ctxt->mkModelExprFieldRef(f),
+                                upper,
+                                lower),
+                            dm::BinOp::Eq,
+                            m_ctxt->mkModelExprVal(slice.get())
+                        )
+                    )));
 			bit = upper+1;
 		}
 	} else {
 		// Single bits
 		DEBUG("single bits: width=%d max_intervals=%d", width, max_intervals);
 		for (uint32_t i=0; i<width; i++) {
+            val->slice(
+                slice.get(),
+                i,
+                i);
+
 			swizzle_c.push_back(dm::IModelConstraintExprUP(
-					new ModelConstraintExpr(
-							new ModelExprBin(
-								new ModelExprPartSelect(
-									new ModelExprFieldRef(f),
-										i,
-										i),
-								BinOp::Eq,
-								new ModelExprVal(
-										val.slice(
-											i,
-											i))
-						))));
+                m_ctxt->mkModelConstraintExpr(
+                    m_ctxt->mkModelExprBin(
+                        m_ctxt->mkModelExprPartSelect(
+                            m_ctxt->mkModelExprFieldRef(f),
+                            i,
+                            i),
+                        dm::BinOp::Eq,
+                        m_ctxt->mkModelExprVal(slice.get())
+                    ))));
 		}
 	}
 
@@ -217,6 +208,8 @@ void SolveSetSwizzlerPartsel::create_rand_domain_constraint(
 	}
 	DEBUG_LEAVE("create_rand_domain_constraint %s", f->name().c_str());
 }
+
+dmgr::IDebug         *SolveSetSwizzlerPartsel::m_dbg = 0;
 
 }
 }

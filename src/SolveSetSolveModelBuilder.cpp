@@ -48,4 +48,3 @@ void SolveSetSolveModelBuilder::build(SolveSet *sset) {
 
 }
 }
-}

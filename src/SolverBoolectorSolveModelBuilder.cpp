@@ -19,39 +19,26 @@
  *      Author: mballance
  */
 
-#include "Debug.h"
+#include "dmgr/impl/DebugMacros.h"
 #include "SolverBoolectorSolveModelBuilder.h"
 #include "boolector/boolector.h"
-#include "vsc/impl/TaskIsDataTypeSigned.h"
-
-#define EN_DEBUG_SOLVER_BOOLECTOR_SOLVE_MODEL_BUILDER
-
-#ifdef EN_DEBUG_SOLVER_BOOLECTOR_SOLVE_MODEL_BUILDER
-DEBUG_SCOPE(SolverBoolectorSolveModelBuilder);
-#define DEBUG_ENTER(fmt, ...) DEBUG_ENTER_BASE(SolverBoolectorSolveModelBuilder, fmt, ##__VA_ARGS__)
-#define DEBUG_LEAVE(fmt, ...) DEBUG_LEAVE_BASE(SolverBoolectorSolveModelBuilder, fmt, ##__VA_ARGS__)
-#define DEBUG(fmt, ...) DEBUG_BASE(SolverBoolectorSolveModelBuilder, fmt, ##__VA_ARGS__)
-#else
-#define DEBUG_ENTER(fmt, ...)
-#define DEBUG_LEAVE(fmt, ...)
-#define DEBUG(fmt, ...)
-#endif
+#include "vsc/dm/impl/TaskIsDataTypeSigned.h"
 
 namespace vsc {
 namespace solvers {
 
 
 SolverBoolectorSolveModelBuilder::SolverBoolectorSolveModelBuilder(
-		SolverBoolector *solver) : m_solver(solver), m_build_field(false) {
-	// TODO Auto-generated constructor stub
-
+        dmgr::IDebugMgr     *dmgr,
+		SolverBoolector     *solver) : m_solver(solver), m_build_field(false) {
+    DEBUG_INIT("SolverBoolectorSolveModelBuilder", dmgr);
 }
 
 SolverBoolectorSolveModelBuilder::~SolverBoolectorSolveModelBuilder() {
 	// TODO Auto-generated destructor stub
 }
 
-BoolectorNode *SolverBoolectorSolveModelBuilder::build(IModelField *f) {
+BoolectorNode *SolverBoolectorSolveModelBuilder::build(dm::IModelField *f) {
 	DEBUG_ENTER("build(Field)");
 	m_build_field = true;
 	m_width_s.clear();
@@ -63,7 +50,7 @@ BoolectorNode *SolverBoolectorSolveModelBuilder::build(IModelField *f) {
 	return m_node_i.second;
 }
 
-BoolectorNode *SolverBoolectorSolveModelBuilder::build(IModelConstraint *c) {
+BoolectorNode *SolverBoolectorSolveModelBuilder::build(dm::IModelConstraint *c) {
 	DEBUG_ENTER("build(Constraint)");
 	m_build_field = false;
 	m_width_s.clear();
@@ -86,7 +73,7 @@ BoolectorNode *SolverBoolectorSolveModelBuilder::build(IModelConstraint *c) {
 	DEBUG_LEAVE("build(Constraint)");
 }
 
-void SolverBoolectorSolveModelBuilder::visitDataTypeEnum(IDataTypeEnum *t) {
+void SolverBoolectorSolveModelBuilder::visitDataTypeEnum(dm::IDataTypeEnum *t) {
 	DEBUG_ENTER("visitDataTypeEnum");
 	int32_t width = t->getWidth(); // TODO: should calculate from definition
 	BoolectorNode *n = boolector_var(m_solver->btor(),
@@ -95,7 +82,7 @@ void SolverBoolectorSolveModelBuilder::visitDataTypeEnum(IDataTypeEnum *t) {
 	DEBUG_LEAVE("visitDataTypeEnum");
 }
 
-void SolverBoolectorSolveModelBuilder::visitDataTypeInt(IDataTypeInt *t) {
+void SolverBoolectorSolveModelBuilder::visitDataTypeInt(dm::IDataTypeInt *t) {
 	DEBUG_ENTER("visitDataTypeInt width=%d", t->width());
 	BoolectorNode *n = boolector_var(m_solver->btor(),
 			m_solver->get_sort(t->width()), 0);
@@ -103,15 +90,15 @@ void SolverBoolectorSolveModelBuilder::visitDataTypeInt(IDataTypeInt *t) {
 	DEBUG_LEAVE("visitDataTypeInt");
 }
 
-void SolverBoolectorSolveModelBuilder::visitDataTypeStruct(IDataTypeStruct *t) {
+void SolverBoolectorSolveModelBuilder::visitDataTypeStruct(dm::IDataTypeStruct *t) {
 
 }
 
-void SolverBoolectorSolveModelBuilder::visitModelConstraint(IModelConstraint *c) {
+void SolverBoolectorSolveModelBuilder::visitModelConstraint(dm::IModelConstraint *c) {
 
 }
 
-void SolverBoolectorSolveModelBuilder::visitModelConstraintExpr(IModelConstraintExpr *c) {
+void SolverBoolectorSolveModelBuilder::visitModelConstraintExpr(dm::IModelConstraintExpr *c) {
 	DEBUG_ENTER("visitModelConstraintExpr");
 	m_node_i = {false, 0};
 
@@ -129,7 +116,7 @@ void SolverBoolectorSolveModelBuilder::visitModelConstraintExpr(IModelConstraint
 	DEBUG_LEAVE("visitModelConstraintExpr");
 }
 
-void SolverBoolectorSolveModelBuilder::visitModelConstraintIfElse(IModelConstraintIfElse *c) {
+void SolverBoolectorSolveModelBuilder::visitModelConstraintIfElse(dm::IModelConstraintIfElse *c) {
 	DEBUG_ENTER("visitModelConstrainIfElse");
 	c->getCond()->accept(this);
 	BoolectorNode *cond_n = toBoolNode(m_node_i.second);
@@ -160,7 +147,7 @@ void SolverBoolectorSolveModelBuilder::visitModelConstraintIfElse(IModelConstrai
 }
 
 void SolverBoolectorSolveModelBuilder::visitModelConstraintImplies(
-		IModelConstraintImplies *c) {
+		dm::IModelConstraintImplies *c) {
 	DEBUG_ENTER("visitModelConstraintImplies");
 	c->getCond()->accept(this);
 	BoolectorNode *cond_n = toBoolNode(m_node_i.second);
@@ -176,7 +163,7 @@ void SolverBoolectorSolveModelBuilder::visitModelConstraintImplies(
 	DEBUG_LEAVE("visitModelConstraintImplies");
 }
 
-void SolverBoolectorSolveModelBuilder::visitModelConstraintScope(IModelConstraintScope *c) {
+void SolverBoolectorSolveModelBuilder::visitModelConstraintScope(dm::IModelConstraintScope *c) {
 	DEBUG_ENTER("visitModelConstraintScope");
 	BoolectorNode *result = 0;
 
@@ -204,12 +191,12 @@ void SolverBoolectorSolveModelBuilder::visitModelConstraintScope(IModelConstrain
 	DEBUG_LEAVE("visitModelConstraintScope");
 }
 
-void SolverBoolectorSolveModelBuilder::visitModelConstraintSoft(IModelConstraintSoft *c) {
+void SolverBoolectorSolveModelBuilder::visitModelConstraintSoft(dm::IModelConstraintSoft *c) {
 
 }
 
-void SolverBoolectorSolveModelBuilder::visitModelExprBin(IModelExprBin *e) {
-	DEBUG_ENTER("visitModelExprBin %s", BinOp2Str_s(e->op()));
+void SolverBoolectorSolveModelBuilder::visitModelExprBin(dm::IModelExprBin *e) {
+	DEBUG_ENTER("visitModelExprBin %s", dm::BinOp2Str_s(e->op()));
 	int32_t ctx_width = m_width_s.back();
 
 	if (e->lhs()->width() > ctx_width) {
@@ -227,7 +214,7 @@ void SolverBoolectorSolveModelBuilder::visitModelExprBin(IModelExprBin *e) {
 	BoolectorNode *lhs_n;
 	BoolectorNode *rhs_n;
 
-	if (e->op() == BinOp::LogAnd || e->op() == BinOp::LogOr) {
+	if (e->op() == dm::BinOp::LogAnd || e->op() == dm::BinOp::LogOr) {
 		lhs_n = toBoolNode(lhs_i.second);
 		rhs_n = toBoolNode(rhs_i.second);
 	} else {
@@ -238,78 +225,78 @@ void SolverBoolectorSolveModelBuilder::visitModelExprBin(IModelExprBin *e) {
 	BoolectorNode *result = 0;
 
 	switch (e->op()) {
-	case BinOp::Eq:
+	case dm::BinOp::Eq:
 		result = boolector_eq(m_solver->btor(), lhs_n, rhs_n);
 		break;
-	case BinOp::Ne:
+	case dm::BinOp::Ne:
 		result = boolector_ne(m_solver->btor(), lhs_n, rhs_n);
 		break;
-	case BinOp::Gt:
+	case dm::BinOp::Gt:
 		if (is_signed) {
 			result = boolector_sgt(m_solver->btor(), lhs_n, rhs_n);
 		} else {
 			result = boolector_ugt(m_solver->btor(), lhs_n, rhs_n);
 		}
 		break;
-	case BinOp::Ge:
+	case dm::BinOp::Ge:
 		if (is_signed) {
 			result = boolector_sgte(m_solver->btor(), lhs_n, rhs_n);
 		} else {
 			result = boolector_ugte(m_solver->btor(), lhs_n, rhs_n);
 		}
 		break;
-	case BinOp::Lt:
+	case dm::BinOp::Lt:
 		if (is_signed) {
 			result = boolector_slt(m_solver->btor(), lhs_n, rhs_n);
 		} else {
 			result = boolector_ult(m_solver->btor(), lhs_n, rhs_n);
 		}
 		break;
-	case BinOp::Le:
+	case dm::BinOp::Le:
 		if (is_signed) {
 			result = boolector_slte(m_solver->btor(), lhs_n, rhs_n);
 		} else {
 			result = boolector_ulte(m_solver->btor(), lhs_n, rhs_n);
 		}
 		break;
-	case BinOp::Add:
+	case dm::BinOp::Add:
 		result = boolector_add(m_solver->btor(), lhs_n, rhs_n);
 		break;
-	case BinOp::Sub:
+	case dm::BinOp::Sub:
 		result = boolector_sub(m_solver->btor(), lhs_n, rhs_n);
 		break;
-	case BinOp::Div:
+	case dm::BinOp::Div:
 		result = boolector_udiv(m_solver->btor(), lhs_n, rhs_n);
 		break;
-	case BinOp::Mul:
+	case dm::BinOp::Mul:
 		result = boolector_mul(m_solver->btor(), lhs_n, rhs_n);
 		break;
-	case BinOp::Mod:
+	case dm::BinOp::Mod:
 		if (is_signed) {
 			result = boolector_srem(m_solver->btor(), lhs_n, rhs_n);
 		} else {
 			result = boolector_urem(m_solver->btor(), lhs_n, rhs_n);
 		}
 		break;
-	case BinOp::BinAnd:
+	case dm::BinOp::BinAnd:
 		result = boolector_and(m_solver->btor(), lhs_n, rhs_n);
 		break;
-	case BinOp::BinOr:
+	case dm::BinOp::BinOr:
 		result = boolector_or(m_solver->btor(), lhs_n, rhs_n);
 		break;
-	case BinOp::Xor:
+	case dm::BinOp::Xor:
 		result = boolector_xor(m_solver->btor(), lhs_n, rhs_n);
 		break;
-	case BinOp::LogAnd:
+	case dm::BinOp::LogAnd:
 		result = boolector_and(m_solver->btor(), lhs_n, rhs_n);
 		break;
-	case BinOp::LogOr:
+	case dm::BinOp::LogOr:
 		result = boolector_or(m_solver->btor(), lhs_n, rhs_n);
 		break;
-	case BinOp::Sll:
+	case dm::BinOp::Sll:
 		result = boolector_sll(m_solver->btor(), lhs_n, rhs_n);
 		break;
-	case BinOp::Srl:
+	case dm::BinOp::Srl:
 		result = boolector_srl(m_solver->btor(), lhs_n, rhs_n);
 		break;
 	default:
@@ -321,7 +308,7 @@ void SolverBoolectorSolveModelBuilder::visitModelExprBin(IModelExprBin *e) {
 	// If the context wants something larger, perform extension on the
 	// backend vs the frontend. Not sure this is more efficient, but
 	// shouldn't be worse
-	if (e->op() == BinOp::LogAnd || e->op() == BinOp::LogOr) {
+	if (e->op() == dm::BinOp::LogAnd || e->op() == dm::BinOp::LogOr) {
 		if (ctx_width != 1) {
 			result = extend(result, ctx_width, false);
 		}
@@ -329,10 +316,10 @@ void SolverBoolectorSolveModelBuilder::visitModelExprBin(IModelExprBin *e) {
 
 	m_node_i = {is_signed, result};
 
-	DEBUG_LEAVE("visitModelExprBin %s", BinOp2Str_s(e->op()));
+	DEBUG_LEAVE("visitModelExprBin %s", dm::BinOp2Str_s(e->op()));
 }
 
-void SolverBoolectorSolveModelBuilder::visitModelExprFieldRef(IModelExprFieldRef *e) {
+void SolverBoolectorSolveModelBuilder::visitModelExprFieldRef(dm::IModelExprFieldRef *e) {
 	// Note: this should only be used for scalar fields
 	BoolectorNode *n;
 	bool is_signed = false;
@@ -345,7 +332,7 @@ void SolverBoolectorSolveModelBuilder::visitModelExprFieldRef(IModelExprFieldRef
 			e->field()->name().c_str(), m_node_i.second);
 }
 
-void SolverBoolectorSolveModelBuilder::visitModelExprIn(IModelExprIn *e) {
+void SolverBoolectorSolveModelBuilder::visitModelExprIn(dm::IModelExprIn *e) {
 	DEBUG_ENTER("visitModelExprIn");
 	int32_t ctx_width = m_width_s.back();
 	node_info_t lhs_i = expr(e->lhs(), ctx_width);
@@ -423,23 +410,23 @@ void SolverBoolectorSolveModelBuilder::visitModelExprIn(IModelExprIn *e) {
 }
 
 void SolverBoolectorSolveModelBuilder::visitModelExprIndexedFieldRef(
-		IModelExprIndexedFieldRef *e) {
+		dm::IModelExprIndexedFieldRef *e) {
 	DEBUG_ENTER("visitModelExprIndexedFieldRef");
-	IModelField *field = 0;
+	dm::IModelField *field = 0;
 
-	for (std::vector<ModelExprIndexedFieldRefElem>::const_iterator
+	for (std::vector<dm::ModelExprIndexedFieldRefElem>::const_iterator
 		it=e->getPath().begin();
 		it!=e->getPath().end(); it++) {
 		switch (it->kind) {
-			case ModelExprIndexedFieldRefKind::Field:
+			case dm::ModelExprIndexedFieldRefKind::Field:
 				field = it->field;
 				break;
 
-			case ModelExprIndexedFieldRefKind::FieldIndex:
+			case dm::ModelExprIndexedFieldRefKind::FieldIndex:
 				field = field->getField(it->offset);
 				break;
 
-			case ModelExprIndexedFieldRefKind::VecIndex:
+			case dm::ModelExprIndexedFieldRefKind::VecIndex:
 				fprintf(stdout, "TODO: vector index\n");
 				field = 0;
 				break;
@@ -451,7 +438,7 @@ void SolverBoolectorSolveModelBuilder::visitModelExprIndexedFieldRef(
 }
 
 void SolverBoolectorSolveModelBuilder::visitModelExprPartSelect(
-		IModelExprPartSelect *e) {
+		dm::IModelExprPartSelect *e) {
 	int32_t ctx_width = m_width_s.back();
 	DEBUG_ENTER("visitModelExprPartSelect");
 	node_info_t lhs_i = expr(e->lhs(), ctx_width);
@@ -466,7 +453,7 @@ void SolverBoolectorSolveModelBuilder::visitModelExprPartSelect(
 	DEBUG_LEAVE("visitModelExprPartSelect");
 }
 
-void SolverBoolectorSolveModelBuilder::visitModelExprVal(IModelExprVal *e) {
+void SolverBoolectorSolveModelBuilder::visitModelExprVal(dm::IModelExprVal *e) {
 	DEBUG_ENTER("visitModelExprVal");
 	char *bits = (char *)alloca(e->val()->bits()+1);
 	e->val()->to_bits(bits);
@@ -478,16 +465,16 @@ void SolverBoolectorSolveModelBuilder::visitModelExprVal(IModelExprVal *e) {
 	DEBUG_LEAVE("visitModelExprVal");
 }
 
-void SolverBoolectorSolveModelBuilder::visitModelField(IModelField *f) {
+void SolverBoolectorSolveModelBuilder::visitModelField(dm::IModelField *f) {
 	DEBUG_ENTER("visitModelField %s", f->name().c_str());
-	if (f->isFlagSet(ModelFieldFlag::UsedRand)) {
+	if (f->isFlagSet(dm::ModelFieldFlag::UsedRand)) {
 		if (m_build_field) {
 			// If we're field-building, then the solver already
 			// knows it doesn't have a cached copy
 			m_node_i.second = 0;
 		} else {
 			m_node_i.second = m_solver->findFieldData(f);
-			m_node_i.first = TaskIsDataTypeSigned().check(f->getDataType());
+			m_node_i.first = dm::TaskIsDataTypeSigned().check(f->getDataType());
 		}
 
 		if (!m_node_i.second) {
@@ -514,21 +501,21 @@ void SolverBoolectorSolveModelBuilder::visitModelField(IModelField *f) {
 	DEBUG_LEAVE("visitModelField %s", f->name().c_str());
 }
 
-void SolverBoolectorSolveModelBuilder::visitModelFieldRoot(IModelFieldRoot *f) {
+void SolverBoolectorSolveModelBuilder::visitModelFieldRoot(dm::IModelFieldRoot *f) {
 	DEBUG_ENTER("visitModelFieldRoot %s", f->name().c_str());
 	VisitorBase::visitModelFieldRoot(f);
 	DEBUG_LEAVE("visitModelFieldRoot %s", f->name().c_str());
 }
 
-void SolverBoolectorSolveModelBuilder::visitModelFieldType(IModelFieldType *f) {
+void SolverBoolectorSolveModelBuilder::visitModelFieldType(dm::IModelFieldType *f) {
 	DEBUG_ENTER("visitModelFieldType %s(%p)", f->name().c_str(), f);
-	if (f->isFlagSet(ModelFieldFlag::UsedRand)) {
+	if (f->isFlagSet(dm::ModelFieldFlag::UsedRand)) {
 		// Create a solver-variable representation for this
 		if (m_build_field) {
 			m_node_i.second = 0;
 		} else {
 			m_node_i.second = m_solver->findFieldData(f);
-			m_node_i.first = TaskIsDataTypeSigned().check(f->getDataType());
+			m_node_i.first = dm::TaskIsDataTypeSigned().check(f->getDataType());
 		}
 
 		if (!m_node_i.second) {
@@ -550,7 +537,7 @@ void SolverBoolectorSolveModelBuilder::visitModelFieldType(IModelFieldType *f) {
 
 		DEBUG("bits=%s", bits);
 		m_node_i.second = boolector_const(m_solver->btor(), bits);
-		m_node_i.first = TaskIsDataTypeSigned().check(f->getDataType());
+		m_node_i.first = dm::TaskIsDataTypeSigned().check(f->getDataType());
 	}
 	DEBUG_LEAVE("visitModelFieldType %s", f->name().c_str());
 }
@@ -570,7 +557,7 @@ BoolectorNode *SolverBoolectorSolveModelBuilder::toBoolNode(BoolectorNode *n) {
 }
 
 SolverBoolectorSolveModelBuilder::node_info_t SolverBoolectorSolveModelBuilder::expr(
-		IModelExpr 		*e,
+		dm::IModelExpr 		*e,
 		int32_t 		ctx_width) {
 	m_node_i = {false, 0};
 	m_width_s.push_back(ctx_width);
@@ -607,6 +594,7 @@ BoolectorNode *SolverBoolectorSolveModelBuilder::extend(
 	return n;
 }
 
-}
+dmgr::IDebug *SolverBoolectorSolveModelBuilder::m_dbg = 0;
+
 }
 }

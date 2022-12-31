@@ -7,28 +7,20 @@
 namespace vsc {
 namespace solvers {
 
-namespace dm {
-
-class TaskSizeArraysExpandForeach : public virtual VisitorBase {
+class TaskSizeArraysExpandForeach : public virtual dm::VisitorBase {
 public:
 
-    TaskSizeArraysExpandForeach(IContext *ctxt);
+    TaskSizeArraysExpandForeach(dm::IContext *ctxt);
 
     virtual ~TaskSizeArraysExpandForeach();
 
     void apply(SolveSet *sset);
 
 private:
-    IContext                    *m_ctxt;
+    dm::IContext                    *m_ctxt;
 
 
 };
 
-}
-}
-}
-};
-
-}
 }
 }

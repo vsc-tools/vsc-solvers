@@ -27,7 +27,7 @@ namespace vsc {
 namespace solvers {
 
 
-SolverFactoryDefault::SolverFactoryDefault() {
+SolverFactoryDefault::SolverFactoryDefault() : m_ctxt(0) {
 	// TODO Auto-generated constructor stub
 
 }
@@ -36,15 +36,12 @@ SolverFactoryDefault::~SolverFactoryDefault() {
 	// TODO Auto-generated destructor stub
 }
 
-ISolver *SolverFactoryDefault::createSolverInst(SolveSet *sset) {
+ISolver *SolverFactoryDefault::createSolverInst(
+    dm::IContext            *ctxt,
+    SolveSet                *sset) {
 //	return new SolverBitwuzla();
-	return new SolverBoolector();
+	return new SolverBoolector(ctxt);
 }
-
-ISolverFactory *SolverFactoryDefault::inst() {
-	return &m_inst;
-}
-
-SolverFactoryDefault SolverFactoryDefault::m_inst;
 
 } /* namespace vsc */
+}

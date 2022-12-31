@@ -5,6 +5,7 @@
  *      Author: mballance
  */
 #pragma once
+#include "vsc/dm/IContext.h"
 #include "vsc/dm/IModelConstraint.h"
 #include "vsc/solvers/ISolverFactory.h"
 #include "vsc/solvers/IRandomizer.h"
@@ -18,6 +19,7 @@ namespace solvers {
 class Randomizer : public IRandomizer {
 public:
 	Randomizer(
+            dm::IContext        *ctxt,
 			ISolverFactory		*solver_factory,
 			IRandState			*randstate);
 
@@ -30,8 +32,10 @@ public:
 			) override;
 
 private:
-	ISolverFactory		*m_solver_factory;
-	IRandState			*m_randstate;
+    static dmgr::IDebug             *m_dbg;
+    dm::IContext                    *m_ctxt;
+	ISolverFactory		            *m_solver_factory;
+	IRandState			            *m_randstate;
 
 };
 

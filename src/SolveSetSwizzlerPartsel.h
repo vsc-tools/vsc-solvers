@@ -6,6 +6,7 @@
  */
 
 #pragma once
+#include "vsc/dm/IContext.h"
 #include "vsc/solvers/ISolver.h"
 #include "vsc/solvers/IRandState.h"
 #include "SolveSet.h"
@@ -16,7 +17,9 @@ namespace solvers {
 
 class SolveSetSwizzlerPartsel {
 public:
-	SolveSetSwizzlerPartsel(IRandState *rand_state);
+	SolveSetSwizzlerPartsel(
+        dm::IContext        *ctxt,
+        IRandState          *rand_state);
 
 	virtual ~SolveSetSwizzlerPartsel();
 
@@ -37,6 +40,8 @@ private:
 			std::vector<dm::IModelConstraintUP>	&constraints);
 
 private:
+    static dmgr::IDebug     *m_dbg;
+    dm::IContext            *m_ctxt;
 	IRandState				*m_randstate;
 	ISolver					*m_solver;
 	SolveSet				*m_sset;

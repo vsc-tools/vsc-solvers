@@ -7,28 +7,30 @@
 
 #pragma once
 #include <vector>
-#include "vsc/impl/VisitorBase.h"
+#include "vsc/dm/IContext.h"
+#include "vsc/dm/impl/VisitorBase.h"
 
 namespace vsc {
 namespace solvers {
 
 
-class SetFieldUsedRandVisitor : public VisitorBase {
+class SetFieldUsedRandVisitor : public dm::VisitorBase {
 public:
-	SetFieldUsedRandVisitor();
+	SetFieldUsedRandVisitor(dm::IContext *ctxt);
 
 	virtual ~SetFieldUsedRandVisitor();
 
-	void set(IModelField *f);
+	void set(dm::IModelField *f);
 
-	virtual void visitModelField(IModelField *f) override;
+	virtual void visitModelField(dm::IModelField *f) override;
 
 private:
+    static dmgr::IDebug     *m_dbg;
 	std::vector<bool>		m_decl_rand_s;
 
 };
 
-}
+
 }
 }
 

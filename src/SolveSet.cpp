@@ -19,53 +19,47 @@
  *      Author: mballance
  */
 
-#include "Debug.h"
+#include "dmgr/impl/DebugMacros.h"
 #include "SolveSet.h"
-#include "ModelFieldVec.h"
-
-DEBUG_SCOPE(SolveSet);
-#define DEBUG_ENTER(fmt, ...) DEBUG_ENTER_BASE(SolveSet, fmt, ##__VA_ARGS__)
-#define DEBUG_LEAVE(fmt, ...) DEBUG_LEAVE_BASE(SolveSet, fmt, ##__VA_ARGS__)
-#define DEBUG(fmt, ...) DEBUG_BASE(SolveSet, fmt, ##__VA_ARGS__)
 
 namespace vsc {
 namespace solvers {
 
 
-SolveSet::SolveSet() : m_flags(SolveSetFlag::NoFlags) {
-	// TODO Auto-generated constructor stub
+SolveSet::SolveSet(dmgr::IDebugMgr *dmgr) : m_flags(SolveSetFlag::NoFlags) {
+    DEBUG_INIT("SolveSet", dmgr);
 }
 
 SolveSet::~SolveSet() {
 	// TODO Auto-generated destructor stub
 }
 
-void SolveSet::add_field(IModelField *f) {
+void SolveSet::add_field(dm::IModelField *f) {
 	DEBUG_ENTER("add_field %s", f->name().c_str());
 	if (m_field_s.find(f) == m_field_s.end()) {
 		m_all_fields.push_back(f);
-		if (f->isFlagSet(ModelFieldFlag::UsedRand)) {
+		if (f->isFlagSet(dm::ModelFieldFlag::UsedRand)) {
 			DEBUG("  Field is marked used-rand");
 			m_rand_fields.push_back(f);
 		}
 		// If this is the size of a vector, save the vec
-		if (f->isFlagSet(ModelFieldFlag::VecSize)) {
+		if (f->isFlagSet(dm::ModelFieldFlag::VecSize)) {
 			m_constrained_sz_vec.push_back(
-					dynamic_cast<IModelFieldVec *>(f->getParent()));
+					dynamic_cast<dm::IModelFieldVec *>(f->getParent()));
 		}
 		m_field_s.insert(f);
 	}
 	DEBUG_LEAVE("add_field %s", f->name().c_str());
 }
 
-void SolveSet::add_constraint(IModelConstraint *c) {
+void SolveSet::add_constraint(dm::IModelConstraint *c) {
 	if (m_constraint_s.find(c) == m_constraint_s.end()) {
 		m_constraints.push_back(c);
 		m_constraint_s.insert(c);
 	}
 }
 
-void SolveSet::add_soft_constraint(IModelConstraintSoft *c) {
+void SolveSet::add_soft_constraint(dm::IModelConstraintSoft *c) {
 	if (m_soft_constraint_s.find(c) == m_soft_constraint_s.end()) {
 		m_soft_constraints.push_back(c);
 		m_soft_constraint_s.insert(c);
@@ -88,6 +82,7 @@ void SolveSet::merge(SolveSet *src) {
 	m_flags |= src->m_flags;
 }
 
-}
+dmgr::IDebug *SolveSet::m_dbg = 0;
+
 }
 }

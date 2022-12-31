@@ -6,6 +6,7 @@
  */
 
 #pragma once
+#include "vsc/dm/IContext.h"
 #include "vsc/solvers/ISolverFactory.h"
 
 namespace vsc {
@@ -18,12 +19,14 @@ public:
 
 	virtual ~SolverFactoryDefault();
 
-	virtual ISolver *createSolverInst(SolveSet *sset) override;
+    void init(dm::IContext *ctxt) { m_ctxt = ctxt; }
 
-	static ISolverFactory *inst();
+	virtual ISolver *createSolverInst(
+        dm::IContext        *ctxt,
+        SolveSet            *sset) override;
 
 private:
-	static SolverFactoryDefault			m_inst;
+    dm::IContext                        *m_ctxt;
 
 };
 
