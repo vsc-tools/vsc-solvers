@@ -24,6 +24,8 @@ package:
        url: https://gmplib.org/download/gmp/gmp-6.2.1.tar.xz
      - name: ninja
        src: pypi
+     - name: debug-mgr
+       url: https://github.com/mballance/debug-mgr.git
      - name: libvsc-dm
        url: https://github.com/vsc-tools/libvsc-dm.git
        branch: dm-refactor
@@ -43,6 +45,8 @@ package:
        url: https://github.com/google/googletest/archive/refs/tags/release-1.11.0.tar.gz
      - name: gmp
        url: https://gmplib.org/download/gmp/gmp-6.2.1.tar.xz
+     - name: debug-mgr
+       url: https://github.com/mballance/debug-mgr.git
      - name: libvsc-dm
        url: https://github.com/vsc-tools/libvsc-dm.git
        branch: dm-refactor
