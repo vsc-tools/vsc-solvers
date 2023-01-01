@@ -31,6 +31,14 @@ set_target_properties(libgtest PROPERTIES
     "IMPORTED_LINK_INTERFACE_LIBRARIES" "${CMAKE_THREAD_LIBS_INIT}"
     )
 
+add_library(libgtest_main IMPORTED STATIC GLOBAL)
+add_dependencies(libgtest_main GTEST)
+
+set_target_properties(libgtest_main PROPERTIES
+    "IMPORTED_LOCATION" "${binary_dir}/lib/libgtest_main.a"
+    "IMPORTED_LINK_INTERFACE_LIBRARIES" "${CMAKE_THREAD_LIBS_INIT}"
+    )
+
 add_library(libgmock IMPORTED STATIC GLOBAL)
 add_dependencies(libgmock gtest)
 
@@ -44,36 +52,31 @@ include_directories(
 	"${source_dir}/googlemock/include"
 	)
 
-file(GLOB test_libvsc_SRC
-  "*.h"
-  "*.cpp"
+file(GLOB test_libvsc_solvers_SRC
+  "src/*.h"
+  "src/*.cpp"
   )
 
-add_executable(test_libvsc ${test_libvsc_SRC})
-target_include_directories(test_libvsc PUBLIC
+add_executable(test_libvsc_solvers ${test_libvsc_solvers_SRC})
+target_include_directories(test_libvsc_solvers PUBLIC
     "${source_dir}/googletest/include"
     )
    
-target_link_directories(test_libvsc PRIVATE
+target_link_directories(test_libvsc_solvers PRIVATE
     ${CMAKE_BINARY_DIR}/lib
     ${CMAKE_BINARY_DIR}/lib64
     ${CMAKE_BINARY_DIR}/gmp/lib
     )
   
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-	set(libglog glogd)
-else()
-	set(libglog glog)
-endif()
-
-target_link_libraries(test_libvsc 
+target_link_libraries(test_libvsc_solvers 
     vsc-solvers 
 	vsc-dm
     debug-mgr
 	libgtest 
+	libgtest_main 
 	libgmock
 	)
-add_dependencies(test_libvsc GTEST)
+add_dependencies(test_libvsc_solvers GTEST)
 #set_property(TARGET test_libvsc PROPERTY INTERPROCEDURAL_OPTIMIZATION OFF)
 
-gtest_discover_tests(test_libvsc)
+gtest_discover_tests(test_libvsc_solvers)

@@ -1,6 +1,8 @@
 
 #include "Factory.h"
 #include "CompoundSolverDefault.h"
+#include "RandState.h"
+#include "vsc/solvers/FactoryExt.h"
 
 namespace vsc {
 namespace solvers {
@@ -17,6 +19,10 @@ ICompoundSolver *Factory::mkCompoundSolver(dm::IContext *ctxt) {
     return new CompoundSolverDefault(ctxt, &m_solver_factory);
 }
 
+IRandState *Factory::mkRandState(const std::string &seed) {
+    return new RandState(seed);
+}
+
 IFactory *Factory::inst() {
     if (!m_inst) {
         m_inst = FactoryUP(new Factory());
@@ -24,12 +30,12 @@ IFactory *Factory::inst() {
     return m_inst.get();
 }
 
-extern "C" IFactory *vsc_solvers_getFactory() {
-    return Factory::inst();
-}
 
 FactoryUP Factory::m_inst;
 
 }
 }
 
+vsc::solvers::IFactory *vsc_solvers_getFactory() {
+    return vsc::solvers::Factory::inst();
+}

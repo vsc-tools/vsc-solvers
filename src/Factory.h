@@ -26,6 +26,8 @@ public:
 
 	virtual ICompoundSolver *mkCompoundSolver(dm::IContext *ctxt) override;
 
+    virtual IRandState *mkRandState(const std::string &seed) override;
+
     static IFactory *inst();
 
 
