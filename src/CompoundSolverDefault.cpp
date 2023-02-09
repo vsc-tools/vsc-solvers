@@ -106,7 +106,7 @@ bool CompoundSolverDefault::solve(
 				}
 			}
 
-			DEBUG("unroll_s: %d constraints", unroll_s->constraints().size());
+			DEBUG("unroll_s: %d constraints", unroll_s->getConstraints().size());
 
 			// Now, partition up the new expanded set
 			SolveSpecUP spec_it(SolveSpecBuilder(m_ctxt).build(

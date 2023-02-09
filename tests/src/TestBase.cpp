@@ -52,6 +52,10 @@ void TestBase::TearDown() {
 
 }
 
+void TestBase::enableDebug(bool en) {
+    dmgr::IDebugMgr *dmgr = dmgr_getFactory()->getDebugMgr();
+    dmgr->enable(en);
+}
 
 }
 }

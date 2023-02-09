@@ -38,6 +38,8 @@ public:
 
     virtual void TearDown() override;
 
+    void enableDebug(bool en);
+
 protected:
     IFactory                        *m_factory;
     vsc::dm::IContextUP             m_ctxt;

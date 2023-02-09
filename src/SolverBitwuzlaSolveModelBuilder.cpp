@@ -118,8 +118,8 @@ void SolverBitwuzlaSolveModelBuilder::visitModelConstraintScope(dm::IModelConstr
 	DEBUG_ENTER("visitModelConstraintScope");
 	const BitwuzlaTerm *result = 0;
 
-	for (auto c_it=c->constraints().begin();
-			c_it!=c->constraints().end(); c_it++) {
+	for (auto c_it=c->getConstraints().begin();
+			c_it!=c->getConstraints().end(); c_it++) {
 		m_node_i = {false, 0};
 		(*c_it)->accept(this);
 
