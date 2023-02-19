@@ -109,8 +109,9 @@ bool CompoundSolverDefault::solve(
 			DEBUG("unroll_s: %d constraints", unroll_s->getConstraints().size());
 
 			// Now, partition up the new expanded set
-			SolveSpecUP spec_it(SolveSpecBuilder(m_ctxt).build(
-				{}, {unroll_s.get()}));
+            std::vector<dm::IModelConstraint *> constraints;
+            constraints.push_back(unroll_s.get());
+			SolveSpecUP spec_it(SolveSpecBuilder(m_ctxt).build({}, constraints));
 
 			DEBUG("spec_it: %d solve-sets ; %d unconstrained ; %d unconstrained_sz_vec",
 					spec_it->solvesets().size(),

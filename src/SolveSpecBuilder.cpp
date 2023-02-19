@@ -261,7 +261,7 @@ void SolveSpecBuilder::visitModelField(dm::IModelField *f) {
 		if (f->getDataType()) {
 			f->getDataType()->accept(this);
 		}
-		for (std::vector<dm::IModelField *>::const_iterator
+		for (std::vector<dm::IModelFieldUP>::const_iterator
 				it=f->getFields().begin();
 				it!=f->getFields().end(); it++) {
 			(*it)->accept(m_this);

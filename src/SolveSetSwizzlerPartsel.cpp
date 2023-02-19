@@ -163,7 +163,7 @@ void SolveSetSwizzlerPartsel::create_rand_domain_constraint(
                 lower
             );
 
-			swizzle_c.push_back(dm::IModelConstraintExprUP(
+			swizzle_c.push_back(dm::IModelConstraintUP(
                     m_ctxt->mkModelConstraintExpr(
                         m_ctxt->mkModelExprBin(
                             m_ctxt->mkModelExprPartSelect(
@@ -185,7 +185,7 @@ void SolveSetSwizzlerPartsel::create_rand_domain_constraint(
                 i,
                 i);
 
-			swizzle_c.push_back(dm::IModelConstraintExprUP(
+			swizzle_c.push_back(dm::IModelConstraintUP(
                 m_ctxt->mkModelConstraintExpr(
                     m_ctxt->mkModelExprBin(
                         m_ctxt->mkModelExprPartSelect(
