@@ -1,4 +1,7 @@
 
+import ctypes
+import os
+cimport debug_mgr.core as dm_core
 cimport libvsc_dm.core as vsc_dm
 cimport libvsc_solvers.decl as decl
 
@@ -16,8 +19,42 @@ cdef class CompoundSolver(object):
         ret._hndl = hndl
         return ret
 
+cdef Factory _inst = None
 cdef class Factory(object):
-    pass
+
+    cdef init(self, dm_core.Factory f):
+        self._hndl.init(f._hndl.getDebugMgr())
+
+    @staticmethod
+    def inst():
+        cdef decl.IFactory *hndl = NULL
+        cdef Factory factory
+        global _inst
+
+        if _inst is None:
+            ext_dir = os.path.dirname(os.path.abspath(__file__))
+
+            core_lib = os.path.join(ext_dir, "libvsc-solvers.so")
+            if not os.path.isfile(core_lib):
+                raise Exception("Extension library core \"%s\" doesn't exist" % core_lib)
+            
+            so = ctypes.cdll.LoadLibrary(core_lib)
+            func = so.vsc_solvers_getFactory
+            func.restype = ctypes.c_void_p
+            
+            hndl = <decl.IFactoryP>(<intptr_t>(func()))
+            factory = Factory()
+            factory._hndl = hndl
+            factory.init(dm_core.Factory.inst())
+            _inst = factory
+
+        return _inst
+
+    cpdef RandState mkRandState(self, seed):
+        return RandState.mk(self._hndl.mkRandState(str(seed).encode()))
+
+    cpdef CompoundSolver mkCompoundSolver(self, vsc_dm.Context ctxt):
+        return CompoundSolver.mk(self._hndl.mkCompoundSolver(ctxt._hndl))
 
 
 cdef class RandState(object):
