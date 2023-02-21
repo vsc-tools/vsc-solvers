@@ -60,12 +60,16 @@ file(GLOB test_libvsc_solvers_SRC
 add_executable(test_libvsc_solvers ${test_libvsc_solvers_SRC})
 target_include_directories(test_libvsc_solvers PUBLIC
     "${source_dir}/googletest/include"
+    "${vsc_dm_INCDIR}"
+    "${debug_mgr_INCDIR}"
     )
    
 target_link_directories(test_libvsc_solvers PRIVATE
     ${CMAKE_BINARY_DIR}/lib
     ${CMAKE_BINARY_DIR}/lib64
     ${CMAKE_BINARY_DIR}/gmp/lib
+    "${vsc_dm_LIBDIR}"
+    "${debug_mgr_LIBDIR}"
     )
   
 target_link_libraries(test_libvsc_solvers 
