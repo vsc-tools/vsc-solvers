@@ -1,4 +1,5 @@
 
+cimport debug_mgr.core as dm_core
 cimport libvsc_solvers.decl as decl
 cimport libvsc_dm.core as vsc_dm
 from libc.stdint cimport intptr_t
@@ -21,6 +22,11 @@ cdef class CompoundSolver(object):
 cdef class Factory(object):
     cdef decl.IFactory         *_hndl
 
+    cdef init(self, dm_core.Factory f)
+
+    cpdef RandState mkRandState(self, seed)
+
+    cpdef CompoundSolver mkCompoundSolver(self, vsc_dm.Context ctxt)
 
 cdef class RandState(object):
     cdef decl.IRandState       *_hndl
