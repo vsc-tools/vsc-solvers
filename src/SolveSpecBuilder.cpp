@@ -183,7 +183,10 @@ void SolveSpecBuilder::visitDataTypeInt(dm::IDataTypeInt *t) {
 }
 
 void SolveSpecBuilder::visitDataTypeStruct(dm::IDataTypeStruct *t) {
+    DEBUG_ENTER("visitDataTypeStruct");
 	// Don't recurse to look 
+    DEBUG("Note: no further processing");
+    DEBUG_LEAVE("visitDataTypeStruct");
 }
 
 void SolveSpecBuilder::visitModelConstraintExpr(dm::IModelConstraintExpr *c) {

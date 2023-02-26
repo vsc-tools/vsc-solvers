@@ -164,12 +164,12 @@ bool CompoundSolverDefault::solve_sset(
 	// Build solve data for this solve set
 	SolveSetSolveModelBuilder(solver.get()).build(sset);
 
-/*
-	for (std::vector<IModelConstraint *>::const_iterator
+	for (std::vector<vsc::dm::IModelConstraint *>::const_iterator
 		it=sset->constraints().begin();
 		it!=sset->constraints().end(); it++) {
-		DEBUG("Constraint: %s", PrettyPrinter().print(*it));
+		DEBUG("Constraint: %s", dm::PrettyPrinter().print(*it));
 	}
+/*
  */
 
 	// First, ensure all constraints solve
@@ -197,6 +197,8 @@ bool CompoundSolverDefault::solve_sset(
 	}
 
 	if (ret) {
+        /*
+         */
 		if ((flags & SolveFlags::Randomize) != SolveFlags::NoFlags) {
 			// Swizzle fields
 			SolveSetSwizzlerPartsel(m_ctxt, randstate).swizzle(

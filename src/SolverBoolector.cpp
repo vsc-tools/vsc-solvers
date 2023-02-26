@@ -81,6 +81,7 @@ void SolverBoolector::initField(dm::IModelField *f) {
 
 	// Creates solver data for a constraint
 void SolverBoolector::initConstraint(dm::IModelConstraint *c) {
+    DEBUG_ENTER("initConstraint");
 	auto it = m_constraint_node_m.find(c);
 
 	if (it == m_constraint_node_m.end()) {
@@ -89,31 +90,38 @@ void SolverBoolector::initConstraint(dm::IModelConstraint *c) {
 		m_constraint_node_m.insert({c, node});
 		m_issat_valid = false;
 	}
+    DEBUG_LEAVE("initConstraint");
 }
 
 void SolverBoolector::addAssume(dm::IModelConstraint *c) {
+    DEBUG_ENTER("addAssume");
 	auto it = m_constraint_node_m.find(c);
 	// TODO: assert ) == m_field_node_m.end()) {
 
 	m_issat_valid = false;
 	boolector_assume(m_btor, it->second);
+    DEBUG_LEAVE("addAssume");
 }
 
 void SolverBoolector::addAssert(dm::IModelConstraint *c) {
+    DEBUG_ENTER("addAssert");
 	auto it = m_constraint_node_m.find(c);
 
 	// TODO: assert
 
 	m_issat_valid = false;
 	boolector_assert(m_btor, it->second);
+    DEBUG_LEAVE("addAssert");
 }
 
 bool SolverBoolector::isSAT() {
-
+    DEBUG_ENTER("isSAT");
 	if (!m_issat_valid || !m_issat) {
+        DEBUG("Check SAT");
 		m_issat = (boolector_sat(m_btor) == BTOR_RESULT_SAT);
 		m_issat_valid = true;
 	}
+    DEBUG_LEAVE("isSAT %d", m_issat);
 
 	return m_issat;
 }

@@ -10,7 +10,7 @@ namespace vsc {
 namespace solvers {
 
 TEST_F(TestModelFieldFactory, smoke) {
-    enableDebug(true);
+    enableDebug(false);
 
     IDataTypeStruct *my_t = m_ctxt->mkDataTypeStruct("my_t");
     IDataTypeInt *ui8_t = m_ctxt->mkDataTypeInt(false, 8);
@@ -47,12 +47,14 @@ TEST_F(TestModelFieldFactory, smoke) {
     IRandStateUP state(m_factory->mkRandState("0"));
     ICompoundSolverUP solver(m_factory->mkCompoundSolver(m_ctxt.get()));
 
-    for (uint32_t i=0; i<10; i++) {
+    for (uint32_t i=0; i<1000; i++) {
         ASSERT_TRUE(solver->solve(
             state.get(),
             {field.get()},
             {},
-            SolveFlags::RandomizeTopFields|SolveFlags::Randomize
+            SolveFlags::RandomizeTopFields
+            | SolveFlags::Randomize
+            | SolveFlags::RandomizeDeclRand
         ));
         ASSERT_LT(
             field->getField(0)->val()->val_u(),

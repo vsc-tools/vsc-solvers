@@ -1,4 +1,6 @@
 
+set(BUILD_RPATH_USE_ORIGIN 1)
+
 file(GLOB libvsc_solvers_SRC
   "*.h"
   "*.cpp"
