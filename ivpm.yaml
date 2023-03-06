@@ -1,6 +1,6 @@
 
 package:
-   name: libvsc
+   name: vsc-solvers
    version: 0.0.1
 
    setup-deps:
@@ -26,8 +26,8 @@ package:
        src: pypi
      - name: debug-mgr
        url: https://github.com/mballance/debug-mgr.git
-     - name: libvsc-dm
-       url: https://github.com/vsc-tools/libvsc-dm.git
+     - name: vsc-dm
+       url: https://github.com/vsc-tools/vsc-dm.git
        branch: dm-refactor
 
    deps:
@@ -47,8 +47,8 @@ package:
        url: https://gmplib.org/download/gmp/gmp-6.2.1.tar.xz
      - name: debug-mgr
        url: https://github.com/mballance/debug-mgr.git
-     - name: libvsc-dm
-       url: https://github.com/vsc-tools/libvsc-dm.git
+     - name: vsc-dm
+       url: https://github.com/vsc-tools/vsc-dm.git
        branch: dm-refactor
        
 
