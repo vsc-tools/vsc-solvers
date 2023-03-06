@@ -1,5 +1,5 @@
 #****************************************************************************
-#* setup.py for libvsc-solvers
+#* setup.py for vsc-solvers
 #****************************************************************************
 import os
 import shutil
@@ -33,16 +33,16 @@ else:
     cmake_build_tool = "Ninja"
 
 # First need to establish where things are
-libvsc_solvers_dir = os.path.dirname(os.path.abspath(__file__))
+vsc_solvers_dir = os.path.dirname(os.path.abspath(__file__))
 
-if os.path.isdir(os.path.join(libvsc_solvers_dir, "packages")):
+if os.path.isdir(os.path.join(vsc_solvers_dir, "packages")):
     print("Packages are inside this directory")
-    packages_dir = os.path.join(libvsc_solvers_dir, "packages")
+    packages_dir = os.path.join(vsc_solvers_dir, "packages")
 else:
-    parent = os.path.dirname(libvsc_solvers_dir)
+    parent = os.path.dirname(vsc_solvers_dir)
     
-    if os.path.isdir(os.path.join(parent, "libvsc-solvers")):
-        print("libvsc-solvers is a peer")
+    if os.path.isdir(os.path.join(parent, "vsc-solvers")):
+        print("vsc-solvers is a peer")
         packages_dir = parent
     else:
         raise Exception("Unexpected source layout")
@@ -51,9 +51,6 @@ else:
 cwd = os.getcwd()
 if not os.path.isdir(os.path.join(cwd, "build")):
     os.makedirs(os.path.join(cwd, "build"))
-
-#if not os.path.isdir(os.path.join(libvsc_solvers_dir, "python/libvsc")):
-#    os.makedirs(os.path.join(tblink_vsc, "python/libvsc"))
 
 if _DEBUG:
     BUILD_TYPE = "-DCMAKE_BUILD_TYPE=Debug"
@@ -72,7 +69,7 @@ else:
 # Run configure...
 result = subprocess.run(
     ["cmake", 
-     libvsc_solvers_dir,
+     vsc_solvers_dir,
      "-G%s" % cmake_build_tool,
      BUILD_TYPE,
      "-DPACKAGES_DIR=%s" % packages_dir,
@@ -127,6 +124,10 @@ else:
 
 if result.returncode != 0:
     raise Exception("build failed")
+
+for d in {"debug-mgr", "vsc-dm"}:
+    if os.path.isdir(os.path.join(packages_dir, d, "python")):
+        sys.path.insert(0, os.path.join(packages_dir, d, "python"))
 
 extra_compile_args = sysconfig.get_config_var('CFLAGS').split()
 extra_compile_args = []
@@ -281,26 +282,26 @@ class build_ext(_build_ext):
 
 print("extra_compile_args=" + str(extra_compile_args))
 
-ext = Extension("libvsc_solvers.core",
+ext = Extension("vsc_solvers.core",
             extra_compile_args=extra_compile_args,
             sources=[
-                os.path.join(libvsc_solvers_dir, 'python', "core.pyx"), 
+                os.path.join(vsc_solvers_dir, 'python', "core.pyx"), 
             ],
             language="c++",
             include_dirs=[
-                os.path.join(libvsc_solvers_dir, 'src'),
-                os.path.join(libvsc_solvers_dir, 'src', 'include'),
+                os.path.join(vsc_solvers_dir, 'src'),
+                os.path.join(vsc_solvers_dir, 'src', 'include'),
                 os.path.join(packages_dir, "debug-mgr/src/include"),
-                os.path.join(packages_dir, "libvsc-dm/src/include"),
-                os.path.join(packages_dir, "libvsc-dm/python"),
+                os.path.join(packages_dir, "vsc-dm/src/include"),
+                os.path.join(packages_dir, "vsc-dm/python"),
             ]
         )
 ext.cython_directives={'language_level' : '3'}
 
 setup(
-  name = "libvsc-solvers",
+  name = "vsc-solvers",
   version=version,
-  packages=['libvsc_solvers'],
+  packages=['vsc_solvers'],
   package_dir = {'' : 'python'},
   author = "Matthew Ballance",
   author_email = "matt.ballance@gmail.com",
@@ -310,9 +311,9 @@ setup(
   """,
   license = "Apache 2.0",
   keywords = ["SystemVerilog", "Verilog", "RTL", "Python"],
-  url = "https://github.com/vsc-tools/libvsc-solvers",
+  url = "https://github.com/vsc-tools/vsc-solvers",
   install_requires=[
-    'libvsc-dm',
+    'vsc-dm',
   ],
   setup_requires=[
     'setuptools_scm',

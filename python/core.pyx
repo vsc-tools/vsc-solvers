@@ -2,8 +2,8 @@
 import ctypes
 import os
 cimport debug_mgr.core as dm_core
-cimport libvsc_dm.core as vsc_dm
-cimport libvsc_solvers.decl as decl
+cimport vsc_dm.core as vsc_dm
+cimport vsc_solvers.decl as decl
 
 cdef class CompoundSolver(object):
 

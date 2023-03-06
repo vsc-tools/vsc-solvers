@@ -1,7 +1,7 @@
 
 cimport debug_mgr.core as dm_core
-cimport libvsc_solvers.decl as decl
-cimport libvsc_dm.core as vsc_dm
+cimport vsc_solvers.decl as decl
+cimport vsc_dm.core as vsc_dm
 from libc.stdint cimport intptr_t
 from libc.stdint cimport int32_t
 from libc.stdint cimport uint32_t

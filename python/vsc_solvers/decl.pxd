@@ -1,7 +1,7 @@
 
 
 cimport debug_mgr.decl as dm_decl
-cimport libvsc_dm.decl as vsc_dm_decl
+cimport vsc_dm.decl as vsc_dm_decl
 from libc.stdint cimport intptr_t
 from libc.stdint cimport int32_t
 from libc.stdint cimport uint32_t
