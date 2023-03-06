@@ -1,12 +1,12 @@
 
 set(BUILD_RPATH_USE_ORIGIN 1)
 
-file(GLOB libvsc_solvers_SRC
+file(GLOB vsc_solvers_SRC
   "*.h"
   "*.cpp"
   )
   
-add_library(vsc-solvers SHARED ${libvsc_solvers_SRC})
+add_library(vsc-solvers SHARED ${vsc_solvers_SRC})
 
 target_include_directories(vsc-solvers PUBLIC
     ${PROJECT_SOURCE_DIR}/src
@@ -36,7 +36,7 @@ target_link_libraries(vsc-solvers
 	)
 add_dependencies(vsc-solvers Boolector Bitwuzla)
 
-# add_library(vsc-solvers_static STATIC ${libvsc_solvers_SRC})
+# add_library(vsc-solvers_static STATIC ${vsc_solvers_SRC})
 
 # target_include_directories(vsc-solvers_static PUBLIC
 #     ${PROJECT_SOURCE_DIR}/src
@@ -56,9 +56,9 @@ add_dependencies(vsc-solvers Boolector Bitwuzla)
 
 # install(TARGETS vsc-solvers_static
 #     DESTINATION lib
-#     EXPORT libvsc-solvers-targets)
+#     EXPORT vsc-solvers-targets)
 
 install(TARGETS vsc-solvers
     DESTINATION lib
-    EXPORT libvsc-solvers-targets)
+    EXPORT vsc-solvers-targets)
 

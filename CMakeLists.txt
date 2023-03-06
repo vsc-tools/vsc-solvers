@@ -1,7 +1,7 @@
 
 cmake_minimum_required(VERSION 3.10)
 
-project(libvsc)
+project(vsc-solvers)
 
 include (ExternalProject)
 
@@ -19,7 +19,7 @@ if (NOT PACKAGES_DIR)
   set(PACKAGES_DIR ${CMAKE_SOURCE_DIR}/packages)
 
 
-  # Testing is only enabled when libvsc is the top-level project
+  # Testing is only enabled when vsc-solvers is the top-level project
   set(ENABLE_TESTING 1)
 
 endif()
@@ -41,7 +41,7 @@ message("IVPM_CMAKE_PATH: ${IVPM_CMAKE_PATH} ${CMAKE_MODULE_PATH}")
 include(ivpm)
 
 Ivpm_AddPythonExtProject(debug-mgr debug_mgr)
-Ivpm_AddPythonExtProject(libvsc-dm vsc_dm)
+Ivpm_AddPythonExtProject(vsc-dm vsc_dm)
 
 set (GMP_DIR "${PACKAGES_DIR}/gmp")
 set (CADICAL_DIR "${PACKAGES_DIR}/cadical")
