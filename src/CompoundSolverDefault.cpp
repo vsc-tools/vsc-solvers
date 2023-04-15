@@ -25,7 +25,7 @@ namespace solvers {
 CompoundSolverDefault::CompoundSolverDefault(
     dm::IContext        *ctxt,
     ISolverFactory      *solver_factory) : m_ctxt(ctxt), m_solver_factory(solver_factory) {
-	DEBUG_INIT("CompountSolverDefault", ctxt->getDebugMgr());
+	DEBUG_INIT("CompoundSolverDefault", ctxt->getDebugMgr());
 
 }
 
