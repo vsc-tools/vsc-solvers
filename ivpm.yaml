@@ -21,7 +21,8 @@ package:
      - name: gtest
        url: https://github.com/google/googletest/archive/refs/tags/release-1.11.0.tar.gz
      - name: gmp
-       url: https://gmplib.org/download/gmp/gmp-6.2.1.tar.xz
+       url: https://mirrors.kernel.org/gnu/gmp/gmp-6.2.1.tar.xz
+       #       url: https://gmplib.org/download/gmp/gmp-6.2.1.tar.xz
      - name: ninja
        src: pypi
      - name: debug-mgr
