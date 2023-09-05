@@ -8,8 +8,9 @@
 #pragma once
 #include <memory>
 #include "vsc/dm/IModelField.h"
-#include "vsc/dm/IModelConstraint.h"
+#include "vsc/dm/ITypeConstraint.h"
 #include "vsc/solvers/IRandState.h"
+#include "vsc/solvers/impl/RefPathSet.h"
 
 namespace vsc {
 namespace solvers {
@@ -61,11 +62,18 @@ public:
 
 	virtual ~ICompoundSolver() { }
 
-	virtual bool solve(
-			IRandState								*randstate,
-			const std::vector<dm::IModelField *>		&fields,
-			const std::vector<dm::IModelConstraint *>	&constraints,
-			SolveFlags								flags) = 0;
+	virtual bool randomize(
+			IRandState								    *randstate,
+            const std::vector<dm::IModelFieldUP>        &root_fields,
+            const RefPathSet                            &target_fields,
+            const RefPathSet                            &fixed_fields,
+			SolveFlags								    flags) = 0;
+
+	virtual bool sat(
+            const std::vector<dm::IModelFieldUP>        &root_fields,
+            const RefPathSet                            &target_fields,
+            const RefPathSet                            &fixed_fields,
+			SolveFlags								    flags) = 0;
 };
 
 }

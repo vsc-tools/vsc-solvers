@@ -1,7 +1,7 @@
 /**
- * TaskApplySoftBinSearch.h
+ * SolverUnconstrained.h
  *
- * Copyright 2022 Matthew Ballance and Contributors
+ * Copyright 2023 Matthew Ballance and Contributors
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may 
  * not use this file except in compliance with the License.  
@@ -19,7 +19,7 @@
  *     Author: 
  */
 #pragma once
-#include "vsc/dm/IModelConstraint.h"
+#include "dmgr/IDebugMgr.h"
 #include "vsc/solvers/ISolver.h"
 
 namespace vsc {
@@ -27,20 +27,21 @@ namespace solvers {
 
 
 
-class TaskApplySoftBinSearch {
+class SolverUnconstrained : public virtual ISolver {
 public:
-    TaskApplySoftBinSearch(ISolver *solver);
+    SolverUnconstrained(dmgr::IDebugMgr *dmgr);
 
-    virtual ~TaskApplySoftBinSearch();
+    virtual ~SolverUnconstrained();
 
-    bool apply(
-        const std::vector<dm::IModelConstraintUP> &constraints);
+    virtual bool randomize(
+        IRandState                              *randstate,
+        const std::vector<dm::IModelFieldUP>    &root_fields,
+        const RefPathSet                        &target_fields,
+        const RefPathSet                        &fixed_fields
+    ) override;
 
 private:
-    bool is_sat();
-
-private:
-    ISolver                     *m_solver;
+    static dmgr::IDebug                         *m_dbg;
 
 };
 

@@ -28,7 +28,11 @@
 #include <memory>
 #include <vector>
 
+#include "vsc/dm/IModelField.h"
+#include "vsc/dm/ITypeConstraint.h"
 #include "vsc/solvers/ISolver.h"
+#include "vsc/solvers/ISolveSet.h"
+#include "vsc/solvers/SolveFlagsSet.h"
 
 namespace vsc {
 namespace solvers {
@@ -41,10 +45,7 @@ class ISolverFactory {
 public:
 	virtual ~ISolverFactory() { }
 
-	// Get a solver instance
-	virtual ISolver *createSolverInst(
-        dm::IContext        *ctxt,
-        SolveSet            *spec) = 0;
+    virtual ISolver *mkSolver(ISolveSet *solve_set) = 0;
 
 };
 

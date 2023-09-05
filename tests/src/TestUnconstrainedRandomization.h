@@ -1,7 +1,7 @@
 /**
- * TestBase.h
+ * TestUnconstrainedRandomization.h
  *
- * Copyright 2022 Matthew Ballance and Contributors
+ * Copyright 2023 Matthew Ballance and Contributors
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may 
  * not use this file except in compliance with the License.  
@@ -19,37 +19,18 @@
  *     Author: 
  */
 #pragma once
-#include "gtest/gtest.h"
-#include "vsc/dm/IContext.h"
-#include "vsc/solvers/IFactory.h"
-
-#ifndef VSC_DATACLASSSES
-#define VSC_DATACLASSES(name, deps, content)
-#endif
+#include "TestBase.h"
 
 namespace vsc {
 namespace solvers {
 
 
 
-class TestBase : public ::testing::Test {
+class TestUnconstrainedRandomization : public TestBase {
 public:
-    TestBase();
+    TestUnconstrainedRandomization();
 
-    virtual ~TestBase();
-
-    virtual void SetUp() override;
-
-    virtual void TearDown() override;
-
-    void enableDebug(bool en);
-
-protected:
-    vsc::dm::IModelField *mkRootField(const std::string &name, vsc::dm::IDataType *t);
-
-protected:
-    IFactory                        *m_factory;
-    vsc::dm::IContextUP             m_ctxt;
+    virtual ~TestUnconstrainedRandomization();
 
 };
 

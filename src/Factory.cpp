@@ -1,6 +1,6 @@
 
 #include "Factory.h"
-#include "CompoundSolverDefault.h"
+//#include "CompoundSolverDefault.h"
 #include "RandState.h"
 #include "vsc/solvers/FactoryExt.h"
 
@@ -15,9 +15,11 @@ Factory::~Factory() {
 
 }
 
+#ifdef UNDEFINED
 ICompoundSolver *Factory::mkCompoundSolver(dm::IContext *ctxt) {
     return new CompoundSolverDefault(ctxt, &m_solver_factory);
 }
+#endif
 
 IRandState *Factory::mkRandState(const std::string &seed) {
     return new RandState(seed);

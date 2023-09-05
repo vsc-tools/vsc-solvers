@@ -1,7 +1,7 @@
 /**
- * TestBase.h
+ * BuildConstraintVisitor.h
  *
- * Copyright 2022 Matthew Ballance and Contributors
+ * Copyright 2023 Matthew Ballance and Contributors
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may 
  * not use this file except in compliance with the License.  
@@ -19,41 +19,30 @@
  *     Author: 
  */
 #pragma once
-#include "gtest/gtest.h"
 #include "vsc/dm/IContext.h"
-#include "vsc/solvers/IFactory.h"
-
-#ifndef VSC_DATACLASSSES
-#define VSC_DATACLASSES(name, deps, content)
-#endif
+#include "vsc/dm/impl/VisitorBase.h"
 
 namespace vsc {
 namespace solvers {
 
 
 
-class TestBase : public ::testing::Test {
+class BuildConstraintVisitor : public dm::VisitorBase {
 public:
-    TestBase();
 
-    virtual ~TestBase();
+    BuildConstraintVisitor(
+        dm::IContext *ctxt
+        ) : m_ctxt(ctxt) { }
 
-    virtual void SetUp() override;
-
-    virtual void TearDown() override;
-
-    void enableDebug(bool en);
+    virtual ~BuildConstraintVisitor() { }
 
 protected:
-    vsc::dm::IModelField *mkRootField(const std::string &name, vsc::dm::IDataType *t);
+    dm::IContext                *m_ctxt;
 
-protected:
-    IFactory                        *m_factory;
-    vsc::dm::IContextUP             m_ctxt;
 
 };
 
-}
-}
+} /* namespace solvers */
+} /* namespace vsc */
 
 

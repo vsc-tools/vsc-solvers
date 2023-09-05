@@ -2,7 +2,6 @@
 #pragma once
 #include <memory>
 #include "vsc/solvers/IFactory.h"
-#include "SolverFactoryDefault.h"
 
 
 namespace vsc {
@@ -24,7 +23,7 @@ public:
         return m_dmgr;
     }
 
-	virtual ICompoundSolver *mkCompoundSolver(dm::IContext *ctxt) override;
+//	virtual ICompoundSolver *mkCompoundSolver(dm::IContext *ctxt) override;
 
     virtual IRandState *mkRandState(const std::string &seed) override;
 
@@ -34,7 +33,6 @@ public:
 private:
     static FactoryUP                    m_inst;
     dmgr::IDebugMgr                     *m_dmgr;
-    SolverFactoryDefault                m_solver_factory;
 
 };
 

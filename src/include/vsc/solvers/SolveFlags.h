@@ -1,7 +1,7 @@
-/*
- * TaskApplySoftBinSearch.cpp
+/**
+ * SolveFlags.h
  *
- * Copyright 2022 Matthew Ballance and Contributors
+ * Copyright 2023 Matthew Ballance and Contributors
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may 
  * not use this file except in compliance with the License.  
@@ -16,28 +16,22 @@
  * limitations under the License.
  *
  * Created on:
- *     Author:
+ *     Author: 
  */
-#include "TaskApplySoftBinSearch.h"
-
+#pragma once
 
 namespace vsc {
 namespace solvers {
 
+/*
+enum class SolveFlags {
+    Target   = (1 << 0),
+    Resolved = (1 << 1),
+    Wildcard = (1 << 2)
+};
+ */
 
-TaskApplySoftBinSearch::TaskApplySoftBinSearch(ISolver *solver) 
-    : m_solver(solver) {
+} /* namespace solvers */
+} /* namespace vsc */
 
-}
 
-TaskApplySoftBinSearch::~TaskApplySoftBinSearch() {
-
-}
-
-bool TaskApplySoftBinSearch::apply(
-        const std::vector<dm::IModelConstraintUP> &constraints) {
-
-}
-
-}
-}

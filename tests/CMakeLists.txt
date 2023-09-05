@@ -23,6 +23,16 @@ ExternalProject_Get_Property(GTEST source_dir binary_dir)
 
 # find_package(Gtest)
 
+file(GLOB test_CPP_SRC
+  "src/*.cpp"
+  "${CMAKE_CURRENT_BINARY_DIR}/"
+  )
+
+add_custom_target(
+    GEN_CODE_SNIPPETS
+    COMMAND ${PYTHON} -m vsc_dataclasses.util.gen_cpp_dt_defs ${test_CPP_SRC} -o ${CMAKE_CURRENT_BINARY_DIR}/vscdefs -d ${CMAKE_CURRENT_BINARY_DIR}/vscdefs.d
+)
+
 add_library(libgtest IMPORTED STATIC GLOBAL)
 add_dependencies(libgtest GTEST)
 
@@ -50,11 +60,13 @@ set_target_properties(libgmock PROPERTIES
 include_directories(
 	"${source_dir}/googletest/include"
 	"${source_dir}/googlemock/include"
+    "${CMAKE_CURRENT_BINARY_DIR}/vscdefs"
 	)
 
 file(GLOB test_libvsc_solvers_SRC
   "src/*.h"
   "src/*.cpp"
+  ${CMAKE_CURRENT_BINARY_DIR}/vscdefs.cpp
   )
 
 add_executable(test_libvsc_solvers ${test_libvsc_solvers_SRC})
@@ -80,7 +92,7 @@ target_link_libraries(test_libvsc_solvers
 	libgtest_main 
 	libgmock
 	)
-add_dependencies(test_libvsc_solvers GTEST)
+add_dependencies(test_libvsc_solvers GTEST GEN_CODE_SNIPPETS)
 #set_property(TARGET test_libvsc PROPERTY INTERPROCEDURAL_OPTIMIZATION OFF)
 
 gtest_discover_tests(test_libvsc_solvers)

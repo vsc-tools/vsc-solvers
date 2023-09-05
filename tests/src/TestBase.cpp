@@ -21,6 +21,7 @@
 #include "dmgr/FactoryExt.h"
 #include "vsc/dm/FactoryExt.h"
 #include "vsc/solvers/FactoryExt.h"
+#include "vsc/dm/impl/ModelBuildContext.h"
 #include "TestBase.h"
 
 
@@ -55,6 +56,17 @@ void TestBase::TearDown() {
 void TestBase::enableDebug(bool en) {
     dmgr::IDebugMgr *dmgr = dmgr_getFactory()->getDebugMgr();
     dmgr->enable(en);
+}
+
+vsc::dm::IModelField *TestBase::mkRootField(
+    const std::string   &name,
+    vsc::dm::IDataType  *t) {
+
+    vsc::dm::ModelBuildContext build_ctxt(m_ctxt.get());
+    vsc::dm::IModelField *ret = t->mkRootField(
+        &build_ctxt,
+        name, 
+        false);
 }
 
 }

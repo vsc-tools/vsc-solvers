@@ -29,7 +29,8 @@ package:
        url: https://github.com/mballance/debug-mgr.git
      - name: vsc-dm
        url: https://github.com/vsc-tools/vsc-dm.git
-       branch: dm-refactor
+     - name: pyvsc-dataclasses
+       url: https://github.com/vsc-tools/pyvsc-dataclasses.git
 
    deps:
      - name: cython
