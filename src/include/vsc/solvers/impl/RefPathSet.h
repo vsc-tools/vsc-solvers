@@ -118,7 +118,81 @@ public:
         return ret;
     }
 
-    bool find(const std::vector<int32_t> &path) {
+    bool remove(const std::vector<int32_t> &path) const {
+        Node *n = &m_root->base;
+        for (std::vector<int32_t>::const_iterator
+            it=path.begin();
+            it!=path.end(); it++) {
+            if (it+1 == path.end()) {
+                LeafNode *leaf = 0;
+                if (n->isLeaf) {
+                    leaf = reinterpret_cast<LeafNode *>(n);
+                } else if (reinterpret_cast<NonLeafNode *>(n)->leafNode) {
+                    leaf = reinterpret_cast<NonLeafNode *>(n)->leafNode;
+                }
+                if (leaf) {
+                    uint32_t idx = *it/(8*sizeof(uintptr_t));
+                    uint32_t off = *it % (8*sizeof(uintptr_t));
+                    if (idx < leaf->base.sz && (leaf->leaves[idx]&(1ULL << off))) {
+                        leaf->leaves[idx] &= (1ULL << off);
+                    } else {
+                        break;
+                    }
+                } else {
+                    return false;
+                }
+            } else if (!n->isLeaf) {
+                // Intermediate node
+                NonLeafNode *nleaf = reinterpret_cast<NonLeafNode *>(n);
+                if (*it < n->sz && nleaf->nodes[*it]) {
+                    n = nleaf->nodes[*it];
+                } else {
+                    break;
+                }
+            } else {
+                break;
+            }
+        }
+
+        return false;
+    }
+    
+    bool empty() const {
+        return empty(&m_root->base);
+    }
+
+    bool find(const std::vector<int32_t> &path) const {
+        Node *n = &m_root->base;
+        for (std::vector<int32_t>::const_iterator
+            it=path.begin();
+            it!=path.end(); it++) {
+            if (it+1 == path.end()) {
+                LeafNode *leaf = 0;
+                if (n->isLeaf) {
+                    leaf = reinterpret_cast<LeafNode *>(n);
+                } else if (reinterpret_cast<NonLeafNode *>(n)->leafNode) {
+                    leaf = reinterpret_cast<NonLeafNode *>(n)->leafNode;
+                }
+                if (leaf) {
+                    uint32_t idx = *it/(8*sizeof(uintptr_t));
+                    uint32_t off = *it % (8*sizeof(uintptr_t));
+                    return (idx < leaf->base.sz && (leaf->leaves[idx]&(1ULL << off)));
+                } else {
+                    return false;
+                }
+            } else if (!n->isLeaf) {
+                // Intermediate node
+                NonLeafNode *nleaf = reinterpret_cast<NonLeafNode *>(n);
+                if (*it < n->sz && nleaf->nodes[*it]) {
+                    n = nleaf->nodes[*it];
+                } else {
+                    break;
+                }
+            } else {
+                break;
+            }
+        }
+
         return false;
     }
 
@@ -139,6 +213,34 @@ private:
         LeafNode    *leafNode;
         Node        *nodes[1];
     };
+
+private:
+    bool empty(Node *n) const {
+        if (n->isLeaf) {
+            LeafNode *leaf = reinterpret_cast<LeafNode *>(n);
+            for (uint32_t i=0; i<leaf->base.sz; i++) {
+                if (leaf->leaves[i]) {
+                    return false;
+                }
+            }
+        } else {
+            NonLeafNode *nleaf = reinterpret_cast<NonLeafNode *>(n);
+            // To qualify as empty, all sub-trees must report empty
+            // and any leafNode must be empty as well
+            if (nleaf->leafNode) {
+                if (!empty(&nleaf->leafNode->base)) {
+                    return false;
+                }
+            }
+
+            for (uint32_t i=0; i<n->sz; i++) {
+                if (nleaf->nodes[i] && !empty(nleaf->nodes[i])) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
 public:
     class iterator {

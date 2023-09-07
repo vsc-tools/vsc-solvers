@@ -18,6 +18,8 @@
  * Created on:
  *     Author:
  */
+#include "dmgr/impl/DebugMacros.h"
+#include "vsc/solvers/impl/TaskBuildSolveSets.h"
 #include "CompoundSolver.h"
 
 
@@ -25,8 +27,11 @@ namespace vsc {
 namespace solvers {
 
 
-CompoundSolver::CompoundSolver() {
-
+CompoundSolver::CompoundSolver(
+    dmgr::IDebugMgr         *dmgr,
+    ISolverFactory          *solver_f) : 
+        m_solver_f(solver_f), m_solver_unconstrained(dmgr) {
+    DEBUG_INIT("vsc::solvers::CompoundSolver", dmgr);
 }
 
 CompoundSolver::~CompoundSolver() {
@@ -38,7 +43,29 @@ bool CompoundSolver::randomize(
             const std::vector<dm::IModelFieldUP>        &root_fields,
             const RefPathSet                            &target_fields,
             const RefPathSet                            &fixed_fields,
+            const RefPathSet                            &include_constraints,
+            const RefPathSet                            &exclude_constraints,
 			SolveFlags								    flags) {
+    IFactory *factory = 0;
+    std::vector<ISolveSetUP>    solvesets;
+    RefPathSet                  unconstrained;
+
+    TaskBuildSolveSets(
+        factory,
+        root_fields,
+        target_fields,
+        include_constraints,
+        exclude_constraints).build(solvesets, unconstrained);
+
+    if (!unconstrained.empty()) {
+        RefPathSet fixed_fields;
+        m_solver_unconstrained.randomize(
+            randstate,
+            root_fields,
+            unconstrained,
+            fixed_fields);
+    }
+
     return true;
 }
 
@@ -46,9 +73,13 @@ bool CompoundSolver::sat(
             const std::vector<dm::IModelFieldUP>        &root_fields,
             const RefPathSet                            &target_fields,
             const RefPathSet                            &fixed_fields,
+            const RefPathSet                            &include_constraints,
+            const RefPathSet                            &exclude_constraints,
 			SolveFlags								    flags) {
     return true;
 }
+
+dmgr::IDebug *CompoundSolver::m_dbg = 0;
 
 }
 }

@@ -1,7 +1,10 @@
 
 #include "Factory.h"
-//#include "CompoundSolverDefault.h"
-#include "RandState.h"
+#include "CompoundSolver.h"
+#include "RandStateMt19937_64.h"
+#include "RandStateLehmer_64.h"
+#include "RandStateLehmer_64_dual.h"
+#include "RandStateLehmer_32.h"
 #include "vsc/solvers/FactoryExt.h"
 
 namespace vsc {
@@ -15,14 +18,14 @@ Factory::~Factory() {
 
 }
 
-#ifdef UNDEFINED
-ICompoundSolver *Factory::mkCompoundSolver(dm::IContext *ctxt) {
-    return new CompoundSolverDefault(ctxt, &m_solver_factory);
+ICompoundSolver *Factory::mkCompoundSolver() {
+    return new CompoundSolver(m_dmgr, m_solver_f.get());
 }
-#endif
 
 IRandState *Factory::mkRandState(const std::string &seed) {
-    return new RandState(seed);
+    return new RandStateLehmer_64(seed);
+//    return new RandStateLehmer_32(seed);
+//    return new RandStateMt19937_64(seed);
 }
 
 IFactory *Factory::inst() {

@@ -20,6 +20,7 @@
  */
 #pragma once
 #include "dmgr/IDebugMgr.h"
+#include "vsc/dm/impl/VisitorBase.h"
 #include "vsc/solvers/ISolver.h"
 
 namespace vsc {
@@ -27,7 +28,9 @@ namespace solvers {
 
 
 
-class SolverUnconstrained : public virtual ISolver {
+class SolverUnconstrained : 
+    public virtual ISolver,
+    public virtual dm::VisitorBase {
 public:
     SolverUnconstrained(dmgr::IDebugMgr *dmgr);
 
@@ -40,8 +43,20 @@ public:
         const RefPathSet                        &fixed_fields
     ) override;
 
+	virtual void visitDataTypeBool(dm::IDataTypeBool *t) override;
+
+	virtual void visitDataTypeEnum(dm::IDataTypeEnum *t) override;
+
+	virtual void visitDataTypeInt(dm::IDataTypeInt *t) override;
+
+	virtual void visitDataTypeStruct(dm::IDataTypeStruct *t) override;
+
 private:
     static dmgr::IDebug                         *m_dbg;
+    IRandState                                  *m_randstate;
+    std::vector<int32_t>::const_iterator        m_it;
+    std::vector<int32_t>::const_iterator        m_it_end;
+    dm::ValRef                                  m_val;
 
 };
 

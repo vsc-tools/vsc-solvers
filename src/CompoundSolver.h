@@ -19,14 +19,20 @@
  *     Author: 
  */
 #pragma once
+#include "dmgr/IDebugMgr.h"
+#include "vsc/solvers/ISolverFactory.h"
 #include "vsc/solvers/ICompoundSolver.h"
+#include "SolverUnconstrained.h"
 
 namespace vsc {
 namespace solvers {
 
 class CompoundSolver : public ICompoundSolver {
 public:
-    CompoundSolver();
+    CompoundSolver(
+        dmgr::IDebugMgr     *dmgr,
+        ISolverFactory      *solver_f
+    );
 
     virtual ~CompoundSolver();
 
@@ -35,13 +41,22 @@ public:
             const std::vector<dm::IModelFieldUP>        &root_fields,
             const RefPathSet                            &target_fields,
             const RefPathSet                            &fixed_fields,
+            const RefPathSet                            &include_constraints,
+            const RefPathSet                            &exclude_constraints,
 			SolveFlags								    flags) override;
 
 	virtual bool sat(
             const std::vector<dm::IModelFieldUP>        &root_fields,
             const RefPathSet                            &target_fields,
             const RefPathSet                            &fixed_fields,
+            const RefPathSet                            &include_constraints,
+            const RefPathSet                            &exclude_constraints,
 			SolveFlags								    flags) override;
+
+private:
+    static dmgr::IDebug                 *m_dbg;
+    ISolverFactory                      *m_solver_f;
+    SolverUnconstrained                 m_solver_unconstrained;
 
 };
 

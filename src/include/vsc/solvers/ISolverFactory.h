@@ -32,7 +32,6 @@
 #include "vsc/dm/ITypeConstraint.h"
 #include "vsc/solvers/ISolver.h"
 #include "vsc/solvers/ISolveSet.h"
-#include "vsc/solvers/SolveFlagsSet.h"
 
 namespace vsc {
 namespace solvers {

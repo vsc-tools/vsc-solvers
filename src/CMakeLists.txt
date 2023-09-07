@@ -58,6 +58,9 @@ add_dependencies(vsc-solvers Boolector Bitwuzla)
 #     DESTINATION lib
 #     EXPORT vsc-solvers-targets)
 
+set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
+
 install(TARGETS vsc-solvers
     DESTINATION lib
     EXPORT vsc-solvers-targets)

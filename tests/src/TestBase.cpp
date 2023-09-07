@@ -67,6 +67,7 @@ vsc::dm::IModelField *TestBase::mkRootField(
         &build_ctxt,
         name, 
         false);
+    return ret;
 }
 
 }

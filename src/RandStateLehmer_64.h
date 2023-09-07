@@ -1,5 +1,5 @@
 /*
- * RandState.h
+ * RandStateLehmer_64.h
  *
  *  Created on: Oct 31, 2021
  *      Author: mballance
@@ -15,15 +15,13 @@ namespace vsc {
 namespace solvers {
 
 
-class RandState;
-using RandStateUP=std::unique_ptr<RandState>;
-class RandState : public IRandState {
+class RandStateLehmer_64 : public IRandState {
 public:
-	RandState(const std::string &seed);
+	RandStateLehmer_64(const std::string &seed);
 
-	RandState(const std::mt19937_64 &state);
+	RandStateLehmer_64(const RandStateLehmer_64 &rhs);
 
-	virtual ~RandState();
+	virtual ~RandStateLehmer_64();
 
 	virtual const std::string &seed() const override {
 		return m_seed;
@@ -53,7 +51,7 @@ protected:
 
 private:
 	std::string			m_seed;
-	std::mt19937_64 	m_state;
+    __uint128_t         m_state;
 
 };
 

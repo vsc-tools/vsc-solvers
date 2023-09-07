@@ -1,31 +1,31 @@
 /*
- * RandState.cpp
+ * RandStateMt19937_64.cpp
  *
  *  Created on: Oct 31, 2021
  *      Author: mballance
  */
 
 #include <random>
-#include "RandState.h"
+#include "RandStateMt19937_64.h"
 
 namespace vsc {
 namespace solvers {
 
 
-RandState::RandState(const std::string &seed) : m_seed(seed) {
+RandStateMt19937_64::RandStateMt19937_64(const std::string &seed) : m_seed(seed) {
 	std::seed_seq seq(seed.begin(), seed.end());
 	m_state = std::mt19937_64(seq);
 }
 
-RandState::RandState(const std::mt19937_64 &state) : m_state(state) {
+RandStateMt19937_64::RandStateMt19937_64(const std::mt19937_64 &state) : m_state(state) {
 
 }
 
-RandState::~RandState() {
+RandStateMt19937_64::~RandStateMt19937_64() {
 	// TODO Auto-generated destructor stub
 }
 
-int32_t RandState::randint32(
+int32_t RandStateMt19937_64::randint32(
 			int32_t		min,
 			int32_t		max) {
 	uint64_t next_v = next_ui64();
@@ -37,15 +37,15 @@ int32_t RandState::randint32(
 	}
 }
 
-uint64_t RandState::rand_ui64() {
+uint64_t RandStateMt19937_64::rand_ui64() {
 	return next_ui64();
 }
 
-int64_t RandState::rand_i64() {
+int64_t RandStateMt19937_64::rand_i64() {
 	return static_cast<int64_t>(next_ui64());
 }
 
-void RandState::randbits(dm::IModelVal *val) {
+void RandStateMt19937_64::randbits(dm::IModelVal *val) {
 	if (val->bits() <= 64) {
 		uint64_t bits = next_ui64();
 		val->val_u(bits);
@@ -71,24 +71,24 @@ void RandState::randbits(dm::IModelVal *val) {
 	}
 }
 
-uint64_t RandState::next_ui64() {
+uint64_t RandStateMt19937_64::next_ui64() {
 	uint64_t ret = m_state();
 	return ret;
 }
 
-void RandState::setState(IRandState *other) {
-	m_state = dynamic_cast<RandState *>(other)->m_state;
+void RandStateMt19937_64::setState(IRandState *other) {
+	m_state = dynamic_cast<RandStateMt19937_64 *>(other)->m_state;
 }
 
-IRandState *RandState::clone() const {
-	RandState *ret = new RandState(m_state);
+IRandState *RandStateMt19937_64::clone() const {
+	RandStateMt19937_64 *ret = new RandStateMt19937_64(m_state);
 	return ret;
 }
 
-IRandState *RandState::next() {
+IRandState *RandStateMt19937_64::next() {
 	m_state(); // Mutate state
 	// Return a clone
-	return new RandState(m_state);
+	return new RandStateMt19937_64(m_state);
 }
 
 }

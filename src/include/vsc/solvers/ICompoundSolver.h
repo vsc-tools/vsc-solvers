@@ -67,12 +67,16 @@ public:
             const std::vector<dm::IModelFieldUP>        &root_fields,
             const RefPathSet                            &target_fields,
             const RefPathSet                            &fixed_fields,
+            const RefPathSet                            &include_constraints,
+            const RefPathSet                            &exclude_constraints,
 			SolveFlags								    flags) = 0;
 
 	virtual bool sat(
             const std::vector<dm::IModelFieldUP>        &root_fields,
             const RefPathSet                            &target_fields,
             const RefPathSet                            &fixed_fields,
+            const RefPathSet                            &include_constraints,
+            const RefPathSet                            &exclude_constraints,
 			SolveFlags								    flags) = 0;
 };
 

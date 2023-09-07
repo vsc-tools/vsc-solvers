@@ -23,7 +23,7 @@ public:
         return m_dmgr;
     }
 
-//	virtual ICompoundSolver *mkCompoundSolver(dm::IContext *ctxt) override;
+	virtual ICompoundSolver *mkCompoundSolver() override;
 
     virtual IRandState *mkRandState(const std::string &seed) override;
 
@@ -33,6 +33,7 @@ public:
 private:
     static FactoryUP                    m_inst;
     dmgr::IDebugMgr                     *m_dmgr;
+    ISolverFactoryUP                    m_solver_f;
 
 };
 

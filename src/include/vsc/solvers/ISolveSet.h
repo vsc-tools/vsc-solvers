@@ -29,6 +29,8 @@ enum class SolveSetFlags {
     HasConstraintIterative = (1 << 2)
 };
 
+class ISolveSet;
+using ISolveSetUP=dm::UP<ISolveSet>;
 class ISolveSet {
 public:
 

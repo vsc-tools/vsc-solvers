@@ -19,7 +19,7 @@ public:
 
 //    virtual ISolverFactory *getSolverFactory() = 0;
 
-//	virtual ICompoundSolver *mkCompoundSolver(dm::IContext *ctxt) = 0;
+	virtual ICompoundSolver *mkCompoundSolver() = 0;
 
     virtual IRandState *mkRandState(const std::string &seed) = 0;
 

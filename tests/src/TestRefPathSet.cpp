@@ -41,7 +41,18 @@ TEST_F(TestRefPathSet, smoke) {
     ASSERT_FALSE(pset.add({0, 1, 2, 3}));
     ASSERT_TRUE(pset.add({0, 2, 2, 3}));
     ASSERT_TRUE(pset.add({0, 1, 2, 4}));
+}
 
+TEST_F(TestRefPathSet, find_add) {
+    RefPathSet pset;
+
+    ASSERT_FALSE(pset.find({0, 1, 2, 3}));
+    ASSERT_TRUE(pset.add({0, 1, 2, 3}));
+    ASSERT_TRUE(pset.find({0, 1, 2, 3}));
+    ASSERT_FALSE(pset.add({0, 1, 2, 3}));
+
+    ASSERT_TRUE(pset.add({0, 2, 2, 3}));
+    ASSERT_TRUE(pset.add({0, 1, 2, 4}));
 }
 
 TEST_F(TestRefPathSet, insert_p) {
