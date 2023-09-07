@@ -26,7 +26,7 @@ cdef class Factory(object):
 
     cpdef RandState mkRandState(self, seed)
 
-    cpdef CompoundSolver mkCompoundSolver(self, vsc_dm.Context ctxt)
+    cpdef CompoundSolver mkCompoundSolver(self)
 
 cdef class RandState(object):
     cdef decl.IRandState       *_hndl

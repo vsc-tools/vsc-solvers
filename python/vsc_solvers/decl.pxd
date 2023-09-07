@@ -35,7 +35,7 @@ cdef extern from "vsc/solvers/IFactory.h" namespace "vsc::solvers":
 
         dm_decl.IDebugMgr *getDebugMgr()
 
-        ICompoundSolver *mkCompoundSolver(vsc_dm_decl.IContext *)
+        ICompoundSolver *mkCompoundSolver()
 
         IRandState *mkRandState(const cpp_string &seed)
 

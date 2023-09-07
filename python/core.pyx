@@ -53,8 +53,9 @@ cdef class Factory(object):
     cpdef RandState mkRandState(self, seed):
         return RandState.mk(self._hndl.mkRandState(str(seed).encode()))
 
-    cpdef CompoundSolver mkCompoundSolver(self, vsc_dm.Context ctxt):
-        return CompoundSolver.mk(self._hndl.mkCompoundSolver(ctxt._hndl))
+    cpdef CompoundSolver mkCompoundSolver(self):
+        return CompoundSolver.mk(self._hndl.mkCompoundSolver())
+        # ctxt._hndl))
 
 
 cdef class RandState(object):
