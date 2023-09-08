@@ -55,6 +55,7 @@ public:
 
 private:
     static dmgr::IDebug                 *m_dbg;
+    dmgr::IDebugMgr                     *m_dmgr;
     ISolverFactory                      *m_solver_f;
     SolverUnconstrained                 m_solver_unconstrained;
 

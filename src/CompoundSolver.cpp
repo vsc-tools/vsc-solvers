@@ -19,8 +19,8 @@
  *     Author:
  */
 #include "dmgr/impl/DebugMacros.h"
-#include "vsc/solvers/impl/TaskBuildSolveSets.h"
 #include "CompoundSolver.h"
+#include "TaskBuildSolveSets.h"
 
 
 namespace vsc {
@@ -30,7 +30,8 @@ namespace solvers {
 CompoundSolver::CompoundSolver(
     dmgr::IDebugMgr         *dmgr,
     ISolverFactory          *solver_f) : 
-        m_solver_f(solver_f), m_solver_unconstrained(dmgr) {
+        m_dmgr(dmgr), m_solver_f(solver_f), 
+        m_solver_unconstrained(dmgr) {
     DEBUG_INIT("vsc::solvers::CompoundSolver", dmgr);
 }
 
@@ -47,11 +48,11 @@ bool CompoundSolver::randomize(
             const RefPathSet                            &exclude_constraints,
 			SolveFlags								    flags) {
     IFactory *factory = 0;
-    std::vector<ISolveSetUP>    solvesets;
+    std::vector<SolveSetUP>     solvesets;
     RefPathSet                  unconstrained;
 
     TaskBuildSolveSets(
-        factory,
+        factory->getDebugMgr(),
         root_fields,
         target_fields,
         include_constraints,

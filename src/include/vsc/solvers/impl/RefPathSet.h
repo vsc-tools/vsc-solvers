@@ -32,7 +32,7 @@ namespace solvers {
 class RefPathSet {
 public:
 public:
-    RefPathSet() {
+    RefPathSet() : m_size(0) {
         m_root = allocNonLeaf(8);
     }
 
@@ -115,6 +115,10 @@ public:
             }
         }
 
+        if (ret) {
+            m_size++;
+        }
+
         return ret;
     }
 
@@ -158,7 +162,11 @@ public:
     }
     
     bool empty() const {
-        return empty(&m_root->base);
+        return m_size == 0;
+    }
+
+    int32_t size() const {
+        return m_size;
     }
 
     bool find(const std::vector<int32_t> &path) const {
@@ -446,6 +454,7 @@ private:
 
 private:
     NonLeafNode     *m_root;
+    int32_t         m_size;
 
 };
 

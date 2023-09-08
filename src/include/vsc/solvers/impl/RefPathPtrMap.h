@@ -1,5 +1,5 @@
 /**
- * RefPathMap.h
+ * RefPathPtrMap.h
  *
  * Copyright 2023 Matthew Ballance and Contributors
  *
@@ -27,7 +27,7 @@ namespace solvers {
 
 
 
-template <class T> class RefPathMap {
+template <class T> class RefPathPtrMap {
 public:
 /*
     struct const_iterator {
@@ -50,37 +50,24 @@ public:
     };
  */
 public:
-    RefPathMap(int sz=2) : m_root(allocNonLeaf(sz)) { }
+    RefPathPtrMap(int sz=2) : m_root(allocNonLeaf(sz)) { }
 
-    virtual ~RefPathMap() {}
+    virtual ~RefPathPtrMap() {}
 
     bool add(
         const std::vector<int32_t>  &path,
-        const T                     &data,
-        bool                        overwrite=false) {
+        T                           *data) {
         LeafNode *node = findLeaf(path, true);
 
-        if (!node->leaves[path.back()].valid || overwrite) {
-            node->leaves[path.back()].valid = true;
-            node->leaves[path.back()].value = data;
+        if (!node->leaves[path.back()]) {
+            node->leaves[path.back()] = data;
             return true;
         } else {
             return false;
         }
     }
 
-    bool find(
-        const std::vector<int32_t> &path,
-        T                          &data) { 
-        LeafNode *node = findLeaf(path, false);
-
-        if (node && node->leaves[path.back()].valid) {
-            data = node->leaves[path.back()].value;
-            return true;
-        } else {
-            return false;
-        }
-    }
+    T *find(const std::vector<int32_t> &path);
 
 /*
     iterator begin() {
@@ -97,14 +84,9 @@ private:
         uint32_t    sz;
     };
 
-    struct Value {
-        T           value;
-        bool        valid;
-    };
-
     struct LeafNode {
         Node        base;
-        Value       leaves[1];
+        T           *leaves[1];
     };
 
     struct NonLeafNode {
@@ -136,10 +118,10 @@ private:
                         // a non-leaf node. 
                         // Use the leaf-node pointer
                         if (!n->leafNode) {
-                            n->leafNode = allocLeaf((*it));
-                        } else if (*it >= n->leafNode->base.sz) {
+                            n->leafNode = allocLeaf((*it)+1);
+                        } else if (n->leafNode->base.sz <= *it) {
                             // Need to realloc for more space
-                            n->leafNode = reallocLeaf(n->leafNode, (*it));
+                            n->leafNode = reallocLeaf(n->leafNode, (*it)+1);
                         }
                         leaf_np = &n->leafNode;
                     } else {
@@ -148,13 +130,12 @@ private:
                 }
                 leaf_np = reinterpret_cast<LeafNode **>(npp);
 
-                if ((*it) < (*leaf_np)->base.sz) {
-                    ret = (*leaf_np);
-                } else if (create) {
+                if ((*it) >= (*leaf_np)->base.sz && create) {
                     LeafNode *leaf_p = *leaf_np;
                     (*leaf_np) = reallocLeaf(leaf_p, (*it));
-                    ret = (*leaf_np);
                 }
+
+                ret = (*leaf_np);
             } else {
                 // Not last
                 NonLeafNode **nleaf_np;
@@ -162,7 +143,7 @@ private:
                     // We need to replace this leaf node with a non-leaf node
                     // that references the leaf node
                     if (create) {
-                        NonLeafNode *n = allocNonLeaf((*it));
+                        NonLeafNode *n = allocNonLeaf((*it)+1);
                         n->leafNode = reinterpret_cast<LeafNode *>(*npp);
                         (*npp) = &n->base;
                     } else {
@@ -173,7 +154,7 @@ private:
 
                 if (*it >= (*nleaf_np)->base.sz) {
                     // Need to resize
-                    (*nleaf_np) = reallocNonLeaf(*nleaf_np, (*it));
+                    (*nleaf_np) = reallocNonLeaf(*nleaf_np, (*it)+1);
                 }
 
                 if (!(*nleaf_np)->nodes[(*it)]) {
@@ -181,10 +162,10 @@ private:
                         // Need to add 
                         if (it_nn == path.end()) {
                             // The next element will be a leaf index
-                            (*nleaf_np)->nodes[(*it)] = reinterpret_cast<Node *>(allocLeaf(*(it+1)));
+                            (*nleaf_np)->nodes[(*it)] = reinterpret_cast<Node *>(allocLeaf(*(it+1)+1));
                         } else {
                             // The next element is still a non-leaf index
-                            (*nleaf_np)->nodes[(*it)] = reinterpret_cast<Node *>(allocNonLeaf(*(it+1)));
+                            (*nleaf_np)->nodes[(*it)] = reinterpret_cast<Node *>(allocNonLeaf(*(it+1)+1));
                         }
                     } else {
                         break;
@@ -210,12 +191,12 @@ private:
         uint32_t max_t = pow2(max);
 
         NonLeafNode *node = reinterpret_cast<NonLeafNode *>(::operator new(
-            sizeof(NonLeafNode) + ((max_t)*sizeof(Node *))
+            sizeof(NonLeafNode) + ((max_t-1)*sizeof(Node *))
         ));
 
-        memset(node, 0, sizeof(NonLeafNode)+((max_t)*sizeof(Node *)));
+        memset(node, 0, sizeof(NonLeafNode)+((max_t-1)*sizeof(Node *)));
         node->base.isLeaf = false;
-        node->base.sz = max_t+1;
+        node->base.sz = max_t;
 
         return node;
     }
@@ -224,12 +205,12 @@ private:
         uint32_t max_t = pow2(max);
 
         LeafNode *node = reinterpret_cast<LeafNode *>(::operator new(
-            sizeof(LeafNode)+((max_t)*sizeof(Value))
+            sizeof(LeafNode)+((max_t-1)*sizeof(T *))
         ));
 
-        memset(node, 0, sizeof(LeafNode) + ((max_t)*sizeof(Value)));
+        memset(node, 0, sizeof(LeafNode) + ((max_t-1)*sizeof(T *)));
         node->base.isLeaf = true;
-        node->base.sz = max_t+1;
+        node->base.sz = max_t;
 
         return node;
     }
@@ -238,16 +219,16 @@ private:
         uint32_t max_t = pow2(max);
 
         NonLeafNode *nnode = reinterpret_cast<NonLeafNode *>(::operator new(
-            sizeof(NonLeafNode) + ((max_t)*sizeof(Node *))
+            sizeof(NonLeafNode) + ((max_t-1)*sizeof(Node *))
         ));
 
         nnode->base.isLeaf = false;
-        nnode->base.sz = max_t+1;
+        nnode->base.sz = max_t;
         for (uint32_t i=0; i<node->base.sz; i++) {
             nnode->nodes[i] = node->nodes[i];
         }
 
-        for (uint32_t i=node->base.sz; i<max_t+1; i++) {
+        for (uint32_t i=node->base.sz; i<max_t; i++) {
             nnode->nodes[i] = 0;
         }
 
@@ -260,17 +241,17 @@ private:
         uint32_t max_t = pow2(max);
 
         LeafNode *nnode = reinterpret_cast<LeafNode *>(::operator new(
-            sizeof(LeafNode)+((max_t)*sizeof(Value))
+            sizeof(LeafNode)+((max_t-1)*sizeof(T *))
         ));
 
         nnode->base.isLeaf = true;
-        nnode->base.sz = max_t+1;
+        nnode->base.sz = max_t;
 
         for (uint32_t i=0; i<node->base.sz; i++) {
             nnode->leaves[i] = node->leaves[i];
         }
         for (uint32_t i=node->base.sz; i<nnode->base.sz; i++) {
-            nnode->leaves[i].valid = false;
+            nnode->leaves[i] = 0;
         }
 
         ::operator delete(node);

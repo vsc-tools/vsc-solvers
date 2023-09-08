@@ -25,6 +25,8 @@
 #include "vsc/solvers/IFactory.h"
 #include "vsc/solvers/ISolveSet.h"
 #include "vsc/solvers/impl/RefPathSet.h"
+#include "vsc/solvers/impl/RefPathMap.h"
+#include "SolveSet.h"
 
 namespace vsc {
 namespace solvers {
@@ -34,65 +36,55 @@ namespace solvers {
 class TaskBuildSolveSets : public virtual dm::VisitorBase {
 public:
     TaskBuildSolveSets(
-        IFactory                                *factory,
+        dmgr::IDebugMgr                         *dmgr,
         const std::vector<dm::IModelFieldUP>    &root_fields,
         const RefPathSet                        &target_fields,
         const RefPathSet                        &include_constraints,
-        const RefPathSet                        &exclude_constraints
-    ) : m_factory(factory), m_phase(0), m_root_fields(root_fields),
-        m_target_fields(target_fields),
-        m_include_constraints(include_constraints),
-        m_exclude_constraints(exclude_constraints) { }
+        const RefPathSet                        &exclude_constraints);
 
-    virtual ~TaskBuildSolveSets() { }
+    virtual ~TaskBuildSolveSets();
 
     void build(
-        std::vector<ISolveSetUP>        &solvesets,
-        RefPathSet                      &unconstrained) {
+        std::vector<SolveSetUP>         &solvesets,
+        RefPathSet                      &unconstrained);
 
-        m_solvesets = &solvesets;
-        m_unconstrained = &unconstrained;
+	virtual void visitDataTypeStruct(dm::IDataTypeStruct *t) override;
 
-        m_phase = 0; // Collect fields
-        for (uint32_t i=0; i<m_root_fields.size(); i++) {
-            m_path.push_back(i);
-            m_root_fields.at(i)->getDataType()->accept(m_this);
-            m_path.pop_back();
-        }
-    }
+	virtual void visitTypeConstraintExpr(dm::ITypeConstraintExpr *c) override;
 
-	virtual void visitDataTypeStruct(dm::IDataTypeStruct *t) override {
-        for (uint32_t i=0; i<t->getFields().size(); i++) {
-            m_path.push_back(i);
-            t->getFields().at(i)->accept(m_this);
-            m_path.pop_back();
-        }
-        for (uint32_t i=0; i<t->getConstraints().size(); i++) {
-            m_path.push_back(i);
-            t->getConstraints().at(i)->accept(m_this);
-            m_path.pop_back();
-        }
-    }
+	virtual void visitTypeConstraintIfElse(dm::ITypeConstraintIfElse *c) override;
 
-	virtual void visitTypeFieldPhy(dm::ITypeFieldPhy *f) override {
-        switch (m_phase) {
-        case 0: { // Collecting declared fields
-            m_unconstrained->add(m_path);
-        } break;
-        }
-    }
+	virtual void visitTypeConstraintImplies(dm::ITypeConstraintImplies *c) override;
+
+	virtual void visitTypeConstraintScope(dm::ITypeConstraintScope *c) override;
+
+	virtual void visitTypeExprFieldRef(dm::ITypeExprFieldRef *e) override;
+
+	virtual void visitTypeFieldPhy(dm::ITypeFieldPhy *f) override;
 
 protected:
-    IFactory                                    *m_factory;
+
+    void processFieldRef(const std::vector<int32_t> &ref);
+
+    void enterConstraint();
+
+    void leaveConstraint();
+
+protected:
+    static dmgr::IDebug                         *m_dbg;
     uint32_t                                    m_phase;
     const std::vector<dm::IModelFieldUP>        &m_root_fields;
     const RefPathSet                            &m_target_fields;
     const RefPathSet                            &m_include_constraints;
     const RefPathSet                            &m_exclude_constraints;
-    std::vector<int32_t>                        m_path;
-    std::vector<ISolveSetUP>                    *m_solvesets;
-    RefPathSet                                  *m_unconstrained;
+    std::vector<int32_t>                        m_field_path;
+    std::vector<int32_t>                        m_constraint_path;
 
+    RefPathMap<int32_t>                         m_field_ss_m;
+    int32_t                                     m_active_ss_idx;
+    int32_t                                     m_constraint_depth;
+    std::vector<SolveSetUP>                     m_solveset_l;
+    RefPathSet                                  *m_unconstrained;
 };
 
 }
