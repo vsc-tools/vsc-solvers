@@ -52,17 +52,14 @@ TEST_F(TestBuildSolveSets, smoke) {
     RefPathSet unconstrained;
 
     vsc::dm::IModelFieldUP field(mkRootField("abc", MyC_t));
-    std::vector<vsc::dm::IModelFieldUP> root_fields;
-    root_fields.push_back(vsc::dm::IModelFieldUP(field.get(), false));
-    target_fields.add({0});
 
-
-    std::vector<SolveSetUP> solvesets;
+    std::vector<ISolveSetUP> solvesets;
 
     TaskBuildSolveSets(
         m_factory->getDebugMgr(),
-        root_fields,
+        field.get(),
         target_fields,
+        fixed_fields,
         include_constraints,
         exclude_constraints).build(solvesets, unconstrained);
     
@@ -93,17 +90,14 @@ TEST_F(TestBuildSolveSets, three_related_vars) {
     RefPathSet unconstrained;
 
     vsc::dm::IModelFieldUP field(mkRootField("abc", MyC_t));
-    std::vector<vsc::dm::IModelFieldUP> root_fields;
-    root_fields.push_back(vsc::dm::IModelFieldUP(field.get(), false));
-    target_fields.add({0});
 
-
-    std::vector<SolveSetUP> solvesets;
+    std::vector<ISolveSetUP> solvesets;
 
     TaskBuildSolveSets(
         m_factory->getDebugMgr(),
-        root_fields,
+        field.get(),
         target_fields,
+        fixed_fields,
         include_constraints,
         exclude_constraints).build(solvesets, unconstrained);
     
@@ -134,17 +128,14 @@ TEST_F(TestBuildSolveSets, three_related_vars_one_unconstrained) {
     RefPathSet unconstrained;
 
     vsc::dm::IModelFieldUP field(mkRootField("abc", MyC_t));
-    std::vector<vsc::dm::IModelFieldUP> root_fields;
-    root_fields.push_back(vsc::dm::IModelFieldUP(field.get(), false));
-    target_fields.add({0});
 
-
-    std::vector<SolveSetUP> solvesets;
+    std::vector<ISolveSetUP> solvesets;
 
     TaskBuildSolveSets(
         m_factory->getDebugMgr(),
-        root_fields,
+        field.get(),
         target_fields,
+        fixed_fields,
         include_constraints,
         exclude_constraints).build(solvesets, unconstrained);
     

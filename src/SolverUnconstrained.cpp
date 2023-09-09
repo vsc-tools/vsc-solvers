@@ -41,16 +41,15 @@ SolverUnconstrained::~SolverUnconstrained() {
 
 bool SolverUnconstrained::randomize(
         IRandState                              *randstate,
-        const std::vector<dm::IModelFieldUP>    &root_fields,
-        const RefPathSet                        &target_fields,
-        const RefPathSet                        &fixed_fields) {
+        dm::IModelField                         *root_field,
+        const RefPathSet                        &target_fields) {
     DEBUG_ENTER("randomize");
     m_randstate = randstate;
     for (RefPathSet::iterator it=target_fields.begin(); it.next(); ) {
         m_it = it.path().begin();
         m_it_end = it.path().end();
-        dm::IDataType *field_t = root_fields.at(*m_it)->getDataType();
-        m_val = root_fields.at(*m_it)->getMutVal();
+        dm::IDataType *field_t = root_field->getDataType();
+        m_val = root_field->getMutVal();
 
         m_it++;
         DEBUG("--> randomize field");

@@ -18,6 +18,7 @@
  * Created on:
  *     Author:
  */
+#include <string.h>
 #include "SolveSet.h"
 
 
@@ -25,34 +26,54 @@ namespace vsc {
 namespace solvers {
 
 
-SolveSet::SolveSet() {
-
+SolveSet::SolveSet() : m_max_bits(0), m_num_bits(0) {
+    memset(m_size, 0, sizeof(m_size));
 }
 
 SolveSet::~SolveSet() {
 
 }
 
-void SolveSet::addField(const std::vector<int32_t> &path) {
-    m_field_s.add(path);
-    m_target_field_s.add(path);
+void SolveSet::setFlag(SolveSetFlags flags) {
+
+}
+
+void SolveSet::addField(
+    const std::vector<int32_t>  &path, 
+    SolveSetFieldType           type,
+    int32_t                     bits) {
+    if (m_field_s.add(path, type)) {
+        m_size[(uint32_t)type]++;
+    }
+    if (bits > 0) {
+        if (bits > m_max_bits) {
+            m_max_bits = bits;
+        }
+        m_num_bits += bits;
+    }
 }
 
 void SolveSet::addConstraint(const std::vector<int32_t> &path) {
     m_constraint_s.add(path);
 };
 
-int32_t SolveSet::size() const {
-    return m_field_s.size();
+int32_t SolveSet::size(SolveSetFieldType type) const {
+    return m_size[(uint32_t)type];
 }
 
 void SolveSet::merge(SolveSet *rhs) {
-    for (RefPathSet::iterator it=rhs->getFields().begin(); it.next(); ) {
-        addField(it.path());
+    for (RefPathMap<SolveSetFieldType>::iterator 
+        it=rhs->getFields().begin(); it.next(); ) {
+        addField(it.path(), it.value(), -1);
     }
-    for (RefPathSet::iterator it=rhs->getConstraints().begin(); it.next(); ) {
+    for (RefPathSet::iterator 
+        it=rhs->getConstraints().begin(); it.next(); ) {
         addConstraint(it.path());
     }
+    if (rhs->m_max_bits > m_max_bits) {
+        m_max_bits = rhs->m_max_bits;
+    }
+    m_num_bits += rhs->m_num_bits;
 }
 
 }

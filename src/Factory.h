@@ -23,6 +23,8 @@ public:
         return m_dmgr;
     }
 
+    virtual ISolverFactory *getSolverFactory() override;
+
 	virtual ICompoundSolver *mkCompoundSolver() override;
 
     virtual IRandState *mkRandState(const std::string &seed) override;

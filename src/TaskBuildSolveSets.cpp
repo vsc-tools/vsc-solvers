@@ -29,12 +29,15 @@ namespace solvers {
 
 TaskBuildSolveSets::TaskBuildSolveSets(
         dmgr::IDebugMgr                         *dmgr,
-        const std::vector<dm::IModelFieldUP>    &root_fields,
+        dm::IModelField                         *root_field,
         const RefPathSet                        &target_fields,
+        const RefPathSet                        &fixed_fields,
         const RefPathSet                        &include_constraints,
         const RefPathSet                        &exclude_constraints
-        ) : m_phase(0), m_root_fields(root_fields), m_target_fields(target_fields),
-        m_include_constraints(include_constraints), m_exclude_constraints(exclude_constraints) {
+        ) : m_phase(0), m_root_field(root_field), 
+        m_target_fields(target_fields), m_fixed_fields(fixed_fields),
+        m_include_constraints(include_constraints), 
+        m_exclude_constraints(exclude_constraints) {
     DEBUG_INIT("vsc::solvers::TaskBuildSolveSets", dmgr);
 }
 
@@ -43,34 +46,24 @@ TaskBuildSolveSets::~TaskBuildSolveSets() {
 }
 
 void TaskBuildSolveSets::build(
-    std::vector<SolveSetUP>         &solvesets,
+    std::vector<ISolveSetUP>        &solvesets,
     RefPathSet                      &unconstrained) {
     m_active_ss_idx = -1;
     m_constraint_depth = 0;
     m_unconstrained = &unconstrained;
 
     m_phase = 0; // Collect variable references from constraints
-    for (uint32_t i=0; i<m_root_fields.size(); i++) {
-        m_field_path.push_back(i);
-        m_constraint_path.push_back(i);
-        m_root_fields.at(i)->getDataType()->accept(m_this);
-        m_constraint_path.pop_back();
-        m_field_path.pop_back();
-    }
+    m_root_field->getDataType()->accept(m_this);
 
     m_phase = 1; // Collect unreferenced random fields
-    for (uint32_t i=0; i<m_root_fields.size(); i++) {
-        m_field_path.push_back(i);
-        m_root_fields.at(i)->getDataType()->accept(m_this);
-        m_field_path.pop_back();
-    }
+    m_root_field->getDataType()->accept(m_this);
 
     // Now, move the active solvesets to the destination
     for (std::vector<SolveSetUP>::iterator
         it=m_solveset_l.begin();
         it!=m_solveset_l.end(); it++) {
         if (it->get()) {
-            solvesets.push_back(std::move(*it));
+            solvesets.push_back(ISolveSetUP(it->release()));
         }
     }
 }
@@ -184,7 +177,7 @@ void TaskBuildSolveSets::processFieldRef(const std::vector<int32_t> &ref) {
             m_solveset_l.at(dst_idx)->merge(m_solveset_l.at(src_idx).get());
 
             // Now, all field paths in the source must be updated to the dest
-            for (RefPathSet::iterator 
+            for (RefPathMap<SolveSetFieldType>::iterator 
                 it=m_solveset_l.at(src_idx)->getFields().begin(); 
                 it.next(); ) {
                 m_field_ss_m.add(it.path(), dst_idx, true);
@@ -201,7 +194,23 @@ void TaskBuildSolveSets::processFieldRef(const std::vector<int32_t> &ref) {
             m_active_ss_idx = m_solveset_l.size();
             m_solveset_l.push_back(SolveSetUP(new SolveSet()));
         }
-        m_solveset_l.at(m_active_ss_idx)->addField(ref);
+
+        bool is_target = (m_target_fields.size() == 0 || m_target_fields.find(ref));
+        bool is_fixed = ((m_target_fields.size() && !is_target) 
+                            || (m_fixed_fields.size() && m_fixed_fields.find(ref)));
+
+        // A field is a non-fixed non-target if either target or
+        // fixed fields are specified and the field is not part of either
+        if (is_fixed) {
+            m_solveset_l.at(m_active_ss_idx)->addField(
+                ref, SolveSetFieldType::Fixed);
+        } else if (is_target) {
+            m_solveset_l.at(m_active_ss_idx)->addField(
+                ref, SolveSetFieldType::Target);
+        } else {
+            m_solveset_l.at(m_active_ss_idx)->addField(
+                ref, SolveSetFieldType::NonTarget);
+        }
         m_field_ss_m.add(ref, m_active_ss_idx);
     }
     DEBUG_LEAVE("processFieldRef");

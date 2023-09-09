@@ -41,37 +41,52 @@ CompoundSolver::~CompoundSolver() {
 
 bool CompoundSolver::randomize(
 			IRandState								    *randstate,
-            const std::vector<dm::IModelFieldUP>        &root_fields,
+            dm::IModelField                             *root_field,
             const RefPathSet                            &target_fields,
             const RefPathSet                            &fixed_fields,
             const RefPathSet                            &include_constraints,
             const RefPathSet                            &exclude_constraints,
 			SolveFlags								    flags) {
-    IFactory *factory = 0;
-    std::vector<SolveSetUP>     solvesets;
+    std::vector<ISolveSetUP>    solvesets;
     RefPathSet                  unconstrained;
 
     TaskBuildSolveSets(
-        factory->getDebugMgr(),
-        root_fields,
+        m_dmgr,
+        root_field,
         target_fields,
+        fixed_fields,
         include_constraints,
         exclude_constraints).build(solvesets, unconstrained);
 
+    // First, randomize any unconstrained fields
     if (!unconstrained.empty()) {
         RefPathSet fixed_fields;
         m_solver_unconstrained.randomize(
             randstate,
+            root_field,
+            unconstrained);
+    }
+
+    // Now, move on
+    for (std::vector<ISolveSetUP>::const_iterator
+        it=solvesets.begin();
+        it!=solvesets.end(); it++) {
+        ISolverUP solver(m_solver_f->mkSolver(it->get()));
+        /*
+        if (!solver->randomize(
+            randstate,
             root_fields,
-            unconstrained,
-            fixed_fields);
+            (*it)->getFields(),
+
+        ))
+         */
     }
 
     return true;
 }
 
 bool CompoundSolver::sat(
-            const std::vector<dm::IModelFieldUP>        &root_fields,
+            dm::IModelField                             *root_field,
             const RefPathSet                            &target_fields,
             const RefPathSet                            &fixed_fields,
             const RefPathSet                            &include_constraints,

@@ -53,14 +53,10 @@ TEST_F(TestConstraintsLinear, ult_2var) {
     RefPathSet target_fields, fixed_fields, include_constraints, exclude_constraints;
     SolveFlags flags = SolveFlags::NoFlags;
 
-    std::vector<vsc::dm::IModelFieldUP> root_fields;
-    root_fields.push_back(vsc::dm::IModelFieldUP(field.get(), false));
-    target_fields.add({0});
-
     for (uint32_t i=0; i<10; i++) {
         solver->randomize(
             randstate.get(),
-            root_fields,
+            field.get(),
             target_fields,
             fixed_fields,
             include_constraints,

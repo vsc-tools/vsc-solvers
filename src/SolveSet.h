@@ -19,35 +19,48 @@
  *     Author: 
  */
 #pragma once
-#include "vsc/dm/impl/UP.h"
-#include "vsc/solvers/impl/RefPathSet.h"
+#include "vsc/solvers/ISolveSet.h"
 
 namespace vsc {
 namespace solvers {
 
+
 class SolveSet;
 using SolveSetUP=dm::UP<SolveSet>;
-class SolveSet {
+class SolveSet : public virtual ISolveSet {
 public:
     SolveSet();
 
     virtual ~SolveSet();
 
-    void addField(const std::vector<int32_t> &path);
+    virtual SolveSetFlags getFlags() const override { return m_flags; }
+
+    void setFlag(SolveSetFlags flags);
+
+    void addField(
+        const std::vector<int32_t>  &path,
+        SolveSetFieldType           type,
+        int32_t                     bits=-1);
 
     void addConstraint(const std::vector<int32_t> &path);
 
-    const RefPathSet &getFields() const { return m_field_s; }
+    virtual const RefPathMap<SolveSetFieldType> &getFields() const override {
+        return m_field_s;
+    }
 
     const RefPathSet &getConstraints() const { return m_constraint_s; }
 
-    int32_t size() const;
+    int32_t size(SolveSetFieldType type=SolveSetFieldType::Target) const;
 
     void merge(SolveSet *rhs);
 
 private:
-    RefPathSet                      m_field_s;
-    RefPathSet                      m_target_field_s;
+    SolveSetFlags                   m_flags;
+    uint32_t                        m_max_bits;
+    uint32_t                        m_num_bits;
+    uint32_t                        m_size[(uint32_t)SolveSetFieldType::NumTypes];
+
+    RefPathMap<SolveSetFieldType>   m_field_s;
     RefPathSet                      m_constraint_s;
 
 

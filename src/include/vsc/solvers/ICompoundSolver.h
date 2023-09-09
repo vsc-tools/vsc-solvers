@@ -64,7 +64,7 @@ public:
 
 	virtual bool randomize(
 			IRandState								    *randstate,
-            const std::vector<dm::IModelFieldUP>        &root_fields,
+            dm::IModelField                             *root_field,
             const RefPathSet                            &target_fields,
             const RefPathSet                            &fixed_fields,
             const RefPathSet                            &include_constraints,
@@ -72,7 +72,7 @@ public:
 			SolveFlags								    flags) = 0;
 
 	virtual bool sat(
-            const std::vector<dm::IModelFieldUP>        &root_fields,
+            dm::IModelField                             *root_field,
             const RefPathSet                            &target_fields,
             const RefPathSet                            &fixed_fields,
             const RefPathSet                            &include_constraints,

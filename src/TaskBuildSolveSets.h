@@ -37,15 +37,16 @@ class TaskBuildSolveSets : public virtual dm::VisitorBase {
 public:
     TaskBuildSolveSets(
         dmgr::IDebugMgr                         *dmgr,
-        const std::vector<dm::IModelFieldUP>    &root_fields,
+        dm::IModelField                         *root_field,
         const RefPathSet                        &target_fields,
+        const RefPathSet                        &fixed_fields,
         const RefPathSet                        &include_constraints,
         const RefPathSet                        &exclude_constraints);
 
     virtual ~TaskBuildSolveSets();
 
     void build(
-        std::vector<SolveSetUP>         &solvesets,
+        std::vector<ISolveSetUP>        &solvesets,
         RefPathSet                      &unconstrained);
 
 	virtual void visitDataTypeStruct(dm::IDataTypeStruct *t) override;
@@ -73,8 +74,9 @@ protected:
 protected:
     static dmgr::IDebug                         *m_dbg;
     uint32_t                                    m_phase;
-    const std::vector<dm::IModelFieldUP>        &m_root_fields;
+    dm::IModelField                             *m_root_field;
     const RefPathSet                            &m_target_fields;
+    const RefPathSet                            &m_fixed_fields;
     const RefPathSet                            &m_include_constraints;
     const RefPathSet                            &m_exclude_constraints;
     std::vector<int32_t>                        m_field_path;

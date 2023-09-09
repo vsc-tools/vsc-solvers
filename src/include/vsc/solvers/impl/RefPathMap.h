@@ -34,25 +34,16 @@ public:
         std::vector<std::pair<int32_t, Node *>> node_s;
 
     }
-
-    struct iterator {
-        bool                                    m_valid;
-        std::vector<std::pair<int32_t, Node *>> m_node_s;
-
-        void operator ++() {
-            // Find the next 
-
-        }
-
-        bool valid() const {
-            return m_valid;
-        }
-    };
  */
+
+
 public:
-    RefPathMap(int sz=2) : m_root(allocNonLeaf(sz)) { }
+    RefPathMap(int sz=2) : m_root(allocNonLeaf(sz)), m_size(0) { }
 
     virtual ~RefPathMap() {}
+
+    int32_t size() const { return m_size; }
+
 
     bool add(
         const std::vector<int32_t>  &path,
@@ -82,14 +73,6 @@ public:
         }
     }
 
-/*
-    iterator begin() {
-        iterator ret;
-        ret.node_s.push_back({-1, m_root});
-        return ret;
-    }
- */
-
 private:
 
     struct Node {
@@ -112,6 +95,101 @@ private:
         LeafNode    *leafNode;
         Node        *nodes[1];
     };
+
+public:
+    struct iterator {
+        iterator(NonLeafNode *root) {
+            m_node_s.push_back(&root->base);
+            m_path.push_back(-1);
+        }
+        iterator(const iterator &rhs) :
+            m_node_s(rhs.m_node_s.begin(), rhs.m_node_s.end()),
+            m_path(rhs.m_path.begin(), rhs.m_path.end()),
+            m_value(rhs.m_value) { }
+        void operator =(const iterator &rhs) {
+            m_node_s.clear();
+            m_node_s.insert(m_node_s.begin(), 
+                rhs.m_node_s.begin(), rhs.m_node_s.end());
+            m_path.clear();
+            m_path.insert(m_path.begin(), rhs.m_path.begin(), rhs.m_path.end());
+        }
+
+        std::vector<int32_t>                    m_path;
+        T                                       m_value;
+        std::vector<Node *>                     m_node_s;
+
+        const std::vector<int32_t> &path() const {
+            return m_path;
+        }
+
+        T value() const {
+            return m_value;
+        }
+
+        bool next() {
+            bool found = false;
+            while (m_node_s.size()) {
+                // If we're at leaf level, see if there's more for us
+                if (m_node_s.back()->isLeaf) {
+                    LeafNode *leaf = reinterpret_cast<LeafNode *>(m_node_s.back());
+                    m_path.back()++;
+                    while (m_path.back() < leaf->base.sz) {
+                        if (leaf->leaves[m_path.back()].valid) {
+                            found = true;
+                            m_value = leaf->leaves[m_path.back()].value;
+                            break;
+                        } else {
+                            m_path.back()++;
+                        }
+                    }
+
+                    if (!found) {
+                        m_node_s.pop_back();
+                        m_path.pop_back();
+                    }
+                } else {
+                    NonLeafNode *nleaf = reinterpret_cast<NonLeafNode *>(m_node_s.back());
+                    bool have_subnode = false;
+
+                    m_path.back()++;
+                    while (m_path.back() < nleaf->base.sz) {
+                        if (nleaf->nodes[m_path.back()]) {
+                            m_node_s.push_back(nleaf->nodes[m_path.back()]);
+                            m_path.push_back(-1);
+                            have_subnode = true;
+                            break;
+                        } else {
+                            m_path.back()++;
+                        }
+                    }
+
+                    if (!have_subnode) {
+                        if (nleaf->leafNode) {
+                            // Replace the compound node with a leaf node
+                            m_node_s.pop_back();
+                            m_path.pop_back();
+                            m_node_s.push_back(&nleaf->leafNode->base);
+                            m_path.push_back(-1);
+                        } else {
+                            // Nothing more to do in the compound node, so
+                            // move back up the stack
+                            m_node_s.pop_back();
+                            m_path.pop_back();
+                        }
+                    }
+                }
+                if (found) {
+                    break;
+                }
+            }
+
+            return found;
+        }
+    };
+
+    iterator begin() const {
+        return iterator(m_root);
+    }
 
 private:
 
@@ -281,6 +359,7 @@ private:
 
 private:
     NonLeafNode     *m_root;
+    int32_t         m_size;
 
 };
 

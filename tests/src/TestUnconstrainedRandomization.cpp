@@ -82,17 +82,13 @@ TEST_F(TestUnconstrainedRandomization, smoke2) {
 
     ASSERT_TRUE(m_ctxt->findDataTypeStruct("MyC") != 0);
     ASSERT_EQ(m_ctxt->findDataTypeStruct("MyC"), MyC_t);
-    vsc::dm::IModelField *field = mkRootField("abc", MyC_t);
+    vsc::dm::IModelFieldUP field(mkRootField("abc", MyC_t));
     ASSERT_TRUE(field);
 
     IRandStateUP randstate(m_factory->mkRandState("0"));
     ICompoundSolverUP solver(m_factory->mkCompoundSolver());
     RefPathSet target_fields, fixed_fields, include_constraints, exclude_constraints;
     SolveFlags flags = SolveFlags::NoFlags;
-
-    std::vector<vsc::dm::IModelFieldUP> root_fields;
-    root_fields.push_back(vsc::dm::IModelFieldUP(field, false));
-    target_fields.add({0});
 
     ASSERT_TRUE(field->getDataType());
     ASSERT_TRUE(dynamic_cast<dm::IDataTypeStruct *>(field->getDataType()));
@@ -102,7 +98,7 @@ TEST_F(TestUnconstrainedRandomization, smoke2) {
     for (uint32_t i=0; i<10000; i++) {
         solver->randomize(
             randstate.get(),
-            root_fields,
+            field.get(),
             target_fields,
             fixed_fields,
             include_constraints,

@@ -21,27 +21,24 @@
 #pragma once
 #include "dmgr/IDebugMgr.h"
 #include "vsc/dm/impl/VisitorBase.h"
-#include "vsc/solvers/ISolver.h"
+#include "vsc/solvers/IRandState.h"
+#include "vsc/solvers/impl/RefPathSet.h"
 
 namespace vsc {
 namespace solvers {
 
 
 
-class SolverUnconstrained : 
-    public virtual ISolver,
-    public virtual dm::VisitorBase {
+class SolverUnconstrained : public virtual dm::VisitorBase {
 public:
     SolverUnconstrained(dmgr::IDebugMgr *dmgr);
 
     virtual ~SolverUnconstrained();
 
-    virtual bool randomize(
+    bool randomize(
         IRandState                              *randstate,
-        const std::vector<dm::IModelFieldUP>    &root_fields,
-        const RefPathSet                        &target_fields,
-        const RefPathSet                        &fixed_fields
-    ) override;
+        dm::IModelField                         *root_field,
+        const RefPathSet                        &target_fields);
 
 	virtual void visitDataTypeBool(dm::IDataTypeBool *t) override;
 

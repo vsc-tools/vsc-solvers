@@ -1,5 +1,5 @@
 /**
- * ISolveSet.h
+ * SolverFactoryBoolector.h
  *
  * Copyright 2023 Matthew Ballance and Contributors
  *
@@ -19,45 +19,28 @@
  *     Author: 
  */
 #pragma once
-#include "vsc/dm/impl/UP.h"
-#include "vsc/solvers/impl/RefPathMap.h"
-#include "vsc/solvers/impl/RefPathSet.h"
+#include "dmgr/IDebugMgr.h"
+#include "vsc/solvers/ISolverFactory.h"
 
 namespace vsc {
 namespace solvers {
 
-enum class SolveSetFlags {
-    NoFlags   = 0,
-    Linear    = (1 << 0),
-    NonLinear = (1 << 1),
-    Iterative = (1 << 2),
-    ArraySize = (1 << 3),
-    Soft      = (1 << 4)
-};
 
-enum class SolveSetFieldType {
-    Target,
-    NonTarget,
-    Fixed,
-    NumTypes
-};
 
-class ISolveSet;
-using ISolveSetUP=dm::UP<ISolveSet>;
-class ISolveSet {
+class SolverFactoryBoolector : public virtual ISolverFactory {
 public:
+    SolverFactoryBoolector(dmgr::IDebugMgr *dmgr);
 
-    virtual ~ISolveSet() { }
+    virtual ~SolverFactoryBoolector();
 
-    virtual SolveSetFlags getFlags() const = 0;
+    virtual ISolver *mkSolver(ISolveSet *solve_set) override;
 
-    virtual const RefPathMap<SolveSetFieldType> &getFields() const = 0;
-
-    virtual const RefPathSet &getConstraints() const = 0;
+private:
+    dmgr::IDebugMgr                 *m_dmgr;
 
 };
 
-} /* namespace solvers */
-} /* namespace vsc */
+}
+}
 
 

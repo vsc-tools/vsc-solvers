@@ -17,7 +17,7 @@ public:
 
     virtual dmgr::IDebugMgr *getDebugMgr() = 0;
 
-//    virtual ISolverFactory *getSolverFactory() = 0;
+    virtual ISolverFactory *getSolverFactory() = 0;
 
 	virtual ICompoundSolver *mkCompoundSolver() = 0;
 

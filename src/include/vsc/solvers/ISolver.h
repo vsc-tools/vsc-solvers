@@ -27,9 +27,8 @@
 #pragma once
 #include <vector>
 #include "vsc/dm/IModelField.h"
-#include "vsc/dm/ITypeConstraint.h"
 #include "vsc/solvers/IRandState.h"
-#include "vsc/solvers/impl/RefPathSet.h"
+#include "vsc/solvers/ISolveSet.h"
 
 namespace vsc {
 namespace solvers {
@@ -47,9 +46,8 @@ public:
 
     virtual bool randomize(
         IRandState                              *randstate,
-        const std::vector<dm::IModelFieldUP>    &root_fields,
-        const RefPathSet                        &target_fields,
-        const RefPathSet                        &fixed_fields
+        dm::IModelField                         *root_field,
+        ISolveSet                               *solveset
     ) = 0;
 
 //    virtual bool sat() = 0;

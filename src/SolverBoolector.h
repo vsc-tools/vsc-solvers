@@ -1,5 +1,5 @@
 /**
- * ISolveSet.h
+ * SolverBoolector.h
  *
  * Copyright 2023 Matthew Ballance and Contributors
  *
@@ -19,45 +19,34 @@
  *     Author: 
  */
 #pragma once
-#include "vsc/dm/impl/UP.h"
-#include "vsc/solvers/impl/RefPathMap.h"
-#include "vsc/solvers/impl/RefPathSet.h"
+#include "dmgr/IDebugMgr.h"
+#include "vsc/solvers/ISolver.h"
+
+struct Btor;
 
 namespace vsc {
 namespace solvers {
 
-enum class SolveSetFlags {
-    NoFlags   = 0,
-    Linear    = (1 << 0),
-    NonLinear = (1 << 1),
-    Iterative = (1 << 2),
-    ArraySize = (1 << 3),
-    Soft      = (1 << 4)
-};
 
-enum class SolveSetFieldType {
-    Target,
-    NonTarget,
-    Fixed,
-    NumTypes
-};
 
-class ISolveSet;
-using ISolveSetUP=dm::UP<ISolveSet>;
-class ISolveSet {
+class SolverBoolector : public virtual ISolver {
 public:
+    SolverBoolector(dmgr::IDebugMgr *dmgr);
 
-    virtual ~ISolveSet() { }
+    virtual ~SolverBoolector();
 
-    virtual SolveSetFlags getFlags() const = 0;
+    virtual bool randomize(
+        IRandState                              *randstate,
+        dm::IModelField                         *root_field,
+        ISolveSet                               *solveset) override;
 
-    virtual const RefPathMap<SolveSetFieldType> &getFields() const = 0;
-
-    virtual const RefPathSet &getConstraints() const = 0;
+private:
+    static dmgr::IDebug             *m_dbg;
+    struct Btor                     *m_btor;
 
 };
 
-} /* namespace solvers */
-} /* namespace vsc */
+}
+}
 
 
