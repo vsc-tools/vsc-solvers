@@ -12,6 +12,7 @@ from distutils.command.build_clib import build_clib
 from distutils.ccompiler import new_compiler
 from distutils.spawn import find_executable
 from setuptools.command.build_ext import build_ext as _build_ext
+from setuptools.command.install_lib import install_lib as _install_lib
 from distutils.file_util import copy_file
 
 if "-DDEBUG" in sys.argv:
@@ -160,6 +161,13 @@ def _get_lib_ext_name():
 
     return ext_name
 
+class install_lib(_install_lib):
+    def copy_tree(self, infile, outfile, preserve_mode=1, preserve_times=1, preserve_symlinks=0, level=1):
+        super().copy_tree(infile, outfile, preserve_mode, preserve_times, preserve_symlinks, level)
+        shutil.copytree(
+            os.path.join(vsc_solvers_dir, "src/include"),
+            os.path.join(outfile, "vsc_solvers/include"))
+
 class build_ext(_build_ext):
     def run(self):
 
@@ -210,6 +218,7 @@ class build_ext(_build_ext):
 #            ext.library_dirs.append(
 #                os.path.join(self.build_lib, os.path.dirname(ext._full_name))
 #            )
+
 
     def copy_extensions_to_source(self):
         """ Like the base class method, but copy libs into proper directory in develop. """
@@ -319,7 +328,9 @@ setup(
     'setuptools_scm',
     'cython'
   ],
-  cmdclass={'build_ext': build_ext},
+  cmdclass={
+      'build_ext': build_ext,
+      'install_lib': install_lib},
   ext_modules=[ ext ]
 )
 
