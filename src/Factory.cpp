@@ -40,6 +40,7 @@ ISolverFactory *Factory::getSolverFactory() {
             m_solver_f = ISolverFactoryUP(new SolverFactoryBoolector(m_dmgr));
         }
     }
+    return m_solver_f.get();
 }
 
 IFactory *Factory::inst() {

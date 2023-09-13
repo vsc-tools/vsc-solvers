@@ -36,3 +36,5 @@ packages/
 
 python/core.cpp
 
+__pycache__/
+
