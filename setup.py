@@ -155,9 +155,9 @@ def _get_lib_ext_name():
     """ Get name of default library file extension on given OS. """
 
     if os.name == "nt":
-        ext_name = "dll"
+        ext_name = ".dll"
     else:
-        ext_name = "so"
+        ext_name = ".so"
 
     return ext_name
 
@@ -167,6 +167,12 @@ class install_lib(_install_lib):
         shutil.copytree(
             os.path.join(vsc_solvers_dir, "src/include"),
             os.path.join(outfile, "vsc_solvers/include"))
+        for f in os.listdir(os.path.join(vsc_solvers_dir, "build/lib")):
+            ext = os.path.splitext(f)[1]
+            if ext == _get_lib_ext_name():
+                shutil.copy(
+                    os.path.join(vsc_solvers_dir, "build", "lib", f),
+                    os.path.join(outfile, "vsc_solvers", f))
 
 class build_ext(_build_ext):
     def run(self):
