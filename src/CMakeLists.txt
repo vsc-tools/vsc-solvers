@@ -26,14 +26,13 @@ target_link_directories(vsc-solvers PRIVATE
     )
   
 target_link_libraries(vsc-solvers
-    vsc-dm 
-    debug-mgr
+#    vsc-dm 
+#    debug-mgr
 	bitwuzla
 	boolector
 	btor2parser
 	cadical
-	gmp
-	)
+	gmp)
 add_dependencies(vsc-solvers Boolector Bitwuzla)
 
 # add_library(vsc-solvers_static STATIC ${vsc_solvers_SRC})
