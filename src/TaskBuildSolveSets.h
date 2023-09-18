@@ -24,6 +24,7 @@
 #include "vsc/dm/impl/VisitorBase.h"
 #include "vsc/solvers/IFactory.h"
 #include "vsc/solvers/ISolveSet.h"
+#include "vsc/solvers/impl/RefPathField.h"
 #include "vsc/solvers/impl/RefPathSet.h"
 #include "vsc/solvers/impl/RefPathMap.h"
 #include "SolveSet.h"
@@ -59,13 +60,15 @@ public:
 
 	virtual void visitTypeConstraintScope(dm::ITypeConstraintScope *c) override;
 
+	virtual void visitTypeExprBin(dm::ITypeExprBin *e) override;
+
 	virtual void visitTypeExprFieldRef(dm::ITypeExprFieldRef *e) override;
 
 	virtual void visitTypeFieldPhy(dm::ITypeFieldPhy *f) override;
 
 protected:
 
-    void processFieldRef(const std::vector<int32_t> &ref);
+    void processFieldRef(const RefPathField &ref);
 
     void enterConstraint();
 
@@ -79,7 +82,7 @@ protected:
     const RefPathSet                            &m_fixed_fields;
     const RefPathSet                            &m_include_constraints;
     const RefPathSet                            &m_exclude_constraints;
-    std::vector<int32_t>                        m_field_path;
+    RefPathField                                m_field_path;
     std::vector<int32_t>                        m_constraint_path;
 
     RefPathMap<int32_t>                         m_field_ss_m;

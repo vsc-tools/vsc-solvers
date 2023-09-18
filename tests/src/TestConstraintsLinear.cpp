@@ -45,6 +45,7 @@ TEST_F(TestConstraintsLinear, ult_2var) {
                 self.a < self.b
     )");
     #include "TestConstraintsLinear_ult_2var.h"
+    enableDebug(true);
 
     vsc::dm::IModelFieldUP field(mkRootField("abc", MyC_t));
 

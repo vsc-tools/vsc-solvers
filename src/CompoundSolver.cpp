@@ -72,14 +72,8 @@ bool CompoundSolver::randomize(
         it=solvesets.begin();
         it!=solvesets.end(); it++) {
         ISolverUP solver(m_solver_f->mkSolver(it->get()));
-        /*
-        if (!solver->randomize(
-            randstate,
-            root_fields,
-            (*it)->getFields(),
-
-        ))
-         */
+        if (!solver->randomize(randstate, root_field, it->get())) {
+        }
     }
 
     return true;

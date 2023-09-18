@@ -21,8 +21,10 @@
 #pragma once
 #include "dmgr/IDebugMgr.h"
 #include "vsc/solvers/ISolver.h"
+#include "vsc/solvers/impl/RefPathPtrMap.h"
 
 struct Btor;
+struct BoolectorNode;
 
 namespace vsc {
 namespace solvers {
@@ -41,8 +43,11 @@ public:
         ISolveSet                               *solveset) override;
 
 private:
-    static dmgr::IDebug             *m_dbg;
-    struct Btor                     *m_btor;
+    static dmgr::IDebug                     *m_dbg;
+    dmgr::IDebugMgr                         *m_dmgr;
+    struct Btor                             *m_btor;
+    bool                                    m_issat;
+    RefPathPtrMap<struct BoolectorNode>     m_field_m;
 
 };
 

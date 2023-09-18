@@ -65,7 +65,8 @@ public:
         T                          &data) { 
         LeafNode *node = findLeaf(path, false);
 
-        if (node && node->leaves[path.back()].valid) {
+        if (node && path.back() < node->base.sz &&
+                        node->leaves[path.back()].valid) {
             data = node->leaves[path.back()].value;
             return true;
         } else {
@@ -208,8 +209,10 @@ private:
             if (is_last) {
                 LeafNode **leaf_np;
                 if (!(*npp)->isLeaf) {
-                    if (create) {
-                        NonLeafNode *n = reinterpret_cast<NonLeafNode *>(*npp);
+                    NonLeafNode *n = reinterpret_cast<NonLeafNode *>(*npp);
+                    if (n->leafNode && *it < n->leafNode->base.sz) {
+                        leaf_np = &n->leafNode;
+                    } else if (create) {
                         // We're at the last path entry, but we're looking at
                         // a non-leaf node. 
                         // Use the leaf-node pointer
@@ -223,8 +226,9 @@ private:
                     } else {
                         break;
                     }
+                } else {
+                    leaf_np = reinterpret_cast<LeafNode **>(npp);
                 }
-                leaf_np = reinterpret_cast<LeafNode **>(npp);
 
                 if ((*it) < (*leaf_np)->base.sz) {
                     ret = (*leaf_np);

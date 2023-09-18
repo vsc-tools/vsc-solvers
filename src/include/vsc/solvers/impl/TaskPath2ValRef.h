@@ -31,18 +31,17 @@ namespace solvers {
 
 class TaskPath2ValRef : public virtual dm::VisitorBase {
 public:
-    TaskPath2ValRef(const std::vector<dm::IModelFieldUP> &root_fields) :
-        m_root_fields(root_fields) { }
+    TaskPath2ValRef(dm::IModelField *root_field) :
+        m_root_field(root_field) { }
 
     virtual ~TaskPath2ValRef() { }
 
     dm::ValRef toMutVal(const std::vector<int32_t> &path) {
         m_it = path.begin();
         m_it_end = path.end();
-        dm::IDataType *field_t = m_root_fields.at(*m_it)->getDataType();
-        m_val = m_root_fields.at(*m_it)->getMutVal();
+        dm::IDataType *field_t = m_root_field->getDataType();
+        m_val = m_root_field->getMutVal();
 
-        m_it++;
         field_t->accept(m_this);
 
         return m_val;
@@ -62,7 +61,7 @@ public:
     }
 
 private:
-    const std::vector<dm::IModelFieldUP>        &m_root_fields;
+    dm::IModelField                             *m_root_field;
     std::vector<int32_t>::const_iterator        m_it;
     std::vector<int32_t>::const_iterator        m_it_end;
     dm::ValRef                                  m_val;

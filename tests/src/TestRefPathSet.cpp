@@ -20,6 +20,8 @@
  */
 #include "TestRefPathSet.h"
 #include "vsc/solvers/impl/RefPathSet.h"
+#include "vsc/solvers/impl/RefPathMap.h"
+#include "vsc/solvers/impl/RefPathPtrMap.h"
 
 
 namespace vsc {
@@ -171,6 +173,27 @@ TEST_F(TestRefPathSet, iterate_depth_4_single_10) {
     }
     ASSERT_EQ(i, 5);
     ASSERT_FALSE(it.next());
+}
+
+TEST_F(TestRefPathSet, single_level_path) {
+    RefPathMap<int32_t>     m;
+
+    ASSERT_TRUE(m.add({0}, 1));
+//    ASSERT_TRUE(m.add({1}, 2));
+    int32_t v;
+    ASSERT_TRUE(m.find({0}, v));
+//    ASSERT_EQ(v, 1);
+}
+
+TEST_F(TestRefPathSet, single_level_path_ptr) {
+    RefPathPtrMap<int32_t>     m;
+    int32_t l1;
+
+    ASSERT_TRUE(m.add({0}, &l1));
+//    ASSERT_TRUE(m.add({1}, 2));
+    int32_t v;
+    ASSERT_EQ(m.find({0}), &l1);
+//    ASSERT_EQ(v, 1);
 }
 
 }

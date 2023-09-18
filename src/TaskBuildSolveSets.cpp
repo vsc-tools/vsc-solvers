@@ -20,6 +20,7 @@
  */
 #include "dmgr/impl/DebugMacros.h"
 #include "vsc/dm/ITypeExprFieldRef.h"
+#include "vsc/solvers/impl/RefPathConstraint.h"
 #include "TaskBuildSolveSets.h"
 
 
@@ -110,13 +111,29 @@ void TaskBuildSolveSets::visitDataTypeStruct(dm::IDataTypeStruct *t) {
         m_field_path.pop_back();
     }
     if (m_phase == 0) {
+        // Constraint paths start with the crossover index
+        // between datatype and constraint hierarchy
+        m_constraint_path.clear();
+        m_constraint_path.push_back(m_field_path.size()+1);
+        m_constraint_path.insert(
+            m_constraint_path.begin()+m_constraint_path.size(),
+            m_field_path.begin(),
+            m_field_path.end());
         for (uint32_t i=0; i<t->getConstraints().size(); i++) {
             m_constraint_path.push_back(i);
             t->getConstraints().at(i)->accept(m_this);
             m_constraint_path.pop_back();
         }
+        m_constraint_path.clear();
     }
     DEBUG_LEAVE("visitDataTypeStruct");
+}
+
+void TaskBuildSolveSets::visitTypeExprBin(dm::ITypeExprBin *e) {
+    DEBUG_ENTER("visitTypeExprBin");
+    e->lhs()->accept(m_this);
+    e->rhs()->accept(m_this);
+    DEBUG_LEAVE("visitTypeExprBin");
 }
 
 void TaskBuildSolveSets::visitTypeExprFieldRef(dm::ITypeExprFieldRef *e) {
@@ -132,7 +149,9 @@ void TaskBuildSolveSets::visitTypeExprFieldRef(dm::ITypeExprFieldRef *e) {
 }
 
 void TaskBuildSolveSets::visitTypeFieldPhy(dm::ITypeFieldPhy *f) {
-    DEBUG_ENTER("visitTypeFieldPhy %s", f->name().c_str());
+    DEBUG_ENTER("visitTypeFieldPhy %s (%s)", 
+        f->name().c_str(),
+        m_field_path.toString().c_str());
     if (m_phase == 1) {
         int32_t idx;
         if (!m_field_ss_m.find(m_field_path, idx)) {
@@ -145,8 +164,8 @@ void TaskBuildSolveSets::visitTypeFieldPhy(dm::ITypeFieldPhy *f) {
     DEBUG_LEAVE("visitTypeFieldPhy");
 }
 
-void TaskBuildSolveSets::processFieldRef(const std::vector<int32_t> &ref) {
-    DEBUG_ENTER("processFieldRef");
+void TaskBuildSolveSets::processFieldRef(const RefPathField &ref) {
+    DEBUG_ENTER("processFieldRef %s", ref.toString().c_str());
     int32_t ex_ss_idx;
     SolveSet *ex_ss;
 
@@ -211,6 +230,7 @@ void TaskBuildSolveSets::processFieldRef(const std::vector<int32_t> &ref) {
             m_solveset_l.at(m_active_ss_idx)->addField(
                 ref, SolveSetFieldType::NonTarget);
         }
+        DEBUG("Add field to randset");
         m_field_ss_m.add(ref, m_active_ss_idx);
     }
     DEBUG_LEAVE("processFieldRef");
@@ -224,6 +244,8 @@ void TaskBuildSolveSets::leaveConstraint() {
     m_constraint_depth--;
 
     if (!m_constraint_depth && m_active_ss_idx != -1) {
+        DEBUG("Add constraint: %s", 
+            RefPathConstraint(m_constraint_path).toString().c_str());
         m_solveset_l.at(m_active_ss_idx)->addConstraint(m_constraint_path);
     }
 }

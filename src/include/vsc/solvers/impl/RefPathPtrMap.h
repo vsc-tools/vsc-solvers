@@ -67,7 +67,15 @@ public:
         }
     }
 
-    T *find(const std::vector<int32_t> &path);
+    T *find(const std::vector<int32_t> &path) const {
+        const LeafNode *node = findLeaf(path);
+
+        if (node && path.back() < node->base.sz) {
+            return node->leaves[path.back()];
+        } else {
+            return 0;
+        }
+    }
 
 /*
     iterator begin() {
@@ -112,30 +120,31 @@ private:
             if (is_last) {
                 LeafNode **leaf_np;
                 if (!(*npp)->isLeaf) {
-                    if (create) {
-                        NonLeafNode *n = reinterpret_cast<NonLeafNode *>(*npp);
-                        // We're at the last path entry, but we're looking at
-                        // a non-leaf node. 
-                        // Use the leaf-node pointer
+                    NonLeafNode *n = reinterpret_cast<NonLeafNode *>(*npp);
+                    if (n->leafNode && *it < n->leafNode->base.sz) {
+                        leaf_np = &n->leafNode;
+                    } else if (create) {
                         if (!n->leafNode) {
-                            n->leafNode = allocLeaf((*it)+1);
-                        } else if (n->leafNode->base.sz <= *it) {
+                            n->leafNode = allocLeaf((*it));
+                        } else if (*it >= n->leafNode->base.sz) {
                             // Need to realloc for more space
-                            n->leafNode = reallocLeaf(n->leafNode, (*it)+1);
+                            n->leafNode = reallocLeaf(n->leafNode, (*it));
                         }
                         leaf_np = &n->leafNode;
                     } else {
                         break;
                     }
+                } else {
+                    leaf_np = reinterpret_cast<LeafNode **>(npp);
                 }
-                leaf_np = reinterpret_cast<LeafNode **>(npp);
 
-                if ((*it) >= (*leaf_np)->base.sz && create) {
+                if ((*it) < (*leaf_np)->base.sz) {
+                    ret = (*leaf_np);
+                } else if (create) {
                     LeafNode *leaf_p = *leaf_np;
                     (*leaf_np) = reallocLeaf(leaf_p, (*it));
+                    ret = (*leaf_np);
                 }
-
-                ret = (*leaf_np);
             } else {
                 // Not last
                 NonLeafNode **nleaf_np;
@@ -154,7 +163,7 @@ private:
 
                 if (*it >= (*nleaf_np)->base.sz) {
                     // Need to resize
-                    (*nleaf_np) = reallocNonLeaf(*nleaf_np, (*it)+1);
+                    (*nleaf_np) = reallocNonLeaf(*nleaf_np, (*it));
                 }
 
                 if (!(*nleaf_np)->nodes[(*it)]) {
@@ -162,16 +171,59 @@ private:
                         // Need to add 
                         if (it_nn == path.end()) {
                             // The next element will be a leaf index
-                            (*nleaf_np)->nodes[(*it)] = reinterpret_cast<Node *>(allocLeaf(*(it+1)+1));
+                            (*nleaf_np)->nodes[(*it)] = reinterpret_cast<Node *>(allocLeaf(*(it+1)));
                         } else {
                             // The next element is still a non-leaf index
-                            (*nleaf_np)->nodes[(*it)] = reinterpret_cast<Node *>(allocNonLeaf(*(it+1)+1));
+                            (*nleaf_np)->nodes[(*it)] = reinterpret_cast<Node *>(allocNonLeaf(*(it+1)));
                         }
                     } else {
                         break;
                     }
                 }
                 npp = reinterpret_cast<Node **>(&(*nleaf_np)->nodes[(*it)]);
+            }
+        }
+        return ret;
+    }
+
+    const LeafNode *findLeaf(const std::vector<int32_t>  &path) const {
+        const LeafNode *ret = 0;
+        Node * const*npp = reinterpret_cast<Node * const*>(&m_root);
+
+        for (std::vector<int32_t>::const_iterator 
+            it=path.begin();
+            it!=path.end(); it++) {
+            std::vector<int32_t>::const_iterator it_nn = it+2;
+            bool is_last = (it+1 == path.end());
+
+            if (is_last) {
+                LeafNode * const*leaf_np;
+                if (!(*npp)->isLeaf) {
+                    const NonLeafNode *n = reinterpret_cast<const NonLeafNode *>(*npp);
+                    if (n->leafNode) {
+                        leaf_np = &n->leafNode;
+                    } else {
+                        break;
+                    }
+                } else {
+                    leaf_np = reinterpret_cast<LeafNode * const*>(npp);
+                }
+
+                ret = (*leaf_np);
+            } else {
+                // Not last
+                NonLeafNode * const*nleaf_np;
+                if ((*npp)->isLeaf) {
+                    // We need to replace this leaf node with a non-leaf node
+                    // that references the leaf node
+                    break;
+                }
+                nleaf_np = reinterpret_cast<NonLeafNode * const*>(npp);
+
+                if (*it >= (*nleaf_np)->base.sz || !(*nleaf_np)->nodes[(*it)]) {
+                    break;
+                }
+                npp = reinterpret_cast<Node * const*>(&(*nleaf_np)->nodes[(*it)]);
             }
         }
         return ret;
@@ -205,10 +257,10 @@ private:
         uint32_t max_t = pow2(max);
 
         LeafNode *node = reinterpret_cast<LeafNode *>(::operator new(
-            sizeof(LeafNode)+((max_t-1)*sizeof(T *))
+            sizeof(LeafNode)+((max_t)*sizeof(T *))
         ));
 
-        memset(node, 0, sizeof(LeafNode) + ((max_t-1)*sizeof(T *)));
+        memset(node, 0, sizeof(LeafNode) + ((max_t)*sizeof(T *)));
         node->base.isLeaf = true;
         node->base.sz = max_t;
 
@@ -219,11 +271,11 @@ private:
         uint32_t max_t = pow2(max);
 
         NonLeafNode *nnode = reinterpret_cast<NonLeafNode *>(::operator new(
-            sizeof(NonLeafNode) + ((max_t-1)*sizeof(Node *))
+            sizeof(NonLeafNode) + ((max_t)*sizeof(Node *))
         ));
 
         nnode->base.isLeaf = false;
-        nnode->base.sz = max_t;
+        nnode->base.sz = max_t+1;
         for (uint32_t i=0; i<node->base.sz; i++) {
             nnode->nodes[i] = node->nodes[i];
         }
@@ -241,11 +293,11 @@ private:
         uint32_t max_t = pow2(max);
 
         LeafNode *nnode = reinterpret_cast<LeafNode *>(::operator new(
-            sizeof(LeafNode)+((max_t-1)*sizeof(T *))
+            sizeof(LeafNode)+((max_t)*sizeof(T *))
         ));
 
         nnode->base.isLeaf = true;
-        nnode->base.sz = max_t;
+        nnode->base.sz = max_t+1;
 
         for (uint32_t i=0; i<node->base.sz; i++) {
             nnode->leaves[i] = node->leaves[i];
