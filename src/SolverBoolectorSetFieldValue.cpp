@@ -20,6 +20,7 @@
  */
 #include "boolector/boolector.h"
 #include "dmgr/impl/DebugMacros.h"
+#include "vsc/dm/impl/ValRefInt.h"
 #include "vsc/solvers/impl/TaskPath2ValRef.h"
 #include "vsc/solvers/impl/TaskPath2Field.h"
 #include "SolverBoolectorSetFieldValue.h"
@@ -47,6 +48,7 @@ void SolverBoolectorSetFieldValue::set(
     DEBUG_ENTER("set");
     m_node = node;
     dm::ITypeField *field = TaskPath2Field(m_root_field).toField(path);
+    DEBUG("Field: %s", field->name().c_str());
     m_val = TaskPath2ValRef(m_root_field).toMutVal(path);
     field->getDataType()->accept(m_this);
     DEBUG_LEAVE("set");
@@ -71,6 +73,19 @@ void SolverBoolectorSetFieldValue::visitDataTypeInt(dm::IDataTypeInt *t) {
         m_btor, 
         boolector_get_value(m_btor, m_node));
     DEBUG("bits: %s\n", bits);
+    if (t->width() <= 64) {
+        uint64_t val = 0;
+        dm::ValRefInt val_i(m_val);
+
+        for (uint32_t i=0; i<t->width() && bits[i]; i++) {
+            val <<= 1;
+            val |= (bits[i] == '1');
+        }
+
+        val_i.set_val(val);
+    } else {
+        // TODO:
+    }
     boolector_free_bits(m_btor, bits);
 
     DEBUG_LEAVE("visitDataTypeInt");

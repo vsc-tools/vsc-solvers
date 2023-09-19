@@ -42,10 +42,12 @@ TEST_F(TestConstraintsLinear, ult_2var) {
 
             @vdc.constraint
             def ab_c(self):
+                self.a < 15
+                self.b < 15
                 self.a < self.b
     )");
     #include "TestConstraintsLinear_ult_2var.h"
-    enableDebug(true);
+    enableDebug(false);
 
     vsc::dm::IModelFieldUP field(mkRootField("abc", MyC_t));
 
@@ -54,7 +56,46 @@ TEST_F(TestConstraintsLinear, ult_2var) {
     RefPathSet target_fields, fixed_fields, include_constraints, exclude_constraints;
     SolveFlags flags = SolveFlags::NoFlags;
 
-    for (uint32_t i=0; i<10; i++) {
+    for (uint32_t i=0; i<3000; i++) {
+        solver->randomize(
+            randstate.get(),
+            field.get(),
+            target_fields,
+            fixed_fields,
+            include_constraints,
+            exclude_constraints,
+            flags);
+        dm::ValRefStruct field_v(field->getImmVal());
+        dm::ValRefInt val_a(field_v.getField(0));
+        dm::ValRefInt val_b(field_v.getField(1));
+        ASSERT_LT(val_a.get_val_u(), val_b.get_val_u());
+    }
+}
+
+TEST_F(TestConstraintsLinear, ult_2var_8bit) {
+    VSC_DATACLASSES(TestConstraintsLinear_ult_2var_8bit, MyC, R"(
+        @vdc.randclass
+        class MyC(object):
+            a : vdc.rand_uint8_t 
+            b : vdc.rand_uint8_t 
+
+            @vdc.constraint
+            def ab_c(self):
+                self.a < 15
+                self.b < 15
+                self.a < self.b
+    )");
+    #include "TestConstraintsLinear_ult_2var_8bit.h"
+    enableDebug(false);
+
+    vsc::dm::IModelFieldUP field(mkRootField("abc", MyC_t));
+
+    IRandStateUP randstate(m_factory->mkRandState("0"));
+    ICompoundSolverUP solver(m_factory->mkCompoundSolver());
+    RefPathSet target_fields, fixed_fields, include_constraints, exclude_constraints;
+    SolveFlags flags = SolveFlags::NoFlags;
+
+    for (uint32_t i=0; i<3000; i++) {
         solver->randomize(
             randstate.get(),
             field.get(),

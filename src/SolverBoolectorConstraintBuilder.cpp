@@ -102,7 +102,7 @@ void SolverBoolectorConstraintBuilder::visitDataTypeInt(dm::IDataTypeInt *t) {
 
         if (val.bits() <= 64) {
             char tmp[32];
-            sprintf(tmp, "0x%llx", val.get_val_u());
+            sprintf(tmp, "%llx", val.get_val_u());
             m_expr = {
                 boolector_consth(
                     m_btor,
@@ -358,6 +358,7 @@ void SolverBoolectorConstraintBuilder::visitTypeExprRangelist(dm::ITypeExprRange
 void SolverBoolectorConstraintBuilder::visitTypeExprVal(dm::ITypeExprVal *e) { 
     DEBUG_ENTER("visitTypeExprVal");
     m_val = e->val();
+    e->val().type()->accept(m_this);
 
     DEBUG_LEAVE("visitTypeExprVal");
 }
