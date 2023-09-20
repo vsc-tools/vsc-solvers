@@ -50,6 +50,12 @@ public:
         std::vector<ISolveSetUP>        &solvesets,
         RefPathSet                      &unconstrained);
 
+	virtual void visitDataTypeBool(dm::IDataTypeBool *t) override;
+
+	virtual void visitDataTypeEnum(dm::IDataTypeEnum *t) override;
+
+	virtual void visitDataTypeInt(dm::IDataTypeInt *t) override;
+
 	virtual void visitDataTypeStruct(dm::IDataTypeStruct *t) override;
 
 	virtual void visitTypeConstraintExpr(dm::ITypeConstraintExpr *c) override;
@@ -82,6 +88,7 @@ protected:
     const RefPathSet                            &m_fixed_fields;
     const RefPathSet                            &m_include_constraints;
     const RefPathSet                            &m_exclude_constraints;
+    std::vector<dm::ITypeField *>               m_field_s;
     RefPathField                                m_field_path;
     std::vector<int32_t>                        m_constraint_path;
 

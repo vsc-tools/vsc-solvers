@@ -103,8 +103,50 @@ void TaskBuildSolveSets::visitTypeConstraintScope(dm::ITypeConstraintScope *c) {
     DEBUG_LEAVE("visitTypeConstraintScope");
 }
 
+void TaskBuildSolveSets::visitDataTypeBool(dm::IDataTypeBool *t) {
+    // TODO: need to be careful to only do this selectively
+    if (m_phase == 1) {
+        int32_t idx;
+        if (!m_field_ss_m.find(m_field_path, idx)) {
+            DEBUG("Adding as unconstrained");
+            m_unconstrained->add(m_field_path);
+        } else {
+            DEBUG("Already referenced");
+        }
+    }
+}
+
+void TaskBuildSolveSets::visitDataTypeEnum(dm::IDataTypeEnum *t) {
+    // TODO: need to be careful to only do this selectively
+    if (m_phase == 1) {
+        int32_t idx;
+        if (!m_field_ss_m.find(m_field_path, idx)) {
+            DEBUG("Adding as unconstrained");
+            m_unconstrained->add(m_field_path);
+        } else {
+            DEBUG("Already referenced");
+        }
+    }
+}
+
+void TaskBuildSolveSets::visitDataTypeInt(dm::IDataTypeInt *t) {
+    DEBUG_ENTER("visitDataTypeInt");
+
+    // TODO: need to be careful to only do this selectively
+    if (m_phase == 1) {
+        int32_t idx;
+        if (!m_field_ss_m.find(m_field_path, idx)) {
+            DEBUG("Adding as unconstrained");
+            m_unconstrained->add(m_field_path);
+        } else {
+            DEBUG("Already referenced");
+        }
+    }
+    DEBUG_LEAVE("visitDataTypeInt");
+}
+
 void TaskBuildSolveSets::visitDataTypeStruct(dm::IDataTypeStruct *t) {
-    DEBUG_ENTER("visitDataTypeStruct");
+    DEBUG_ENTER("visitDataTypeStruct nFields=%d", t->getFields().size());
     for (uint32_t i=0; i<t->getFields().size(); i++) {
         m_field_path.push_back(i);
         t->getFields().at(i)->accept(m_this);
@@ -152,15 +194,12 @@ void TaskBuildSolveSets::visitTypeFieldPhy(dm::ITypeFieldPhy *f) {
     DEBUG_ENTER("visitTypeFieldPhy %s (%s)", 
         f->name().c_str(),
         m_field_path.toString().c_str());
-    if (m_phase == 1) {
-        int32_t idx;
-        if (!m_field_ss_m.find(m_field_path, idx)) {
-            DEBUG("Adding as unconstrained");
-            m_unconstrained->add(m_field_path);
-        } else {
-            DEBUG("Already referenced");
-        }
-    }
+
+    m_field_s.push_back(f);
+    f->getDataType()->accept(m_this);
+    m_field_s.pop_back();
+
+
     DEBUG_LEAVE("visitTypeFieldPhy");
 }
 

@@ -54,6 +54,7 @@ public:
         if (!node->leaves[path.back()].valid || overwrite) {
             node->leaves[path.back()].valid = true;
             node->leaves[path.back()].value = data;
+            m_size++;
             return true;
         } else {
             return false;

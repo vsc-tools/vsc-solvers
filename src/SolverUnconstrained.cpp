@@ -46,12 +46,12 @@ bool SolverUnconstrained::randomize(
     DEBUG_ENTER("randomize");
     m_randstate = randstate;
     for (RefPathSet::iterator it=target_fields.begin(); it.next(); ) {
+        DEBUG("path.size=%d", it.path().size());
         m_it = it.path().begin();
         m_it_end = it.path().end();
         dm::IDataType *field_t = root_field->getDataType();
         m_val = root_field->getMutVal();
 
-        m_it++;
         DEBUG("--> randomize field");
         field_t->accept(m_this);
         DEBUG("<-- randomize field");
@@ -87,14 +87,18 @@ void SolverUnconstrained::visitDataTypeInt(dm::IDataTypeInt *t) {
 }
 
 void SolverUnconstrained::visitDataTypeStruct(dm::IDataTypeStruct *t) {
+    DEBUG_ENTER("visitDataTypeStruct");
     dm::ValRefStruct val_s(m_val);
 
+    DEBUG("idx: %d", *m_it);
+    DEBUG("m_val.val=%p", m_val.vp());
     m_val = val_s.getFieldRef(*m_it);
     dm::ITypeField *field = t->getField(*m_it);
 
     m_it++;
 
     field->accept(m_this);
+    DEBUG_LEAVE("visitDataTypeStruct");
 }
 
 dmgr::IDebug *SolverUnconstrained::m_dbg = 0;

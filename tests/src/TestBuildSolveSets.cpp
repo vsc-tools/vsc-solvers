@@ -145,5 +145,92 @@ TEST_F(TestBuildSolveSets, three_related_vars_one_unconstrained) {
     ASSERT_EQ(unconstrained.size(), 1);
 }
 
+TEST_F(TestBuildSolveSets, nested_struct_local_constraints) {
+    VSC_DATACLASSES(TestBuildSolveSets_nested_struct_local_constraints, MyC, R"(
+        @vdc.randclass
+        class MyI(object):
+            a : vdc.rand_uint32_t 
+            b : vdc.rand_uint32_t 
+
+            @vdc.constraint
+            def ab_c(self):
+                self.a < self.b
+
+        @vdc.randclass
+        class MyC(object):
+            a : vdc.rand[MyI]
+
+    )");
+    #include "TestBuildSolveSets_nested_struct_local_constraints.h"
+
+    enableDebug(true);
+    RefPathSet target_fields, fixed_fields, include_constraints, exclude_constraints;
+    RefPathSet unconstrained;
+
+    vsc::dm::IModelFieldUP field(mkRootField("abc", MyC_t));
+
+    std::vector<ISolveSetUP> solvesets;
+
+    TaskBuildSolveSets(
+        m_factory->getDebugMgr(),
+        field.get(),
+        target_fields,
+        fixed_fields,
+        include_constraints,
+        exclude_constraints).build(solvesets, unconstrained);
+    
+    ASSERT_EQ(solvesets.size(), 1);
+    ASSERT_EQ(solvesets.at(0)->getFields().size(), 2);
+    ASSERT_EQ(solvesets.at(0)->getConstraints().size(), 1);
+    ASSERT_EQ(unconstrained.size(), 0);
+}
+
+TEST_F(TestBuildSolveSets, nested_struct_local_constraints_nested_unconstrained) {
+    VSC_DATACLASSES(TestBuildSolveSets_nested_struct_local_constraints_nested_unconstrained, MyC, R"(
+        @vdc.randclass
+        class MyI(object):
+            a : vdc.rand_uint32_t 
+            b : vdc.rand_uint32_t 
+            c : vdc.rand_uint32_t
+
+            @vdc.constraint
+            def ab_c(self):
+                self.a < self.b
+
+        @vdc.randclass
+        class MyC(object):
+            a : vdc.rand[MyI]
+
+    )");
+    #include "TestBuildSolveSets_nested_struct_local_constraints_nested_unconstrained.h"
+
+    enableDebug(false);
+    RefPathSet target_fields, fixed_fields, include_constraints, exclude_constraints;
+    RefPathSet unconstrained;
+
+    vsc::dm::IModelFieldUP field(mkRootField("abc", MyC_t));
+
+    std::vector<ISolveSetUP> solvesets;
+
+    TaskBuildSolveSets(
+        m_factory->getDebugMgr(),
+        field.get(),
+        target_fields,
+        fixed_fields,
+        include_constraints,
+        exclude_constraints).build(solvesets, unconstrained);
+    
+    ASSERT_EQ(solvesets.size(), 1);
+    ASSERT_EQ(solvesets.at(0)->getFields().size(), 2);
+    ASSERT_EQ(solvesets.at(0)->getConstraints().size(), 1);
+    ASSERT_EQ(unconstrained.size(), 1);
+    RefPathSet::iterator it = unconstrained.begin();
+    ASSERT_TRUE(it.next());
+    const std::vector<int32_t> &path = it.path();
+    ASSERT_EQ(path.size(), 2);
+    ASSERT_EQ(path.at(0), 0);
+    ASSERT_EQ(path.at(1), 2);
+}
+
 }
 }

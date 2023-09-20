@@ -57,16 +57,13 @@ BoolectorNode *SolverBoolectorConstraintBuilder::build(const std::vector<int32_t
 
     // 
     m_path_prefix.clear();
-    /*
     m_path_prefix.insert(
         m_path_prefix.begin(),
         path.begin()+1,
-        path.begin()+constraint_offset+1);
-     */
+        path.begin()+constraint_offset);
 
     // Now, locate and build the constraint
-    dm::ITypeConstraint *c = TaskPath2Constraint(m_root_field).toConstraint(
-        path);
+    dm::ITypeConstraint *c = TaskPath2Constraint(m_root_field).toConstraint(path);
 
     c->accept(m_this);
 
@@ -331,7 +328,9 @@ void SolverBoolectorConstraintBuilder::visitTypeExprBin(dm::ITypeExprBin *e) {
 }
 
 void SolverBoolectorConstraintBuilder::visitTypeExprFieldRef(dm::ITypeExprFieldRef *e) { 
-    DEBUG_ENTER("visitTypeExprFieldRef");
+    DEBUG_ENTER("visitTypeExprFieldRef path.size=%d prefix=%s", 
+        e->getPath().size(),
+        RefPathField(m_path_prefix).toString().c_str());
     int32_t prefix_sz = m_path_prefix.size();
     m_path_prefix.insert(
         m_path_prefix.end(),
