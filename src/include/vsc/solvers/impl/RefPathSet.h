@@ -412,7 +412,7 @@ private:
             nnode->nodes[i] = node->nodes[i];
         }
 
-        for (uint32_t i=node->base.sz; i<max_t; i++) {
+        for (uint32_t i=node->base.sz; i<nnode->base.sz; i++) {
             nnode->nodes[i] = 0;
         }
 

@@ -325,7 +325,7 @@ private:
         ));
 
         nnode->base.isLeaf = false;
-        nnode->base.sz = max_t+1;
+        nnode->leafNode = node->leafNode;
         for (uint32_t i=0; i<node->base.sz; i++) {
             nnode->nodes[i] = node->nodes[i];
         }
@@ -333,6 +333,7 @@ private:
         for (uint32_t i=node->base.sz; i<max_t+1; i++) {
             nnode->nodes[i] = 0;
         }
+        nnode->base.sz = max_t+1;
 
         ::operator delete(node);
 

@@ -263,6 +263,62 @@ TEST_F(TestConstraintsLinear, nested_struct_32bit_ne_single) {
     }
 }
 
+TEST_F(TestConstraintsLinear, nested_struct_32bit_4_subfield) {
+    VSC_DATACLASSES(TestConstraintsLinear_nested_struct_32bit_4_subfield, MyC, R"(
+        @vdc.randclass
+        class MyI(object):
+            a : vdc.rand_uint32_t
+            b : vdc.rand_uint32_t
+            c : vdc.rand_uint32_t
+            d : vdc.rand_uint32_t
+
+            @vdc.constraint
+            def ab_c(self):
+                self.a != self.b
+                self.a != self.c
+                self.b != self.c
+
+        @vdc.randclass
+        class MyC(object):
+            a : vdc.rand[MyI]
+            b : vdc.rand[MyI]
+            c : vdc.rand[MyI]
+            d : vdc.rand[MyI]
+    )");
+    #include "TestConstraintsLinear_nested_struct_32bit_4_subfield.h"
+    enableDebug(false);
+
+    fprintf(stdout, "MyC_t.name: %s\n", MyC_t->name().c_str());
+    fflush(stdout);
+    ASSERT_EQ(MyC_t->name(), "MyC");
+
+    vsc::dm::IModelFieldUP field(mkRootField("abc", MyC_t));
+
+    IRandStateUP randstate(m_factory->mkRandState("0"));
+    ICompoundSolverUP solver(m_factory->mkCompoundSolver());
+    RefPathSet target_fields, fixed_fields, include_constraints, exclude_constraints;
+    SolveFlags flags = SolveFlags::NoFlags;
+
+    for (uint32_t i=0; i<1; i++) {
+        solver->randomize(
+            randstate.get(),
+            field.get(),
+            target_fields,
+            fixed_fields,
+            include_constraints,
+            exclude_constraints,
+            flags);
+        /*
+        dm::ValRefStruct field_v(field->getImmVal());
+        dm::ValRefInt val_a(field_v.getField(0));
+        dm::ValRefInt val_b(field_v.getField(1));
+ //       ASSERT_LT(val_a.get_val_u(), val_b.get_val_u());
+         */
+    }
+}
+
+
+
 
 }
 }
