@@ -34,7 +34,7 @@ cdef class RandState(object):
     cpdef str seed(self)
 
     cpdef randint32(self, int32_t, int32_t)
-    cpdef randbits(self, vsc_dm.ModelVal)
+#    cpdef randbits(self, vsc_dm.ModelVal)
 
     cpdef void setState(self, RandState other)
     cpdef RandState clone(self)

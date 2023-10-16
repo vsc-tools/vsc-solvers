@@ -66,8 +66,8 @@ cdef class RandState(object):
     cpdef randint32(self, int32_t l, int32_t h):
         return self._hndl.randint32(l, h)
 
-    cpdef randbits(self, vsc_dm.ModelVal v):
-        self._hndl.randbits(v._hndl)
+#    cpdef randbits(self, vsc_dm.ModelVal v):
+#        self._hndl.randbits(v._hndl)
 
     cpdef void setState(self, RandState other):
         self._hndl.setState(other._hndl)
