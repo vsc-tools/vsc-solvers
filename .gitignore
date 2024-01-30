@@ -38,3 +38,5 @@ python/core.cpp
 
 __pycache__/
 
+.eggs/
+*.egg-info/
