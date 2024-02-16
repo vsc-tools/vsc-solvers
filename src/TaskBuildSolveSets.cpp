@@ -181,10 +181,12 @@ void TaskBuildSolveSets::visitTypeExprBin(dm::ITypeExprBin *e) {
 void TaskBuildSolveSets::visitTypeExprFieldRef(dm::ITypeExprFieldRef *e) {
     DEBUG_ENTER("visitTypeExprFieldRef");
     uint32_t sz = m_field_path.size();
+    /* TODO:
     m_field_path.insert(
         m_field_path.end(), 
         e->getPath().begin(), 
         e->getPath().end());
+     */
     processFieldRef(m_field_path);
     m_field_path.resize(sz);
     DEBUG_LEAVE("visitTypeExprFieldRef");

@@ -328,6 +328,7 @@ void SolverBoolectorConstraintBuilder::visitTypeExprBin(dm::ITypeExprBin *e) {
 }
 
 void SolverBoolectorConstraintBuilder::visitTypeExprFieldRef(dm::ITypeExprFieldRef *e) { 
+#ifdef UNDEFINED
     DEBUG_ENTER("visitTypeExprFieldRef path.size=%d prefix=%s", 
         e->getPath().size(),
         RefPathField(m_path_prefix).toString().c_str());
@@ -348,6 +349,7 @@ void SolverBoolectorConstraintBuilder::visitTypeExprFieldRef(dm::ITypeExprFieldR
 
     m_path_prefix.resize(prefix_sz);
     DEBUG_LEAVE("visitTypeExprFieldRef");
+#endif /* UNDEFINED */
 }
 
 void SolverBoolectorConstraintBuilder::visitTypeExprRangelist(dm::ITypeExprRangelist *e) { 
