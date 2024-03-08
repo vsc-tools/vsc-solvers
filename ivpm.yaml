@@ -31,6 +31,8 @@ package:
        url: https://github.com/vsc-tools/vsc-dm.git
      - name: pyvsc-dataclasses
        url: https://github.com/vsc-tools/pyvsc-dataclasses.git
+     - name: ivpm
+       url: https://github.com/fvutils/ivpm.git
 
    deps:
      - name: cython
