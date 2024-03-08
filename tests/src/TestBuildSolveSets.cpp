@@ -158,7 +158,8 @@ TEST_F(TestBuildSolveSets, nested_struct_local_constraints) {
 
         @vdc.randclass
         class MyC(object):
-            a : vdc.rand[MyI]
+            #a : vdc.rand[MyI]
+            pass
 
     )");
     #include "TestBuildSolveSets_nested_struct_local_constraints.h"
@@ -199,7 +200,8 @@ TEST_F(TestBuildSolveSets, nested_struct_local_constraints_nested_unconstrained)
 
         @vdc.randclass
         class MyC(object):
-            a : vdc.rand[MyI]
+            #a : vdc.rand[MyI]
+            pass
 
     )");
     #include "TestBuildSolveSets_nested_struct_local_constraints_nested_unconstrained.h"

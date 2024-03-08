@@ -66,6 +66,12 @@ public:
 
 	virtual void visitTypeExprBin(dm::ITypeExprBin *e) override;
 
+	virtual void visitTypeExprRefBottomUp(dm::ITypeExprRefBottomUp *e) override;
+
+	virtual void visitTypeExprRefPath(dm::ITypeExprRefPath *e) override;
+
+	virtual void visitTypeExprRefTopDown(dm::ITypeExprRefTopDown *e) override;
+
 	virtual void visitTypeExprFieldRef(dm::ITypeExprFieldRef *e) override;
 
 	virtual void visitTypeExprRangelist(dm::ITypeExprRangelist *e) override;

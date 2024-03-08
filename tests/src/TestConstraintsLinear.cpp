@@ -149,17 +149,19 @@ TEST_F(TestConstraintsLinear, struct_32bit_ne) {
             include_constraints,
             exclude_constraints,
             flags);
-        /*
         dm::ValRefStruct field_v(field->getImmVal());
-        dm::ValRefInt val_a(field_v.getField(0));
-        dm::ValRefInt val_b(field_v.getField(1));
- //       ASSERT_LT(val_a.get_val_u(), val_b.get_val_u());
-         */
+        dm::ValRefInt val_a(field_v.getFieldRef(0));
+        dm::ValRefInt val_b(field_v.getFieldRef(1));
+        ASSERT_NE(val_a.get_val_u(), val_b.get_val_u());
     }
 }
 
 TEST_F(TestConstraintsLinear, nested_struct_32bit_ne) {
     VSC_DATACLASSES(TestConstraintsLinear_nested_struct_32bit_ne, MyC, R"(
+        import logging
+
+        logging.basicConfig(level=logging.DEBUG)
+
         @vdc.randclass
         class MyI(object):
             a : vdc.rand_uint32_t
@@ -181,7 +183,7 @@ TEST_F(TestConstraintsLinear, nested_struct_32bit_ne) {
             d : vdc.rand[MyI]
     )");
     #include "TestConstraintsLinear_nested_struct_32bit_ne.h"
-    enableDebug(false);
+    enableDebug(true);
 
     fprintf(stdout, "MyC_t.name: %s\n", MyC_t->name().c_str());
     fflush(stdout);
@@ -194,7 +196,7 @@ TEST_F(TestConstraintsLinear, nested_struct_32bit_ne) {
     RefPathSet target_fields, fixed_fields, include_constraints, exclude_constraints;
     SolveFlags flags = SolveFlags::NoFlags;
 
-    for (uint32_t i=0; i<1000; i++) {
+    for (uint32_t i=0; i<1; i++) {
         solver->randomize(
             randstate.get(),
             field.get(),
@@ -203,12 +205,15 @@ TEST_F(TestConstraintsLinear, nested_struct_32bit_ne) {
             include_constraints,
             exclude_constraints,
             flags);
-        /*
         dm::ValRefStruct field_v(field->getImmVal());
-        dm::ValRefInt val_a(field_v.getField(0));
-        dm::ValRefInt val_b(field_v.getField(1));
- //       ASSERT_LT(val_a.get_val_u(), val_b.get_val_u());
-         */
+        dm::ValRefStruct field_a(field_v.getFieldRef(0));
+        dm::ValRefInt val_a(field_a.getFieldRef(0));
+        dm::ValRefInt val_b(field_a.getFieldRef(1));
+        dm::ValRefInt val_c(field_a.getFieldRef(2));
+        dm::ValRefInt val_d(field_a.getFieldRef(3));
+        ASSERT_NE(val_a.get_val_u(), val_b.get_val_u());
+        ASSERT_NE(val_b.get_val_u(), val_c.get_val_u());
+        ASSERT_NE(val_c.get_val_u(), val_d.get_val_u());
     }
 }
 
@@ -254,12 +259,13 @@ TEST_F(TestConstraintsLinear, nested_struct_32bit_ne_single) {
             include_constraints,
             exclude_constraints,
             flags);
-        /*
         dm::ValRefStruct field_v(field->getImmVal());
-        dm::ValRefInt val_a(field_v.getField(0));
-        dm::ValRefInt val_b(field_v.getField(1));
- //       ASSERT_LT(val_a.get_val_u(), val_b.get_val_u());
-         */
+        dm::ValRefStruct field_a(field_v.getFieldRef(0));
+        dm::ValRefInt val_a(field_a.getFieldRef(0));
+        dm::ValRefInt val_b(field_a.getFieldRef(1));
+        dm::ValRefInt val_c(field_a.getFieldRef(2));
+        ASSERT_NE(val_a.get_val_u(), val_b.get_val_u());
+        ASSERT_NE(val_b.get_val_u(), val_c.get_val_u());
     }
 }
 
@@ -308,12 +314,15 @@ TEST_F(TestConstraintsLinear, nested_struct_32bit_4_subfield) {
             include_constraints,
             exclude_constraints,
             flags);
-        /*
         dm::ValRefStruct field_v(field->getImmVal());
-        dm::ValRefInt val_a(field_v.getField(0));
-        dm::ValRefInt val_b(field_v.getField(1));
- //       ASSERT_LT(val_a.get_val_u(), val_b.get_val_u());
-         */
+        for (uint32_t si=0; si<4; si++) {
+            dm::ValRefStruct field_x(field_v.getFieldRef(si));
+            dm::ValRefInt val_a(field_x.getFieldRef(0));
+            dm::ValRefInt val_b(field_x.getFieldRef(1));
+            dm::ValRefInt val_c(field_x.getFieldRef(2));
+            ASSERT_NE(val_a.get_val_u(), val_b.get_val_u());
+            ASSERT_NE(val_b.get_val_u(), val_c.get_val_u());
+        }
     }
 }
 

@@ -38,7 +38,8 @@ TaskBuildSolveSets::TaskBuildSolveSets(
         ) : m_phase(0), m_root_field(root_field), 
         m_target_fields(target_fields), m_fixed_fields(fixed_fields),
         m_include_constraints(include_constraints), 
-        m_exclude_constraints(exclude_constraints) {
+        m_exclude_constraints(exclude_constraints),
+        m_ref_depth(0) {
     DEBUG_INIT("vsc::solvers::TaskBuildSolveSets", dmgr);
 }
 
@@ -49,6 +50,7 @@ TaskBuildSolveSets::~TaskBuildSolveSets() {
 void TaskBuildSolveSets::build(
     std::vector<ISolveSetUP>        &solvesets,
     RefPathSet                      &unconstrained) {
+    DEBUG_ENTER("build");
     m_active_ss_idx = -1;
     m_constraint_depth = 0;
     m_unconstrained = &unconstrained;
@@ -67,6 +69,29 @@ void TaskBuildSolveSets::build(
             solvesets.push_back(ISolveSetUP(it->release()));
         }
     }
+
+    if (DEBUG_EN) {
+        DEBUG("Result: %d solve sets", solvesets.size());
+
+        for (std::vector<ISolveSetUP>::const_iterator
+            it=solvesets.begin();
+            it!=solvesets.end(); it++) {
+            DEBUG("Solve Set:");
+            const RefPathMap<SolveSetFieldType> &paths = (*it)->getFields();
+            RefPathMap<SolveSetFieldType>::iterator fi = paths.begin();
+            while (fi.next()) {
+                const std::vector<int32_t> &path = fi.path();
+                DEBUG("Path:");
+                for (std::vector<int32_t>::const_iterator
+                    pi=path.begin();
+                    pi!=path.end(); pi++) {
+                    DEBUG("    %d", *pi);
+                }
+            }
+        }
+    }
+
+    DEBUG_LEAVE("build");
 }
 
 void TaskBuildSolveSets::visitTypeConstraintExpr(dm::ITypeConstraintExpr *c) {
@@ -176,6 +201,40 @@ void TaskBuildSolveSets::visitTypeExprBin(dm::ITypeExprBin *e) {
     e->lhs()->accept(m_this);
     e->rhs()->accept(m_this);
     DEBUG_LEAVE("visitTypeExprBin");
+}
+
+void TaskBuildSolveSets::visitTypeExprRefBottomUp(dm::ITypeExprRefBottomUp *e) {
+    DEBUG_ENTER("visitTypeExprRefBottomUp");
+
+    DEBUG_LEAVE("visitTypeExprRefBottomUp");
+}
+
+void TaskBuildSolveSets::visitTypeExprRefPath(dm::ITypeExprRefPath *e) {
+    DEBUG_ENTER("visitTypeExprRefPath");
+    uint32_t sz = m_field_path.size();
+
+    m_ref_depth++;
+    e->getTarget()->accept(m_this);
+    m_ref_depth--;
+
+    m_field_path.insert(
+        m_field_path.end(), 
+        e->getPath().begin(), 
+        e->getPath().end());
+
+    if (!m_ref_depth) {
+        processFieldRef(m_field_path);
+    }
+
+    m_field_path.resize(sz);
+
+    DEBUG_LEAVE("visitTypeExprRefPath");
+}
+
+void TaskBuildSolveSets::visitTypeExprRefTopDown(dm::ITypeExprRefTopDown *e) {
+    DEBUG_ENTER("visitTypeExprRefTopDown");
+
+    DEBUG_LEAVE("visitTypeExprRefTopDown");
 }
 
 void TaskBuildSolveSets::visitTypeExprFieldRef(dm::ITypeExprFieldRef *e) {

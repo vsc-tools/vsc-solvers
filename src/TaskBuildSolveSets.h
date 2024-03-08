@@ -68,6 +68,12 @@ public:
 
 	virtual void visitTypeExprBin(dm::ITypeExprBin *e) override;
 
+	virtual void visitTypeExprRefBottomUp(dm::ITypeExprRefBottomUp *e) override;
+
+	virtual void visitTypeExprRefPath(dm::ITypeExprRefPath *e) override;
+
+	virtual void visitTypeExprRefTopDown(dm::ITypeExprRefTopDown *e) override;
+
 	virtual void visitTypeExprFieldRef(dm::ITypeExprFieldRef *e) override;
 
 	virtual void visitTypeFieldPhy(dm::ITypeFieldPhy *f) override;
@@ -89,6 +95,7 @@ protected:
     const RefPathSet                            &m_include_constraints;
     const RefPathSet                            &m_exclude_constraints;
     std::vector<dm::ITypeField *>               m_field_s;
+    int32_t                                     m_ref_depth;
     RefPathField                                m_field_path;
     std::vector<int32_t>                        m_constraint_path;
 

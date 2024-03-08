@@ -327,6 +327,42 @@ void SolverBoolectorConstraintBuilder::visitTypeExprBin(dm::ITypeExprBin *e) {
     DEBUG_LEAVE("visitTypeExprBin");
 }
 
+void SolverBoolectorConstraintBuilder::visitTypeExprRefBottomUp(dm::ITypeExprRefBottomUp *e) {
+    DEBUG_ENTER("visitTypeExprRefBottomUp");
+
+    DEBUG_LEAVE("visitTypeExprRefBottomUp");
+}
+
+void SolverBoolectorConstraintBuilder::visitTypeExprRefPath(dm::ITypeExprRefPath *e) {
+    DEBUG_ENTER("visitTypeExprRefPath");
+    int32_t prefix_sz = m_path_prefix.size();
+    e->getTarget()->accept(m_this);
+
+    m_path_prefix.insert(
+        m_path_prefix.end(),
+        e->getPath().begin(),
+        e->getPath().end()
+    );
+
+    m_expr.first = m_field_m.find(m_path_prefix);
+
+    DEBUG("node @ %s: %p", RefPathField(m_path_prefix).toString().c_str(), m_expr.first);
+
+    DataTypeMode dt_mode = m_dt_mode;
+    m_dt_mode = DataTypeMode::RefSign;
+    TaskPath2Field(m_root_field).toField(m_path_prefix)->getDataType()->accept(m_this);
+    m_dt_mode = dt_mode;
+
+    m_path_prefix.resize(prefix_sz);
+    DEBUG_LEAVE("visitTypeExprRefPath");
+}
+
+void SolverBoolectorConstraintBuilder::visitTypeExprRefTopDown(dm::ITypeExprRefTopDown *e) {
+    DEBUG_ENTER("visitTypeExprRefTopDown");
+
+    DEBUG_LEAVE("visitTypeExprRefTopDown");
+}
+
 void SolverBoolectorConstraintBuilder::visitTypeExprFieldRef(dm::ITypeExprFieldRef *e) { 
 #ifdef UNDEFINED
     DEBUG_ENTER("visitTypeExprFieldRef path.size=%d prefix=%s", 
