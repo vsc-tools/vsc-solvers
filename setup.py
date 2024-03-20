@@ -10,8 +10,8 @@ proj_dir = os.path.dirname(os.path.abspath(__file__))
 
 try:
     import sys
-    sys.path.insert(0, os.path.join(proj_dir, "python"))
-    from vsc_solvers.__build_num__ import BUILD_NUM
+    sys.path.insert(0, os.path.join(proj_dir, "python/vsc_solvers"))
+    from __build_num__ import BUILD_NUM
     version += ".%s" % str(BUILD_NUM)
 except ImportError:
     pass
