@@ -17,4 +17,5 @@ class PkgInfo(ivpm.PkgInfo):
             self._incdirs = [os.path.join(pkgdir, "share", "include")]
             self._libdirs = [os.path.join(pkgdir)]
 
+        self._deps = ["vsc-dm"]
         self._libs = ["vsc-solvers"]

@@ -59,9 +59,15 @@ setup_args = dict(
   install_requires=[
     'vsc-dm',
   ],
+  entry_points={
+      'ivpm.pkginfo': [
+          'vsc-solvers = vsc_solvers.pkginfo:PkgInfo'
+      ]
+  },
   setup_requires=[
     'setuptools_scm',
-    'cython'
+    'cython',
+    'ivpm'
   ],
   ext_modules=[ ext ]
 )
