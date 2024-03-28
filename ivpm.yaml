@@ -32,7 +32,7 @@ package:
      - name: pyvsc-dataclasses
        url: https://github.com/vsc-tools/pyvsc-dataclasses.git
      - name: ivpm
-       url: https://github.com/fvutils/ivpm.git
+       src: pypi
 
    deps:
      - name: cython
