@@ -42,8 +42,20 @@ jobs:
 
   macos:
     runs-on: macos-latest
+    strategy:
+      matrix:
+        include:
+          - pyversion: '3.8'
+          - pyversion: '3.9'
+          - pyversion: '3.10'
+          - pyversion: '3.11'
+          - pyversion: '3.12'
     steps:
     - uses: actions/checkout@v4
+    - name: Install python ${{ matrix.pyversion }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.pyversion }}
     - name: Fetch dependencies
       run: |
         python3 --version
