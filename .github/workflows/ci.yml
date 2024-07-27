@@ -98,7 +98,7 @@ jobs:
         python -m pip install ivpm
         python -m ivpm update -a
         ./packages/python/Scripts/python -m pip install ninja cython setuptools wheel build twine
-        echo "BUILD_NUM=$env:BUILD_NUM" > python/vsc_dm/__build_num__.py
+        echo "BUILD_NUM=$env:BUILD_NUM" > python/vsc_solvers/__build_num__.py
         ./packages/python/Scripts/python setup.py build bdist_wheel
         ls dist
         
