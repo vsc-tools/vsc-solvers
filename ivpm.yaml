@@ -13,13 +13,17 @@ package:
     - name: cython
       src: pypi
     - name: bitwuzla
-      url: https://github.com/mballance/bitwuzla.git
+      url: https://github.com/vsc-tools/bitwuzla.git
+      branch: win32-build
     - name: boolector
-      url: https://github.com/boolector/boolector.git
+      url: https://github.com/vsc-tools/boolector.git
+      branch: win32
     - name: btor2tools
-      url: https://github.com/boolector/btor2tools.git
+      url: https://github.com/vsc-tools/btor2tools.git
+      branch: win32
     - name: cadical
-      url: https://github.com/mballance/cadical.git
+      url: https://github.com/vsc-tools/cadical.git
+      branch: win32
     - name: gtest
       url: https://github.com/google/googletest/archive/refs/tags/release-1.11.0.tar.gz
     - name: gmp
