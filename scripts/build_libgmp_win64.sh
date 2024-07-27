@@ -7,6 +7,8 @@ cd $inst
 mkdir build
 cd build
 
+gmp_dir=`echo $gmp_dir | sed -e 's%\\%/%g'`
+
 echo "** Configure "
 ${gmp_dir}/configure --enable-cxx --prefix=${inst} --disable-static --enable-shared
 
