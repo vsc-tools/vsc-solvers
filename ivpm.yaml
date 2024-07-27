@@ -1,59 +1,61 @@
 
 package:
-   name: vsc-solvers
-   version: 0.0.1
+  name: vsc-solvers
+  version: 0.0.1
 
-   setup-deps:
-     - cython
-     - ninja
-   
-   dev-deps:
-     - name: cython
-       src: pypi
-     - name: bitwuzla
-       url: https://github.com/mballance/bitwuzla.git
-     - name: boolector
-       url: https://github.com/boolector/boolector.git
-     - name: btor2tools
-       url: https://github.com/boolector/btor2tools.git
-     - name: cadical
-       url: https://github.com/mballance/cadical.git
-     - name: gtest
-       url: https://github.com/google/googletest/archive/refs/tags/release-1.11.0.tar.gz
-     - name: gmp
-       url: https://mirrors.kernel.org/gnu/gmp/gmp-6.2.1.tar.xz
-       #       url: https://gmplib.org/download/gmp/gmp-6.2.1.tar.xz
-     - name: ninja
-       src: pypi
-     - name: debug-mgr
-       url: https://github.com/mballance/debug-mgr.git
-     - name: vsc-dm
-       url: https://github.com/vsc-tools/vsc-dm.git
-     - name: pyvsc-dataclasses
-       url: https://github.com/vsc-tools/pyvsc-dataclasses.git
-     - name: ivpm
-       src: pypi
+  setup-deps:
+    - cython
+    - ninja
 
-   deps:
-     - name: cython
-       src: pypi
-     - name: bitwuzla
-       url: https://github.com/mballance/bitwuzla.git
-     - name: boolector
-       url: https://github.com/boolector/boolector.git
-     - name: btor2tools
-       url: https://github.com/boolector/btor2tools.git
-     - name: cadical
-       url: https://github.com/mballance/cadical.git
-     - name: gtest
-       url: https://github.com/google/googletest/archive/refs/tags/release-1.11.0.tar.gz
-     - name: gmp
-       #       url: https://gmplib.org/download/gmp/gmp-6.2.1.tar.xz
-       url: https://mirrors.kernel.org/gnu/gmp/gmp-6.2.1.tar.xz
-     - name: debug-mgr
-       url: https://github.com/mballance/debug-mgr.git
-     - name: vsc-dm
-       url: https://github.com/vsc-tools/vsc-dm.git
-       branch: dm-refactor
+  dep-sets:
+  - name: default-dev   
+    deps:
+    - name: cython
+      src: pypi
+    - name: bitwuzla
+      url: https://github.com/mballance/bitwuzla.git
+    - name: boolector
+      url: https://github.com/boolector/boolector.git
+    - name: btor2tools
+      url: https://github.com/boolector/btor2tools.git
+    - name: cadical
+      url: https://github.com/mballance/cadical.git
+    - name: gtest
+      url: https://github.com/google/googletest/archive/refs/tags/release-1.11.0.tar.gz
+    - name: gmp
+      url: https://mirrors.kernel.org/gnu/gmp/gmp-6.2.1.tar.xz
+      #       url: https://gmplib.org/download/gmp/gmp-6.2.1.tar.xz
+    - name: ninja
+      src: pypi
+    - name: debug-mgr
+      url: https://github.com/mballance/debug-mgr.git
+    - name: vsc-dm
+      url: https://github.com/vsc-tools/vsc-dm.git
+    - name: pyvsc-dataclasses
+      url: https://github.com/vsc-tools/pyvsc-dataclasses.git
+    - name: ivpm
+      src: pypi
+
+  - name: default
+    deps:
+    - name: cython
+      src: pypi
+    - name: bitwuzla
+      url: https://github.com/mballance/bitwuzla.git
+    - name: boolector
+      url: https://github.com/boolector/boolector.git
+    - name: btor2tools
+      url: https://github.com/boolector/btor2tools.git
+    - name: cadical
+      url: https://github.com/mballance/cadical.git
+    - name: gtest
+      url: https://github.com/google/googletest/archive/refs/tags/release-1.11.0.tar.gz
+    - name: gmp
+      #       url: https://gmplib.org/download/gmp/gmp-6.2.1.tar.xz
+      url: https://mirrors.kernel.org/gnu/gmp/gmp-6.2.1.tar.xz
+    - name: debug-mgr
+      url: https://github.com/mballance/debug-mgr.git
+    - name: vsc-dm
+      url: https://github.com/vsc-tools/vsc-dm.git
        
 
