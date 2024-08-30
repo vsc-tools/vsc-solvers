@@ -63,7 +63,9 @@ void SolverBoolectorFieldBuilder::visitDataTypeBool(dm::IDataTypeBool *t) {
     DEBUG_ENTER("visitDataTypeBool");
     if (m_is_fixed) {
         // Create a single-bit constant
-        dm::ValRefBool val(m_field->getInit());
+//        dm::ValRefBool val(m_field->getInit());
+// TODO:
+        dm::ValRefBool val;
         m_node = boolector_const(
             m_btor,
             val.get_val()?"1":"0");
@@ -89,7 +91,9 @@ void SolverBoolectorFieldBuilder::visitDataTypeInt(dm::IDataTypeInt *t) {
     DEBUG_ENTER("visitDataTypeInt");
     if (m_is_fixed) {
         if (t->width() <= 64) {
-            dm::ValRefInt val(m_field->getInit());
+//            dm::ValRefInt val(m_field->getInit());
+            // TODO:
+            dm::ValRefInt val;
             char tmp[32];
             sprintf(tmp, "0x%llx", val.get_val_u());
             m_node = boolector_consth(
