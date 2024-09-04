@@ -72,85 +72,42 @@ jobs:
       run: |
         ./packages/python/bin/python3 -m twine  upload dist/*.whl
 
-  windows:
-    runs-on: "windows-latest"
-    strategy:
-      matrix:
-        build_arch: [x64]
-        pyversion: ['3.8', '3.9', '3.10', '3.11', '3.12']
-    steps:
-    - name: checkout
-      uses: actions/checkout@v4
+#   windows:
+#     runs-on: "windows-latest"
+#     strategy:
+#       matrix:
+#         build_arch: [x64]
+#         pyversion: ['3.8', '3.9', '3.10', '3.11', '3.12']
+#     steps:
+#     - name: checkout
+#       uses: actions/checkout@v4
         
-    - name: Install python ${{ matrix.pyversion }}
-      uses: actions/setup-python@v4
-      with:
-        architecture: ${{ matrix.build_arch }}
-        python-version: ${{ matrix.pyversion }}
-    - uses: ilammy/msvc-dev-cmd@v1.13.0
-      with:
-        arch: ${{ matrix.build_arch }}
+#     - name: Install python ${{ matrix.pyversion }}
+#       uses: actions/setup-python@v4
+#       with:
+#         architecture: ${{ matrix.build_arch }}
+#         python-version: ${{ matrix.pyversion }}
+#     - uses: ilammy/msvc-dev-cmd@v1.13.0
+#       with:
+#         arch: ${{ matrix.build_arch }}
         
-    - name: Build/Test Package
-      env:
-        BUILD_NUM: ${{ github.run_id }}
-      run: |
-        python -m pip install ivpm
-        python -m ivpm update -a
-        ./packages/python/Scripts/python -m pip install ninja cython setuptools wheel build twine
-        echo "BUILD_NUM=$env:BUILD_NUM" > python/vsc_solvers/__build_num__.py
-        ./packages/python/Scripts/python setup.py build bdist_wheel
-        ls dist
+#     - name: Build/Test Package
+#       env:
+#         BUILD_NUM: ${{ github.run_id }}
+#       run: |
+#         python -m pip install ivpm
+#         python -m ivpm update -a
+#         ./packages/python/Scripts/python -m pip install ninja cython setuptools wheel build twine
+#         echo "BUILD_NUM=$env:BUILD_NUM" > python/vsc_solvers/__build_num__.py
+#         ./packages/python/Scripts/python setup.py build bdist_wheel
+#         ls dist
         
-    - name: Publish to PyPi
-      if: startsWith(github.ref, 'refs/heads/master')
-      env:
-        TWINE_USERNAME: __token__
-        TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
-      shell: bash
-      run: |
-        ./packages/python/Scripts/python -m twine upload dist/*.whl
+#     - name: Publish to PyPi
+#       if: startsWith(github.ref, 'refs/heads/master')
+#       env:
+#         TWINE_USERNAME: __token__
+#         TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+#       shell: bash
+#       run: |
+#         ./packages/python/Scripts/python -m twine upload dist/*.whl
         
-#  ci-macos-arm64:
-#    runs-on: [self-hosted, macOS, ARM64]
-#    steps:
-#      - uses: actions/checkout@v1
-#      - name: Fetch source dependencies
-#        run: |
-#          export IVPM_PYTHON=python3
-#          ${IVPM_PYTHON} -m pip install ivpm 
-#          ${IVPM_PYTHON} -m ivpm update -a
-#          ./packages/python/bin/python3 -m pip install twine
-#      - name: Build packages
-#        run: |
-#          export BUILD_NUM=$GITHUB_RUN_ID
-#          ./packages/python/bin/python3 setup.py bdist_wheel
-#      - name: Publish to PyPi
-#        if: startsWith(github.ref, 'refs/heads/main')
-#        run: |
-#          python3 -m twine upload dist/*
-#        env:
-#          TWINE_USERNAME: __token__
-#          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
-#  ci-macos-x86_64:
-#    runs-on: [self-hosted, macOS, ARM64]
-#    steps:
-#      - uses: actions/checkout@v1
-#      - name: Fetch source dependencies
-#        run: |
-#          export IVPM_PYTHON=/usr/local/bin/python3
-#          arch -x86_64 ${IVPM_PYTHON} -m pip install ivpm 
-#          arch -x86_64 ${IVPM_PYTHON} -m ivpm update -a
-#          arch -x86_64 ./packages/python/bin/python3 -m pip install twine
-#      - name: Build packages
-#        run: |
-#          export BUILD_NUM=$GITHUB_RUN_ID
-#          arch -x86_64 ./packages/python/bin/python3 setup.py bdist_wheel --plat-name macosx_10_9_x86_64
-#      - name: Publish to PyPi
-#        if: startsWith(github.ref, 'refs/heads/main')
-#        run: |
-#          arch -x86_64 ./packages/python/bin/python3 -m twine upload dist/*_x86_64.whl
-#        env:
-#          TWINE_USERNAME: __token__
-#          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
-#
