@@ -56,6 +56,10 @@ setup_args = dict(
   license = "Apache 2.0",
   keywords = ["SystemVerilog", "Verilog", "RTL", "Python"],
   url = "https://github.com/vsc-tools/vsc-solvers",
+  package_data = {'vsc_solvers': [
+      'core.pxd',
+      'decl.pxd'
+  ]},
   install_requires=[
     'vsc-dm',
   ],
