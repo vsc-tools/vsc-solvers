@@ -69,8 +69,9 @@ setup_args = dict(
       ]
   },
   setup_requires=[
-    'setuptools_scm',
     'cython',
+    'setuptools_scm',
+    'vsc_dm',
     'ivpm'
   ],
   ext_modules=[ ext ]
